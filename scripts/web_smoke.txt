@@ -1,0 +1,48 @@
+main.js 导入完成，具名导出：（无，靠副作用启动）
+启动后 #login-screen hidden=false / #app-shell hidden=true
+OK   登录 admin/***
+导航项：9 个，文案：工作台工作台智能问答合同审查法规检索办案案件管理任务中心文书草稿系统能力与降级管理后台
+OK   工作台                    #/  (view 799 字)  
+     本轮新增异常 0 条
+OK   智能问答                   #/chat  (view 230 字)  
+     本轮新增异常 0 条
+OK   合同审查                   #/contract  (view 242 字)  
+     本轮新增异常 0 条
+OK   法规检索                   #/search  (view 194 字)  
+    检索「未签订书面劳动合同二倍工资」→ 6 条命中
+     本轮新增异常 0 条
+OK   案件管理                   #/cases  (view 173 字)  
+     本轮新增异常 0 条
+OK   案件详情                   #/cases/case_20260917_cf3573  (view 395 字)  
+     本轮新增异常 0 条
+OK   任务中心                   #/tasks  (view 1558 字)  
+     本轮新增异常 0 条
+OK   任务详情                   #/tasks/task_7db5f1312905  (view 436 字)  
+     本轮新增异常 0 条
+OK   文书草稿                   #/drafts  (view 290 字)  
+    打开草稿 draft_27ba0be2324c，正文字数 77，按钮：清空条件 / 筛选 / 保存为新版本 v3 / 导出 Markdown / 导出 纯文本 / 导出 Word / 下载导出文件 / 复制正文 / 删除草稿
+    下载按钮 disabled=false（该草稿 exported=true，一致）
+     本轮新增异常 0 条
+OK   能力与降级                  #/capabilities  (view 9614 字)  
+    tab：降级与后端 / 工具清单 / Agent 目录 / 交付判据 / 意图路由
+    点击 tab「工具清单」→ view 15748 字，新增异常 0
+    点击 tab「Agent 目录」→ view 6619 字，新增异常 0
+    点击 tab「交付判据」→ view 11662 字，新增异常 0
+    点击 tab「意图路由」→ view 2280 字，新增异常 0
+     本轮新增异常 0 条
+OK   管理后台                   #/admin  (view 347 字)  
+    tab：团队 / 用户 / 系统配置 / 审计中心 / 运营统计 / 知识库 / 法规库
+    点击 tab「团队」→ view 347 字，新增异常 0
+    点击 tab「用户」→ view 8306 字，新增异常 0
+    点击 tab「系统配置」→ view 12300 字，新增异常 0
+    点击 tab「审计中心」→ view 64583 字，新增异常 0
+    点击 tab「运营统计」→ view 5554 字，新增异常 0
+    点击 tab「知识库 / 法规库」→ view 7403 字，新增异常 0
+     本轮新增异常 0 条
+OK   管理后台·法规库深链             #/admin?tab=knowledge  (view 7403 字)  
+     本轮新增异常 0 条
+OK   不存在的页面                 #/nonexistent-page  (view 47 字)  
+     本轮新增异常 0 条
+
+================ 未捕获异常 ================
+（无）

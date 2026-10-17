@@ -1,0 +1,326 @@
+# 律师专用多 Agent 法律咨询助手 —— 容器编排
+#
+# 跑法（在 deploy/ 目录下）：
+#   docker compose up -d                      # 核心：mysql + redis + api + worker + web
+#   docker compose --profile broker up -d     # 再加 RabbitMQ（需先装 aio-pika，见下）
+#   docker compose --profile vector up -d     # 再加 Milvus 向量库
+#   docker compose --profile gpu up -d        # 再加 SGLang 推理服务（需要 NVIDIA 显卡）
+#
+# **为什么分 profile。** 默认组合在一台 8C16G 的机器上能跑通全流程：
+# 向量检索会回落到本地 numpy 索引（`MILVUS_ENABLED=false`），LLM 走你配的
+# OpenAI 兼容网关。把 Milvus 与 GPU 推理塞进默认组合，会让"先跑起来看一眼"
+# 这件事变成一次两小时的排障 —— 而它们的缺失都只是降级，不是不可用。
+#
+# **数据一律用命名卷，不用 bind mount。** 镜像里跑 uvicorn 的是非 root 用户
+# （`appuser`），bind mount 会用宿主机目录的属主覆盖镜像内的属主，
+# 于是应用写 SQLite / 导出文件时报 `readonly database` —— 一个只在"写"的时候
+# 才出现、且看起来像磁盘满了的错误。命名卷由 Docker 初始化属主，没有这个坑。
+
+name: legal-agent
+
+services:
+  # ---------------------------------------------------------------- 关系库
+  mysql:
+    image: mysql:8.0
+    # **必须显式声明字符集。** 服务器默认 latin1 时，中文法规条文整列会存成
+    # 乱码 —— 而且入库阶段不报错，要到律师在界面上看到问号才发现。
+    # 这里同时给服务器级与库级两道保险（init.sql 里还有第三道）。
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+      --max_connections=300
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-legal_agent}
+      MYSQL_USER: ${MYSQL_USER:-legal}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-changeme}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------- 短期记忆
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------- 消息broker
+  # 只是"让 worker 立刻发现新任务"的加速器：不装它任务照样排队、照样执行，
+  # 只是延迟从瞬时变成 WORKER_POLL_SECONDS 秒。所以它默认也起来，
+  # 但即使它挂了，业务不会停（见 /health 的 task_broker 降级项）。
+  # **为什么放进 profile。** 见下面 api 里 RABBITMQ_ENABLED 那段：默认组合没有
+  # aio-pika，开了它也只会回落轮询，而它自己要占几百 MB 内存和一次 healthcheck 等待。
+  # 想真的用 MQ 再 --profile broker。
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    profiles: ["broker"]
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-legal}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-changeme}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------- 向量库（可选）
+  milvus-etcd:
+    image: quay.io/coreos/etcd:v3.5.5
+    profiles: ["vector"]
+    environment:
+      ETCD_AUTO_COMPACTION_MODE: revision
+      ETCD_AUTO_COMPACTION_RETENTION: "1000"
+      ETCD_QUOTA_BACKEND_BYTES: "4294967296"
+      ETCD_SNAPSHOT_COUNT: "50000"
+    command:
+      - etcd
+      - -advertise-client-urls=http://milvus-etcd:2379
+      - -listen-client-urls=http://0.0.0.0:2379
+      - -listen-peer-urls=http://0.0.0.0:2380
+      - -initial-cluster=milvus-etcd=http://milvus-etcd:2380
+      - -data-dir=/etcd-data
+    volumes:
+      - milvus-etcd-data:/etcd-data
+    healthcheck:
+      # etcd 单节点启动后要等一个选举周期才真正可用。Milvus 连得太早会
+      # 反复崩（退出码 134），所以**必须**等它 healthy 再起 milvus。
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+    restart: unless-stopped
+
+  milvus-minio:
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    profiles: ["vector"]
+    command: minio server /minio_data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASS:-minioadmin}
+    volumes:
+      - milvus-minio-data:/minio_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  milvus:
+    # **钉 2.4 而不是 latest。** 2.6.x 的 standalone 存在 etcd 启动竞态，
+    # 表现为容器起来几十秒后 Exited(134)、无限重启，而日志里只有 etcd 超时 ——
+    # 看起来像"数据损坏了"，实际是启动顺序问题。2.4.x 稳定。
+    image: milvusdb/milvus:v2.4-latest
+    profiles: ["vector"]
+    command: ["milvus", "run", "standalone"]
+    environment:
+      ETCD_ENDPOINTS: milvus-etcd:2379
+      MINIO_ADDRESS: milvus-minio:9000
+    volumes:
+      - milvus-data:/var/lib/milvus
+    depends_on:
+      milvus-etcd:
+        condition: service_healthy
+      milvus-minio:
+        condition: service_healthy
+    # 不给 healthcheck：milvus 镜像里没有 curl，装一个只为探针不值得。
+    # 它的可用性由应用侧的回落兜底（连不上就用本地 numpy 索引）。
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------- API 服务
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: legal-agent/api:latest
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8001 --workers 1
+    # **这里刻意不挂项目根的 ``../.env``。** 那份是本机开发配置：
+    # ``DEBUG=true``、``SECRET_KEY=change-me-in-production-legal-agent``、
+    # ``ADMIN_PASSWORD=admin123``、``RABBITMQ_ENABLED=false``。直接挂进来的后果是
+    # "照着文档部署完之后，容器里跑的是一套开发配置" —— 而且因为那份文件里
+    # ``ENV=dev``，连代码里那条出厂密钥告警都不触发（它只在 ENV=prod 时查）。
+    # 部署要用 ``deploy/.env``：从 ``deploy/.env.example`` 复制后再改。
+    env_file:
+      - ./.env
+    environment:
+      # 容器里的地址用**服务名**，不是 localhost —— 这是从"本机跑得通"到
+      # "容器里跑不通"最常见的唯一原因。
+      DB_URL: mysql+pymysql://${MYSQL_USER:-legal}:${MYSQL_PASSWORD:-changeme}@mysql:3306/${MYSQL_DATABASE:-legal_agent}?charset=utf8mb4
+      REDIS_URL: redis://redis:6379/0
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-legal}:${RABBITMQ_PASS:-changeme}@rabbitmq:5672/%2F
+      MILVUS_URI: http://milvus:19530
+      LLM_BASE_URL: http://sglang:30000/v1
+      # ---- 下面这批是**安全兜底**，不能被部署用的 .env 里的开发值带跑偏
+      # ``${VAR:?提示}`` 是 Compose 的必需变量语法：没配就**让 up 直接失败**并
+      # 打印这段提示，而不是静默回落到某个默认值。"请先复制 deploy/.env.example"
+      # 写进文档里没人看，写进报错里才拦得住。
+      ENV: ${APP_ENV:-prod}
+      # 容器里的 traceback 会带出案件正文 —— 法律场景这比"不方便调试"严重得多。
+      DEBUG: "false"
+      SECRET_KEY: ${SECRET_KEY:?未设置 SECRET_KEY。请 cp deploy/.env.example deploy/.env，并用该模板里附带的 python 命令生成随机串后填入}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?未设置 ADMIN_PASSWORD。初始管理员口令不得使用示例值（admin123 是公开的）}
+      DB_ENABLED: "true"
+      REDIS_ENABLED: "true"
+      # **默认不开 broker。** 原因是依赖：aio-pika 没有进 requirements.txt 的实选项
+      # （那里它是被注释掉的），所以容器里没有它。此时若强行 RABBITMQ_ENABLED=true，
+      # worker 会打印"未安装 aio-pika，回落为轮询"并继续用数据库轮询 ——
+      # 功能不丢（队列由 ``la_task`` 表支撑），但每次启动都用一条 WARNING 假装出错，
+      # 看久了就没人再分辨这条和其他警告了。
+      # 要真用 MQ：先 pip install aio-pika 重建镜像，再用 --profile broker 并设
+      # RABBITMQ_ENABLED=true。
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-false}
+      # 默认 profile 里没有 milvus 服务，指向它只会让每次检索先等一次解析失败。
+      # 要用的话在 deploy/.env 里设 MILVUS_ENABLED=true 并用 --profile vector 启动。
+      MILVUS_ENABLED: ${MILVUS_ENABLED:-false}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080}
+    volumes:
+      - app-data:/app/data
+      - corpus-packs:/app/corpus:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      # 用 python 而不是 curl：slim 镜像里没装 curl。
+      # `full=false` 是刻意的：探针只该回答"进程活着吗"。完整健康检查会加载
+      # embedding 模型（冷启动十几秒），拿它当探针等于让容器在启动期被判死 ——
+      # 而"模型到底加载好没有"已经由 lifespan 里的预热负责（见 main.py 的
+      # run_warmup），不需要探针再花十几秒验一遍。
+      # start_period 90s 是给预热留的余量：实测预热约 18 秒。
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8001/health?full=false',timeout=30)"]
+      interval: 30s
+      timeout: 40s
+      retries: 5
+      start_period: 90s
+    restart: unless-stopped
+    # **不对外暴露 8001。** 生产上只让 web（nginx）转发，避免绕过网关直接打后端。
+    expose:
+      - "8001"
+
+  # ---------------------------------------------------------------- 任务 worker
+  # 与 api 同一个镜像，只是入口不同。**它必须能独立扩缩** ——
+  # 长任务（合同审查）吃的是 worker，不是 API 的请求线程。
+  worker:
+    image: legal-agent/api:latest
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    command: python -m backend.worker.app
+    # 与 api 用同一份 deploy/.env —— **尤其是 SECRET_KEY 必须一致**：
+    # worker 要拿它校验队列消息里带的令牌，两个进程对不上时表现是
+    # "任务被投递成功但立刻被判为未授权"，查起来很像 broker 的问题。
+    env_file:
+      - ./.env
+    environment:
+      DB_URL: mysql+pymysql://${MYSQL_USER:-legal}:${MYSQL_PASSWORD:-changeme}@mysql:3306/${MYSQL_DATABASE:-legal_agent}?charset=utf8mb4
+      REDIS_URL: redis://redis:6379/0
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-legal}:${RABBITMQ_PASS:-changeme}@rabbitmq:5672/%2F
+      MILVUS_URI: http://milvus:19530
+      LLM_BASE_URL: http://sglang:30000/v1
+      ENV: ${APP_ENV:-prod}
+      DEBUG: "false"
+      SECRET_KEY: ${SECRET_KEY:?未设置 SECRET_KEY（worker 必须与 api 用同一个值，否则校验不了 api 签发的令牌）}
+      DB_ENABLED: "true"
+      REDIS_ENABLED: "true"
+      RABBITMQ_ENABLED: ${RABBITMQ_ENABLED:-false}
+      MILVUS_ENABLED: ${MILVUS_ENABLED:-false}
+    volumes:
+      - app-data:/app/data
+    depends_on:
+      mysql:
+        condition: service_healthy
+    # **必须覆盖镜像里的健康检查。** api 与 worker 是同一个镜像，而 Dockerfile 里
+    # 那条 HEALTHCHECK 探的是 8001 —— worker 不监听任何端口，于是它**永远
+    # unhealthy**。这不是显示不好看而已：编排平台与很多监控会按 unhealthy 重启
+    # 容器，worker 一旦被反复重启，队列里的活就没人干了。
+    #
+    # 这里改判 worker 自己的进程还在不在。**局限要写清楚**：它只能证明"进程还活着"，
+    # 不能证明"在干活"。真正想知道 worker 有没有在消费任务，去看
+    # /health 里 task_queue 的积压数与 worker 段。
+    healthcheck:
+      test: ["CMD-SHELL",
+             "python -c \"import sys; sys.exit(0 if 'backend.worker.app' in open('/proc/1/cmdline','rb').read().decode(errors='ignore') else 1)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------- Web（静态 + 反代）
+  web:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../web:/usr/share/nginx/html/ui:ro
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/ui/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------- 推理服务（可选·需 GPU）
+  # 镜像、启动参数来自 SGLang 官方文档（lmsysorg/sglang，端口 30000）。
+  # `--shm-size` 与 `--ipc=host` 是**必需的**：共享内存不足会在并发推理时
+  # 直接崩，报错却指向 CUDA，非常容易查错方向。
+  sglang:
+    image: lmsysorg/sglang:latest-runtime
+    profiles: ["gpu"]
+    command: >
+      python3 -m sglang.launch_server
+      --model-path ${SGLANG_MODEL:-Qwen/Qwen2.5-7B-Instruct}
+      --host 0.0.0.0
+      --port 30000
+      --served-model-name ${LLM_MODEL:-qwen3-8b-legal-lora}
+    environment:
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - hf-cache:/root/.cache/huggingface
+    ipc: host
+    shm_size: 32gb
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+  redis-data:
+  rabbitmq-data:
+  app-data:        # 上传材料 / 导出文书 / BM25 索引 / 审计日志，全在 /app/data 下
+  corpus-packs:    # 离线语料包挂载点（只读），见 scripts/import_corpus_pack.py
+  hf-cache:
+  milvus-data:
+  milvus-etcd-data:
+  milvus-minio-data:

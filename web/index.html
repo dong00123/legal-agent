@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>衡律工作台 · 律师 AI 辅助工作台</title>
+<!-- 守卫期间先隐藏页面，避免未登录时工作台内容一闪而过；3 秒兜底强制显示 -->
+<style>html.guard{visibility:hidden}</style>
+<script>document.documentElement.className+=' guard';setTimeout(function(){document.documentElement.classList.remove('guard')},3000)</script>
+<style>
+:root{--sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;--mono:ui-monospace,Menlo,Consolas,monospace;--tp:#1a1a1a;--ts:#4d4d4d;--tt:#8a8a8a;--tq:#b3b3b3;--bg:#fff;--mu:#f5f5f5;--br:#e6e6e6;--dg:#dc3b3b;--wn:#c07d10;--ps:#1d9e57;--ac:#2f6bff;--r6:6px;--r8:8px;--r10:10px;--r12:12px}
+[data-theme="dark"]{--tp:#f2f2f2;--ts:#c4c4c4;--tt:#8f8f8f;--tq:#666;--bg:#171717;--mu:#222;--br:#333;--dg:#f25555;--wn:#e0a63e;--ps:#3ecf7a;--ac:#5b8cff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--tp);font-size:14px;line-height:1.55;background:var(--bg)}
+button,input,textarea{font:inherit;color:inherit}
+.ic{width:18px;height:18px;flex:none}.ic.sm{width:15px;height:15px}.ic.xs{width:12px;height:12px}
+.top{display:flex;align-items:center;gap:12px;height:54px;padding:0 16px;border-bottom:1px solid var(--br);position:sticky;top:0;background:var(--bg);z-index:50}
+.brand{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;white-space:nowrap}
+.brand .ver{font-size:11px;font-weight:400;color:var(--tt);border:1px solid var(--br);border-radius:6px;padding:1px 6px}
+.gs{flex:1;max-width:440px;display:flex;align-items:center;gap:8px;border:1px solid var(--br);border-radius:10px;padding:6px 12px;color:var(--tt)}
+.gs:focus-within{border-color:var(--tp)}
+.gs input{border:0;outline:0;background:none;flex:1;font-size:13px;color:var(--tp)}
+.gs kbd{font-size:11px;border:1px solid var(--br);border-radius:4px;padding:0 5px;color:var(--tt);font-family:var(--mono)}
+.tr{margin-left:auto;display:flex;gap:8px;align-items:center}
+.ibtn{position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--br);border-radius:8px;background:var(--bg);color:var(--ts)}
+.ibtn:hover{background:var(--mu);color:var(--tp)}
+.ibtn .dot{position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--dg)}
+.ava{width:30px;height:30px;border-radius:50%;background:var(--tp);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.layout{display:flex;flex:1}
+.side{width:184px;flex:none;border-right:1px solid var(--br);padding:12px 8px;display:flex;flex-direction:column;gap:2px;position:sticky;top:54px;height:calc(100vh - 54px)}
+.nav{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--ts);background:none;border:0;text-align:left;width:100%;cursor:pointer}
+.nav:hover{background:var(--mu);color:var(--tp)}
+.nav.on{background:var(--mu);color:var(--tp);font-weight:600;box-shadow:inset 2px 0 0 var(--tp)}
+.nav .bdg{margin-left:auto;font-size:11px;color:var(--tt);background:var(--bg);border:1px solid var(--br);border-radius:6px;padding:0 6px}
+/* 侧栏分组小标题。上下留白不对称是有意的：上 12px 把"上一组的最后一项"和
+   "下一组"拉开，下 4px 只把标题和它自己的第一项绑在一起。 */
+.sgh{font-size:11.5px;color:var(--tt);padding:12px 10px 4px;letter-spacing:.04em}
+/* 分组结束的分界：间距取 14px = 分组标题的上留白（12px padding + 2px gap），
+   这样"进一组"和"出一组"用的是同一档留白，视觉上对称。 */
+.nav.sep{margin-top:14px}
+.sft{margin-top:auto;padding:12px 10px 4px;border-top:1px solid var(--br);font-size:11px;color:var(--tq)}
+.sft .bar{height:3px;border-radius:2px;background:var(--mu);border:1px solid var(--br);overflow:hidden;margin:6px 0}
+.sft .bar i{display:block;height:100%;width:38%;background:var(--ac)}
+.main{flex:1;min-width:0;padding:20px 24px 32px}
+.pg{display:none;max-width:1200px}.pg.on{display:block}
+.ph{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.ph h2{font-size:20px;font-weight:600}.ph .sub{font-size:13px;color:var(--tt)}.ph .sp{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--br);border-radius:8px;padding:6px 12px;font-size:13px;background:var(--bg);color:var(--tp);cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--mu)}
+.btn.pr{background:var(--tp);color:var(--bg);border-color:var(--tp)}
+.btn.dng{background:#e5484d;color:#fff;border-color:#e5484d}
+.btn.dng:hover{background:#d1363b;opacity:.92}
+.btn.sm{padding:4px 10px;font-size:12px;border-radius:6px}
+/* ⚠️ ``[hidden]`` 必须能真的藏住，且必须带 ``!important``。
+   UA 样式表那条 ``[hidden]{display:none}`` 优先级最低，任何作者样式里的
+   ``display`` 都盖得掉 —— 而上面 ``.btn`` 是 ``inline-flex``、``.ct-card .x``
+   是 ``flex``，于是 ``<button class="btn" hidden>`` **永远显示**：
+   ``#ctPartyGo`` 空着就是个黑条、``#ctRetpl`` 变成一颗常驻的野按钮、
+   ``#ctMainX``/``#ctTplX`` 在没传文件时也照样露着。
+   （同一个坑 ``#pg-docedit`` 那段注释里记过一次，那次严重到整页盖住全站。）
+   ``login.html`` 早就有这条，index.html 一直没有 —— 靠给每个元素单选器补
+   ``.xxx[hidden]`` 是补不完的，下一颗按钮又会中招，所以整页补一条。
+   ``tests/test_ui_static.py::test_hidden_attribute_rule_is_present`` 钉着它。 */
+[hidden]{display:none!important}
+.hello{display:flex;align-items:flex-end;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.hello h1{font-size:22px;font-weight:600}
+.hello .sub{font-size:13px;color:var(--tt);margin-top:2px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{border:1px solid var(--br);border-radius:10px;padding:14px 16px;background:var(--bg);cursor:pointer}
+.stat:hover{background:var(--mu)}
+.stat .lb{font-size:12px;color:var(--tt)}
+.stat .vl{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:4px}
+.stat .tr{font-size:12px;color:var(--tt);margin-top:2px}
+.cols{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;align-items:start}
+.card{border:1px solid var(--br);border-radius:10px;padding:16px;background:var(--bg);margin-bottom:16px}
+.ch{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;margin-bottom:12px}
+.sk-cats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.sk-cats .cat{flex:none;border:1px solid var(--br);background:var(--mu);color:var(--tt);border-radius:999px;padding:3px 12px;font-size:12px;cursor:pointer;line-height:1.6}
+.sk-cats .cat:hover{border-color:var(--ac);color:var(--ac)}
+.sk-cats .cat.on{background:var(--tp);color:var(--bg);border-color:var(--tp)}
+.ch .rt{margin-left:auto;font-size:12px;font-weight:400;color:var(--tt);background:none;border:0;cursor:pointer;display:flex;align-items:center;gap:4px}
+.task{display:flex;align-items:flex-start;gap:10px;padding:10px 4px;border-bottom:1px solid var(--br);cursor:pointer}
+.task:last-child{border-bottom:0}
+.task .box{width:17px;height:17px;flex:none;border:1.5px solid var(--tq);border-radius:5px;margin-top:2px;display:flex;align-items:center;justify-content:center;color:var(--bg)}
+.task .box svg{width:11px;height:11px;opacity:0}
+.task.done .box{background:var(--tp);border-color:var(--tp)}
+.task.done .box svg{opacity:1}
+.task .tt{font-size:14px}
+.task.done .tt{color:var(--tq);text-decoration:line-through}
+.task .tm{font-size:12px;color:var(--tt);margin-top:1px}
+.pri{width:7px;height:7px;border-radius:50%;flex:none;margin-top:7px}
+.it{display:flex;gap:12px;padding:10px 4px;border-bottom:1px solid var(--br);font-size:13.5px}
+.it:last-child{border-bottom:0}
+.it .ic{width:30px;height:30px;flex:none;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--mu);color:var(--ts)}
+.it .tx{flex:1;min-width:0}.it .tx .mt{color:var(--tt)}
+.it .tm{font-size:12px;color:var(--tq);white-space:nowrap}
+.tips{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.tips li{display:flex;gap:10px;font-size:13.5px;color:var(--ts)}
+.tips li .n{width:18px;height:18px;flex:none;border-radius:50%;background:var(--mu);border:1px solid var(--br);font-size:11px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.tips b{color:var(--tp);font-weight:600}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.q{border:1px solid var(--br);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg);cursor:pointer}
+.q:hover{background:var(--mu)}
+.q .t{font-size:13.5px;font-weight:600;display:flex;gap:8px;align-items:center}
+.q .d{font-size:12px;color:var(--tt)}
+/* ==================== 专家 / 技能页（仿 WorkBuddy 市集布局） ==================== */
+.ex-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.ex{border:1px solid var(--br);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg);cursor:pointer;transition:border-color .15s}
+.ex:hover{border-color:var(--tp)}
+.ex-h{display:flex;gap:10px;align-items:center}
+.ex-av{width:38px;height:38px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#fff}
+.ex-nm{font-size:14.5px;font-weight:700;color:#1a365d}
+[data-theme="dark"] .ex-nm{color:var(--tp)}
+.ex-rl{font-size:11.5px;color:var(--tt)}
+.ex-ds{font-size:12px;color:var(--ts);line-height:1.55;flex:1}
+.ex-tags{display:flex;gap:6px;flex-wrap:wrap}
+.ex-tags .tg{font-size:11px;color:var(--tt);background:var(--mu);border:1px solid var(--br);border-radius:6px;padding:2px 8px}
+.ex-tags .tg.hot{background:var(--tp);color:var(--bg);border-color:var(--tp)}
+/* ---- 专家页受控渲染：搜索 / 排序 / 收藏 / 我的专家 ---- */
+.ex-tools{display:flex;align-items:center;gap:8px;margin-left:auto}
+.ex-sbox{display:flex;align-items:center;gap:6px;border:1px solid var(--br);border-radius:8px;padding:5px 10px;background:var(--bg)}
+.ex-sbox input{border:0;outline:0;background:none;color:var(--tp);font-size:12.5px;min-width:180px}
+.ex-sbox svg{flex:none}
+.ex-sort{border:1px solid var(--br);border-radius:8px;background:var(--bg);color:var(--tp);font-size:12.5px;padding:5px 8px;outline:0}
+.ex-fav{flex:none;width:26px;height:26px;border-radius:7px;border:1px solid var(--br);background:var(--bg);color:var(--tt);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-left:auto;padding:0}
+.ex-fav:hover{border-color:var(--tp);color:var(--tp)}
+.ex-fav.on{color:#f59e0b;border-color:#f59e0b}
+.ex-fav.on svg{fill:#f59e0b}
+.sk-sw{flex:none;width:36px;height:20px;border-radius:10px;background:var(--br);position:relative;cursor:pointer;transition:background .15s;margin-left:auto}
+.sk-sw::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--bg);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .15s}
+.sk-sw.on{background:#2ea043}
+.sk-sw.on::after{left:19px}
+.sk-sw.busy{opacity:.5;pointer-events:none}
+.ex-banner{display:flex;align-items:center;gap:8px;background:var(--tp);color:var(--bg);border-radius:10px;padding:8px 12px;font-size:12.5px;margin-bottom:10px}
+.ex-banner button{background:rgba(255,255,255,.18);border:0;color:var(--bg);border-radius:6px;padding:3px 10px;cursor:pointer;font-size:12px;margin-left:auto}
+.ex-banner .ex-banner-nm{color:var(--bg)}
+.ex-tag{display:inline-block;background:var(--tp);color:var(--bg);border-radius:6px;padding:2px 10px;font-size:12px;font-weight:600;margin-bottom:8px}
+.cmp-tag{display:inline-block;background:rgba(127,127,127,.16);color:var(--dg);border-radius:6px;padding:2px 10px;font-size:12px;font-weight:600;margin-bottom:8px}
+.ex-mine-sec{font-size:12.5px;color:var(--tt);font-weight:600;margin:4px 0 8px}
+.ex-mine{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ex-mine .ex-grid{grid-template-columns:1fr}
+/* ---- 技能页顶部工具栏（对齐图2：搜索 + 我安装的 N + 添加技能） ---- */
+.sk-bar{display:flex;align-items:center;gap:10px}
+.sk-count{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--br);border-radius:8px;background:var(--mu);color:var(--tt);font-size:12.5px;font-weight:600;padding:5px 12px;white-space:nowrap;cursor:default}
+.sk-add-wrap{position:relative}
+.sk-menu{position:absolute;top:calc(100% + 6px);right:0;min-width:150px;background:var(--bg);border:1px solid var(--br);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:4px;z-index:50;display:flex;flex-direction:column;gap:2px}
+.sk-menu[hidden]{display:none}
+.sk-menu-item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:none;color:var(--tp);font-size:13px;padding:8px 12px;border-radius:7px;cursor:pointer}
+.sk-menu-item:hover{background:var(--mu)}
+.sk-menu-item svg{flex:none;color:var(--tt)}
+.sk-count{cursor:pointer}
+.sk-count:hover{border-color:var(--ac);color:var(--ac)}
+.sk-detail{display:flex;align-items:center;gap:10px}
+.sk-detail[hidden]{display:none}
+.sk-back{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--br);border-radius:8px;background:var(--mu);color:var(--tt);font-size:12.5px;font-weight:600;padding:5px 12px;cursor:pointer;white-space:nowrap}
+.sk-back:hover{border-color:var(--ac);color:var(--ac)}
+.sk-back svg{color:var(--ac)}
+.sk-detail-title{font-size:13px;font-weight:600;color:var(--tp);white-space:nowrap}
+.sk-install{flex:none;border:1px solid var(--tp);border-radius:8px;background:var(--tp);color:var(--bg);font-size:12px;font-weight:600;padding:4px 14px;cursor:pointer;margin-left:auto}
+.sk-install:hover{opacity:.88}
+.sk-install.busy{opacity:.5;pointer-events:none}
+.sk-install.sk-try{background:transparent;color:var(--tp);border-color:var(--tp)}
+.sk-install.sk-try:hover{background:var(--tp);color:var(--bg);opacity:1}
+/* ---- 技能卡悬停三态与操作菜单（对齐 WorkBuddy：默认仅开关，悬停浅蓝底+阴影并露出 ... 与置顶） ---- */
+.ex.ex-mine-card{position:relative;transition:background .15s,border-color .15s,box-shadow .15s}
+.ex.ex-mine-card:hover{background:#eef6ff;border-color:#bcd7ff;box-shadow:0 6px 18px rgba(37,99,235,.16)}
+[data-theme="dark"] .ex.ex-mine-card:hover{background:#15263d;border-color:#2b4a72;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.sk-ops{display:none;align-items:center;gap:6px;margin-left:auto}
+.ex.ex-mine-card:hover .sk-ops{display:flex}
+.sk-ops .sk-sw{margin-left:0}
+.sk-ops button{flex:none;width:24px;height:24px;border-radius:7px;border:1px solid var(--br);background:var(--bg);color:var(--tt);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.sk-ops button:hover{border-color:var(--tp);color:var(--tp)}
+.sk-ops button .ic{width:14px;height:14px}
+.sk-ops .sk-pin.on{color:#f59e0b;border-color:#f59e0b}
+.sk-ops .sk-pin.on svg{fill:#f59e0b}
+.sk-ops .sk-pin.busy{opacity:.5;pointer-events:none}
+.sk-pop{position:absolute;top:44px;right:12px;min-width:136px;background:var(--bg);border:1px solid var(--br);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.16);padding:4px;z-index:60;display:none;flex-direction:column;gap:2px}
+.sk-pop.on{display:flex}
+.sk-pop-item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:none;color:var(--tp);font-size:13px;padding:8px 12px;border-radius:7px;cursor:pointer}
+.sk-pop-item:hover{background:var(--mu)}
+.sk-pop-item .ic{width:15px;height:15px;flex:none;color:var(--tt)}
+.sk-pop-item.danger{color:#e5484d}
+.sk-pop-item.danger .ic{color:#e5484d}
+.sk-pop-item.danger:hover{background:#fdecec}
+[data-theme="dark"] .sk-pop-item.danger:hover{background:#3d1d1f}
+@media(max-width:1100px){.ex-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:960px){.ex-grid{grid-template-columns:1fr}.ex-mine{grid-template-columns:1fr}.ex-sbox input{min-width:120px}}
+.live{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--ps)}
+.live i{width:6px;height:6px;border-radius:50%;background:var(--ps);animation:pl 2s infinite}
+@keyframes pl{50%{opacity:.4}}
+.aiw{border:1px solid var(--br);border-radius:12px;overflow:hidden;background:var(--bg)}
+.aih{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--br)}
+.aih .av{width:32px;height:32px;border-radius:8px;background:var(--tp);color:var(--bg);display:flex;align-items:center;justify-content:center}
+.aih .tt{font-size:14px;font-weight:600}.aih .ds{font-size:12px;color:var(--tt)}
+.chat{height:420px;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:16px;background:var(--mu)}
+.msg{display:flex;gap:10px;max-width:92%}
+.msg .bav{width:28px;height:28px;flex:none;border-radius:8px;background:var(--tp);color:var(--bg);display:flex;align-items:center;justify-content:center}
+.msg .bb{flex:1;min-width:0;font-size:14px;background:var(--bg);border:1px solid var(--br);border-radius:12px;border-top-left-radius:6px;padding:12px 14px}
+.msg .bb p+p{margin-top:8px}
+.msg ul{margin:8px 0 0 18px;color:var(--ts)}
+.msg ul li{margin-top:4px}.msg ul b{color:var(--tp)}
+.msg.me{align-self:flex-end}
+.msg.me .ub{background:var(--tp);color:var(--bg);border-radius:12px;border-top-right-radius:6px;padding:10px 14px;font-size:14px;max-width:520px}
+.cite{border:1px solid var(--br);border-radius:10px;padding:10px 12px;margin-top:10px;background:var(--mu)}
+.cite .ct{display:flex;gap:8px;font-size:12.5px;flex-wrap:wrap;align-items:center}
+.cite .ct b{font-weight:600}
+.cite .art{font-size:11px;color:var(--tt);border:1px solid var(--br);border-radius:6px;padding:0 6px;background:var(--bg);white-space:nowrap}
+.cite .cd{font-size:12.5px;color:var(--ts);margin-top:6px}
+.cite .ok{display:flex;gap:5px;font-size:11px;color:var(--ps);margin-top:8px;align-items:center}
+/* ---- 纯 RAG 问答（AI 助手页）：行内法条标签 · 参考法规卡片区 · 追问行 ---- */
+.rag-a{font-size:14px}
+.rag-a h1,.rag-a h2,.rag-a h3{font-size:15px;font-weight:600;margin:14px 0 6px}
+.rag-a h1:first-child,.rag-a h2:first-child,.rag-a h3:first-child{margin-top:0}
+.rag-a ul{margin:8px 0 0 18px;color:var(--ts)}
+.rag-a ul li{margin-top:4px}
+.rag-a .tblw{margin-top:10px}
+/* 行内法条标签。颜色只表达"法条在检索结果里的效力状态"，不表达"已核验" ——
+   这条链路上没有终审节点，界面不能替它背书。 */
+.rcite{display:inline-block;border:1px solid var(--br);border-radius:99px;padding:0 7px;margin:0 2px;
+  font-size:11px;line-height:1.7;background:var(--mu);color:var(--tt);cursor:pointer;vertical-align:1px;white-space:nowrap}
+.rcite:hover{background:var(--bg);border-color:var(--tp);color:var(--tp)}
+.rcite.ok{color:var(--ps)}.rcite.mid{color:var(--wn)}.rcite.bad{color:var(--dg)}
+/* 类案标签可点（弹案例详情）：光标与 hover 反馈都跟法条标签一致，
+   否则用户看不出它能点 —— 之前这里是 cursor:default，等于把"点不开"写进了样式。 */
+.rcite.cas{color:var(--ac)}
+.rcite.cas:hover{background:var(--bg);border-color:var(--ac);color:var(--ac)}
+.rag-warn{margin-top:10px;font-size:12.5px;color:var(--wn);border-left:2px solid var(--wn);padding-left:8px}
+/* 一行执行摘要（约束 4 的「结束」层）。助手页的 ``formatRagAnswer`` 把它摆在
+   回答最上面，与合同审查页 ``.hm`` 同一位置 —— 四个入口的成本口径长得一样。
+   淡、小、不加边框：它说的是"跑了多久"，不是对法律结论的背书，
+   别做成第二个摘要条。深色主题不用单独写。 */
+.rag-meta{font-size:12px;color:var(--tt);margin-bottom:8px}
+.refs{margin-top:14px;border:1px solid var(--br);border-radius:10px;background:var(--mu);overflow:hidden}
+.refs summary{display:flex;align-items:center;gap:6px;padding:9px 12px;font-size:12.5px;font-weight:600;
+  color:var(--ts);cursor:pointer;list-style:none}
+.refs summary::-webkit-details-marker{display:none}
+.refs-b{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px}
+.ref{border:1px solid var(--br);border-radius:8px;padding:9px 11px;background:var(--bg);
+  scroll-margin-top:80px;transition:box-shadow .3s,border-color .3s}
+.ref.on{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}
+.ref-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ref-n{font-size:12.5px;font-weight:600}
+.ref-st{font-size:11px;border:1px solid var(--br);border-radius:99px;padding:0 6px;color:var(--tt)}
+.ref-st.ok{color:var(--ps)}.ref-st.bad{color:var(--dg)}.ref-st.mid{color:var(--wn)}
+.ref-m{font-size:11px;color:var(--tq);font-family:var(--mono);margin-left:auto}
+.ref-p{font-size:11px;color:var(--tt);margin-top:3px}
+.ref-t{font-size:12.5px;color:var(--ts);margin-top:6px}
+.askmore{display:flex;gap:8px;margin-top:14px}
+.askmore input{flex:1;border:1px solid var(--br);border-radius:8px;padding:7px 10px;font-size:13px;
+  outline:0;background:var(--bg);color:var(--tp);min-width:0}
+.askmore input:focus{border-color:var(--tp)}
+.askmore input::placeholder{color:var(--tq)}
+.askgo{width:32px;flex:none;border:1px solid var(--br);border-radius:8px;background:var(--bg);color:var(--ts);
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
+.askgo:hover{background:var(--mu);color:var(--tp)}
+.askmore input:disabled,.askgo:disabled{opacity:.5;cursor:default}
+.ops{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.tp3{display:flex;gap:4px;padding:12px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--br);width:fit-content}
+.tp3 i{width:6px;height:6px;border-radius:50%;background:var(--tq);animation:tb 1s infinite}
+.tp3 i:nth-child(2){animation-delay:.15s}.tp3 i:nth-child(3){animation-delay:.3s}
+/* Agent 的一句**关键决策**（约束 4 的「过程中」层）。它占的正是等待中那三个点
+   （.tp3）的位置：有决策就把圆点换成这一句，没有则仍是三个点。
+   刻意做成一行状态说明而不是一块面板 —— 执行轨迹面板 2026-09-29 已整块摘掉，
+   这里多一块就等于把它请回来。深色主题不用单独写，颜色全走变量。 */
+.agent-note{padding:10px 14px;border-radius:12px;background:var(--mu);border:1px solid var(--br);
+  width:fit-content;max-width:100%;font-size:12.5px;color:var(--ts)}
+@keyframes tb{30%{transform:translateY(-4px);opacity:1}}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px 0}
+.chip{border:1px solid var(--br);background:var(--bg);border-radius:6px;padding:5px 11px;font-size:12.5px;color:var(--ts);cursor:pointer}
+.chip:hover{background:var(--mu);color:var(--tp)}
+.comp{display:flex;gap:10px;padding:12px 16px 16px}
+.comp textarea{flex:1;resize:none;border:1px solid var(--br);border-radius:10px;padding:10px 12px;font-size:14px;outline:0;background:var(--bg);color:var(--tp);min-height:44px;font-family:var(--sans)}
+.comp textarea:focus{border-color:var(--tp)}
+.comp textarea::placeholder{color:var(--tq)}
+.send{width:44px;height:44px;flex:none;border:0;border-radius:10px;background:var(--tp);color:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.send:disabled{opacity:.4}
+.fchips{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.fchip{border:1px solid var(--br);background:var(--bg);border-radius:6px;padding:5px 12px;font-size:12.5px;color:var(--ts);cursor:pointer}
+.fchip.on{background:var(--tp);color:var(--bg);border-color:var(--tp)}
+.tblw{border:1px solid var(--br);border-radius:10px;overflow:hidden}
+table.tbl{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--bg)}
+.tbl th{text-align:left;font-size:12px;color:var(--tt);padding:10px 14px;border-bottom:1px solid var(--br);background:var(--mu);white-space:nowrap}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--br);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover{background:var(--mu)}
+.tbl .cn{font-weight:600}
+.tbl .cc{color:var(--tt);font-family:var(--mono);font-size:11.5px}
+.tbl .ct2{font-size:12.5px;color:var(--ts);white-space:nowrap}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;border-radius:6px;padding:2px 8px;white-space:nowrap}
+.tag i{width:5px;height:5px;border-radius:50%}
+.tag.ne{background:var(--mu);color:var(--ts);border:1px solid var(--br)}.tag.ne i{background:var(--tq)}
+.tag.wn{background:color-mix(in srgb,var(--wn) 13%,transparent);color:var(--wn)}.tag.wn i{background:var(--wn)}
+.tag.dg{background:color-mix(in srgb,var(--dg) 11%,transparent);color:var(--dg)}.tag.dg i{background:var(--dg)}
+.tag.ps{background:color-mix(in srgb,var(--ps) 12%,transparent);color:var(--ps)}.tag.ps i{background:var(--ps)}
+.tag.ac{background:color-mix(in srgb,var(--ac) 11%,transparent);color:var(--ac)}.tag.ac i{background:var(--ac)}
+.risk-high{color:var(--dg);font-weight:600}.risk-medium{color:var(--wn);font-weight:600}.risk-low{color:var(--ps);font-weight:600}
+.prog{width:88px;height:4px;border-radius:2px;background:var(--mu);border:1px solid var(--br);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ac)}
+.prog-t{font-size:11px;color:var(--tt);margin-top:4px}
+.dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.dc{border:1px solid var(--br);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--bg);cursor:pointer}
+.dc:hover{background:var(--mu)}
+.dc .ic{width:34px;height:34px;border-radius:8px;background:var(--mu);border:1px solid var(--br);display:flex;align-items:center;justify-content:center}
+.dc .t{font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center}
+.dc .d{font-size:12.5px;color:var(--tt);flex:1}
+.dc .go{font-size:12.5px;font-weight:600}
+.dc.on{border-color:var(--tp);box-shadow:0 0 0 1px var(--tp)}
+/* 文书中心落地页的输入区。图 1 是「大框 + 左下相关材料 + 右下发送」，
+   而 `.comp` 是 flex **横排**（textarea 与 .send 并排），排布套不上 ——
+   这里只借用它的 `.send`，外层另起一个纵向容器。
+   ⚠️ `text-align:center` 只加在标题上：加在容器上会继承进 textarea，
+      输入的字会变成居中的。 */
+.doc-hero{max-width:880px;margin:0 auto 20px}
+.doc-hero h3{font-size:19px;font-weight:600;margin:0 0 14px;text-align:center}
+/* 「关联案件」那一行。它是**输入区的一部分**（决定这次起草带不带证据链），
+   所以长在 doc-box 里、正文之上，而不是另开一张卡 —— 摆在卡片外面会被读成
+   "一个设置项"，而跟它并列的正文才是律师真正要说的话。 */
+.doc-case{display:flex;align-items:center;gap:8px;padding:0 0 8px;margin-bottom:8px;
+  border-bottom:1px solid var(--br);color:var(--tt)}
+.doc-case select{border:0;outline:0;background:none;color:var(--tp);font-size:13px;
+  max-width:min(430px,68vw);cursor:pointer}
+.doc-case #docCaseHint{font-size:11.5px;color:var(--tt)}
+.doc-box{border:1px solid var(--br);border-radius:12px;background:var(--bg);padding:12px 14px 10px}
+.doc-box:focus-within{border-color:var(--tp)}
+.doc-box textarea{width:100%;box-sizing:border-box;resize:none;border:0;outline:0;background:none;color:var(--tp);font-size:14px;min-height:92px;font-family:var(--sans)}
+.doc-box textarea::placeholder{color:var(--tq)}
+.doc-bar{display:flex;align-items:center;gap:10px;margin-top:8px}
+/* `margin-left:auto` 顶替「右下角发送」的那个弹性占位 ——
+   `.spacer` 这个类名在样式表里**不存在**，写了也是个普通 span。 */
+.doc-bar .send{width:38px;height:38px;border-radius:9px;margin-left:auto}
+/* 模板带来的版式标记（落款右对齐），对应 mdLite 里那条 `<p align="…">` 分支。
+   少了这两行，标记会被当普通段落渲染成左对齐 —— 版式等于白修。 */
+.doc-right{text-align:right}
+.doc-center{text-align:center}
+/* 左对齐 + 不缩进：交付合同的落款签名区（甲方/乙方/地址/盖章）。
+   左对齐本来就是默认值，写出来是为了和上面两行成一套、也标明它**故意不缩进**。 */
+.doc-left{text-align:left}
+.drow{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--br)}
+.drow:last-child{border-bottom:0}
+.drow .ic{width:32px;height:32px;flex:none;border-radius:8px;background:var(--mu);border:1px solid var(--br);display:flex;align-items:center;justify-content:center;color:var(--ts)}
+.drow .tx{flex:1;min-width:0}
+.drow .tt{font-size:13.5px;font-weight:600}
+.drow .mm{font-size:12px;color:var(--tt);margin-top:2px}
+.drow .up{font-size:11.5px;color:var(--tq);white-space:nowrap}
+.drow .ops{display:flex;gap:6px;opacity:0}
+.drow:hover .ops{opacity:1}
+/* 历史会话行。``.drow`` 是「图标 + 标题/副标题 + 尾部操作」的通用行，
+   这里复用它，只补三处：可点、当前段高亮、窄栏里标题换行不撑破。 */
+#convList .drow{cursor:pointer;padding:9px 6px;border-radius:8px;border-bottom:0}
+#convList .drow:hover{background:var(--mu)}
+#convList .drow.on{background:var(--mu);box-shadow:inset 2px 0 0 var(--tp)}
+#convList .drow .tt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#convList .drow .ops{opacity:1}
+/* ==================== 类案检索（落地页 + 结果态） ====================
+   2026-09-29 按参考图改版：居中的英雄区 + 一张大圆角输入卡 + 三张场景卡，
+   检索后切成结果态（英雄区与场景卡收起，输入卡变紧凑）。
+   切换靠 ``#pg-search`` 上的 ``.run`` 类 —— 与合同审查页同一套做法，不拆成
+   两个 ``.pg``（拆了要在 RENDER 表里多注册一页，而两段共用同一个输入框）。
+   ⚠️ 颜色一律走既有令牌，不新增字面量（``tests/test_client_ui.py`` 拿 ``:root``
+      跟桌面端 theme.py 逐项对账）。 */
+#pg-search .cs-rw{display:none}
+#pg-search.run .cs-only-land{display:none}
+#pg-search.run .cs-rw{display:block}
+.cs-hero{text-align:center;max-width:880px;margin:28px auto 22px}
+.cs-hero h2{font-size:30px;font-weight:700;margin:0 0 12px;letter-spacing:.01em}
+.cs-sub{font-size:14px;color:var(--ts);display:flex;align-items:center;
+  justify-content:center;gap:12px;flex-wrap:wrap;line-height:1.9}
+.cs-sub .pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--ts);
+  background:var(--mu);border:1px solid var(--br);border-radius:999px;padding:3px 12px}
+/* 输入卡。**textarea 不是 input**：案情描述动辄好几行，单行框里改一段话是酷刑。
+   Enter 检索、Shift+Enter 换行（与 AI 助手那个 composer 同一套手感）。 */
+.cs-comp{position:relative;max-width:880px;margin:0 auto;border:1px solid var(--br);
+  border-radius:16px;background:var(--bg);padding:16px 16px 12px;
+  box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.cs-comp:focus-within{border-color:var(--tq)}
+.cs-comp textarea{display:block;width:100%;border:0;outline:0;background:none;resize:none;
+  font-size:15px;line-height:1.75;color:var(--tp);font-family:var(--sans);min-height:88px}
+.cs-comp textarea::placeholder{color:var(--tq)}
+.cs-bar{display:flex;align-items:center;gap:8px;margin-top:8px}
+.cs-bar .sp{flex:1}
+.cs-scope{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ts);
+  border:1px solid var(--br);border-radius:8px;padding:6px 12px;background:var(--bg);cursor:pointer}
+.cs-scope:hover{background:var(--mu);color:var(--tp)}
+.cs-scope.on{border-color:var(--tp);color:var(--tp)}
+.cs-ic{width:36px;height:36px;flex:none;display:flex;align-items:center;justify-content:center;
+  border:0;border-radius:9px;background:none;color:var(--tt);cursor:pointer}
+.cs-ic:hover{background:var(--mu);color:var(--tp)}
+/* 范围面板与已选范围。已选的那几个词是**真的会加进检索式**的（见 csScopeQuery），
+   所以给 × 让人能摘掉 —— 只能加不能减的面板等于把人锁死在一个检索式里。 */
+.cs-panel{border-top:1px solid var(--br);margin-top:12px;padding-top:12px}
+.cs-panel .cs-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.cs-panel .k{width:64px;flex:none;font-size:12.5px;color:var(--tt);line-height:26px}
+.cs-panel .vs{display:flex;gap:8px;flex-wrap:wrap}
+.cs-note{font-size:11.5px;color:var(--tt);line-height:1.7;margin-top:6px}
+.cs-picked{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cs-picked:empty{margin-top:0}
+.cs-pick{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ts);
+  background:var(--mu);border:1px solid var(--br);border-radius:999px;padding:3px 6px 3px 11px}
+.cs-pick button{border:0;background:none;color:var(--tt);cursor:pointer;font-size:13px;
+  line-height:1;padding:0 4px;border-radius:50%}
+.cs-pick button:hover{color:var(--dg)}
+/* 场景卡。三张一等高、窄屏塌成一列 —— 塌之前每张都写死两行案情，
+   卡片高度不一致会看着像没对齐。 */
+.cs-div{display:flex;align-items:center;gap:16px;max-width:880px;margin:34px auto 18px;
+  font-size:13px;color:var(--tt)}
+.cs-div::before,.cs-div::after{content:"";flex:1;height:1px;background:var(--br)}
+.cs-cases{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:980px;
+  margin:0 auto 24px}
+.cs-case{border:1px solid var(--br);border-radius:14px;padding:16px;background:var(--bg);
+  cursor:pointer;transition:border-color .15s}
+.cs-case:hover{border-color:var(--tq)}
+.cs-case .brief{font-size:13.5px;line-height:1.8;color:var(--tp);min-height:72px}
+.cs-case .steps{margin-top:12px;border:1px solid var(--br);border-radius:10px;
+  padding:10px 12px;background:var(--mu)}
+.cs-case .st{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ts)}
+.cs-case .st .dot{width:6px;height:6px;border-radius:50%;background:var(--wn);flex:none}
+.cs-case .sd{font-size:11.5px;color:var(--tt);line-height:1.7;margin:4px 0 8px 13px;
+  display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.cs-case .sd:last-child{margin-bottom:0}
+/* 结果态：输入卡收成一条，英雄区与场景卡让位给命中列表。 */
+#pg-search.run .cs-comp{max-width:980px;margin:0 auto 14px;border-radius:12px;padding:8px 10px}
+#pg-search.run .cs-comp textarea{min-height:0;height:42px;font-size:14px;line-height:1.6;
+  padding:8px 4px}
+#pg-search.run .cs-hero,#pg-search.run .cs-div,#pg-search.run .cs-cases{display:none}
+.cs-rw{max-width:980px;margin:0 auto}
+.cs-rhead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.cs-rhead .sub{font-size:12.5px;color:var(--tt);word-break:break-all}
+.cs-rhead .sp{flex:1}
+.cs-foot{font-size:12px;color:var(--tq);margin-top:4px}
+@media(max-width:960px){.cs-cases{grid-template-columns:1fr}.cs-case .brief{min-height:0}}
+.hit{display:flex;gap:14px;border:1px solid var(--br);border-radius:10px;padding:16px;margin-bottom:12px;background:var(--bg)}
+.hit:hover{background:var(--mu)}
+.sim{width:64px;flex:none;text-align:center}
+.sim b{font-size:24px;font-weight:600;color:var(--ac);font-variant-numeric:tabular-nums}
+.sim span{display:block;font-size:11px;color:var(--tt)}
+.hit .bd{flex:1;min-width:0}
+.hit .ht{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hit .no{font-size:12.5px;font-weight:600;font-family:var(--mono)}
+.hit .hold{font-size:13.5px;color:var(--ts);margin-top:6px}.hit .hold b{color:var(--tp)}
+.hit .hm{font-size:12px;color:var(--tt);margin-top:8px}
+.cal{max-width:760px}
+.day{margin-bottom:20px}
+.dayh{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dayh .dd{font-size:14px;font-weight:600}.dayh .tl{font-size:12px;color:var(--tt)}
+.dayh .ln{flex:1;height:1px;background:var(--br)}
+.ev{display:flex;gap:14px;padding:10px 0}
+.ev .tm{width:52px;flex:none;font-size:12.5px;color:var(--ts);font-variant-numeric:tabular-nums}
+.ev .bar2{width:3px;flex:none;border-radius:2px;background:var(--br)}
+.ev.hl .bar2{background:var(--tp)}
+.ev .tx{flex:1;min-width:0;padding-bottom:12px;border-bottom:1px solid var(--br)}
+.ev:last-child .tx{border-bottom:0}
+.ev .tt{font-size:14px;font-weight:600}
+.ev .ds{font-size:12.5px;color:var(--tt);margin-top:2px}
+.ev .meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(16px);background:var(--tp);color:var(--bg);font-size:13px;padding:9px 18px;border-radius:10px;opacity:0;transition:.25s;z-index:99;max-width:80vw;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.toast a{pointer-events:auto;color:#ffd75e;font-weight:600;text-decoration:underline;cursor:pointer}
+.toast a:hover{opacity:.85}
+@media(max-width:960px){.stats{grid-template-columns:1fr 1fr}.cols{grid-template-columns:1fr}.dgrid{grid-template-columns:1fr 1fr}.side{display:none}.gs kbd{display:none}}
+
+/* ==================== 文书编辑页（点「生成」后进入的全屏页） ====================
+   这一页走 ``#pg-docedit.on`` 而不是 ``hidden`` 属性：
+   ``.pg`` 默认 ``display:none``、``.on`` 才显示，是本站既有的那套切换；
+   一旦给这一页写 ``display:flex`` 又靠 ``hidden`` 藏，就会盖掉 UA 样式表里
+   那条 ``[hidden]{display:none}``（优先级只有 UA 那一档），页面**永远显示**，
+   把整站遮住。z-index 60 是实测梯子里的空档：``.top`` 是 50、``.lp-modal``
+   是 90、``.toast`` 是 99 —— 盖得住顶栏，又不挡弹层和提示。
+   ⚠️ 不新增任何颜色字面量或 ``:root`` 变量，一律复用既有令牌：
+      ``tests/test_client_ui.py`` 会拿 ``:root`` 跟桌面端 theme.py 逐项对账。 */
+#pg-docedit.on{position:fixed;inset:0;z-index:60;max-width:none;background:var(--bg);
+  display:flex;flex-direction:column;overflow:hidden}
+.de-top{display:flex;align-items:center;gap:10px;height:52px;padding:0 14px;border-bottom:1px solid var(--br);flex:none}
+.de-top .de-ti{min-width:0}
+.de-top .tt{font-size:14.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:40vw}
+.de-top .mm{font-size:11.5px;color:var(--tt);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:40vw}
+.de-top .sp{flex:1}
+.de-sv{font-size:11.5px;color:var(--wn);white-space:nowrap}
+.de-sv.ok{color:var(--ps)}
+.de-wrap{flex:1;display:flex;min-height:0}
+.de-side{width:344px;flex:none;border-right:1px solid var(--br);display:flex;flex-direction:column;min-height:0}
+.de-sh{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--br);font-size:13.5px;font-weight:600;flex:none}
+/* 覆盖 ``.chat{height:420px}``：这页的对话栏要撑满整列而不是固定 420px。
+   两条规则同优先级（都是单个类），靠书写顺序取胜 —— 本块在 ``.chat`` 之后。 */
+.de-chat{flex:1;height:auto;min-height:0;border-radius:0;background:var(--mu)}
+.de-comp{flex:none;border-top:1px solid var(--br);padding:10px 12px;background:var(--bg)}
+.de-comp textarea{min-height:50px;max-height:132px}
+.de-main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0}
+.de-tools{display:flex;align-items:center;gap:3px;flex-wrap:wrap;padding:7px 12px;border-bottom:1px solid var(--br);flex:none}
+.de-tb{min-width:28px;height:28px;padding:0 5px;display:flex;align-items:center;justify-content:center;gap:3px;
+  border:1px solid transparent;border-radius:6px;background:none;color:var(--ts);cursor:pointer;font-size:13px;line-height:1}
+.de-tb:hover{background:var(--mu);color:var(--tp)}
+.de-tb:disabled{opacity:.4;cursor:default}
+/* 按钮里的字母图标不能被点击命中 —— 命中目标变了 closest 就拿不到按钮本身 */
+.de-tb b,.de-tb i,.de-tb u,.de-tb s{pointer-events:none}
+.de-tb .bb{font-weight:800}.de-tb .ii{font-style:italic;font-family:Georgia,serif}
+.de-tb .uu{text-decoration:underline}.de-tb .ss{text-decoration:line-through}
+.de-tb .aa{border-bottom:3px solid var(--dg);padding-bottom:1px;font-weight:600}
+.de-sep{width:1px;height:18px;background:var(--br);margin:0 4px;flex:none}
+.de-sel{height:28px;border:1px solid var(--br);border-radius:6px;padding:0 4px;font-size:12.5px;
+  background:var(--bg);color:var(--tp);outline:0;max-width:132px}
+.de-sw{width:28px;height:28px;padding:2px;border:1px solid var(--br);border-radius:6px;background:var(--bg);cursor:pointer}
+.de-scroll{flex:1;min-height:0;overflow:auto;padding:20px 16px 40px;background:var(--mu)}
+/* 白纸：宽高与页边距由 JS 按模板的 sectPr 写成英寸，A4 的起诉状和 Letter 的
+   仲裁申请书在屏幕上就不是同一个尺寸了 —— 与下载到的 Word 对得上。 */
+.de-paper{background:var(--bg);border:1px solid var(--br);border-radius:2px;margin:0 auto;
+  box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.de-doc{outline:0;font-family:var(--sans);font-size:12pt;line-height:1.9;min-height:50vh;
+  word-wrap:break-word;overflow-wrap:break-word}
+.de-doc p{margin:0}
+.de-doc table{border-collapse:collapse;width:100%}
+.de-doc td,.de-doc th{padding:2px 4px;vertical-align:top}
+/* 还没填的占位（＿＿）高亮。律师一眼看到还要补哪几栏 —— 这件事之前只以
+   底部一行「待填 6 项」的文字列表存在，得自己一行行去找。 */
+.de-doc .de-miss{background:var(--wn);opacity:.18;border-radius:2px}
+@media(max-width:960px){.de-side{display:none}}
+
+/* ==================== 合同审查（上传即审查） ====================
+   两段式：``#ctLand`` 落地页（只上传，没有输入框）↔ ``#ctRun`` 审查页。
+   切换靠 ``#pg-contract`` 上的 ``.run`` 类，不拆成两个 ``.pg`` ——
+   拆了就得在 ``RENDER`` 表里多注册一页，而这两段共用同一份状态与同一条 SSE。
+   ⚠️ 颜色一律走既有令牌，不新增字面量（``tests/test_client_ui.py`` 拿 ``:root``
+      跟桌面端 theme.py 逐项对账）。 */
+.ct-hero{text-align:center;max-width:880px;margin:20px auto 24px}
+.ct-hero h2{font-size:26px;font-weight:600;margin:0 0 10px}
+/* 小圆角标签，对应参考图标题右侧那枚橙色胶囊。配色沿用单色体系 ——
+   整站没有强调色，为这一处引入橙的会让其余页面的主按钮显得是另一种风格。 */
+.ct-hero .pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--ts);
+  background:var(--mu);border:1px solid var(--br);border-radius:999px;padding:3px 12px}
+.ct-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:980px;margin:0 auto}
+.ct-card{position:relative;min-height:230px;padding:24px 20px;border:1px dashed var(--br);
+  border-radius:14px;background:var(--mu);color:var(--ts);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  text-align:center;transition:border-color .15s,background .15s}
+.ct-card:hover{border-color:var(--tp);color:var(--tp)}
+.ct-card.drag{border-color:var(--tp);background:var(--bg)}
+.ct-card.busy{opacity:.6;cursor:wait}
+/* 已上传：虚线变实线、底色提白，跟"待上传"一眼可分 */
+.ct-card.on{border-style:solid;border-color:var(--br);background:var(--bg)}
+.ct-card .big{font-size:15px;font-weight:600;color:var(--tp)}
+.ct-card .hint{font-size:12px;color:var(--tt);max-width:270px;line-height:1.7}
+.ct-card .st{font-size:12.5px;max-width:280px;word-break:break-all}
+.ct-card .st.ok{color:var(--ps)}
+.ct-card .st.bad{color:var(--dg)}
+.ct-card .x{position:absolute;top:9px;right:9px;width:26px;height:26px;display:flex;
+  align-items:center;justify-content:center;border:1px solid var(--br);border-radius:7px;
+  background:var(--bg);color:var(--tt);cursor:pointer;font-size:15px;line-height:1}
+.ct-card .x:hover{color:var(--dg);border-color:var(--dg)}
+.ct-foot{display:flex;flex-direction:column;align-items:center;gap:10px;margin:26px auto 0;max-width:980px}
+.ct-foot .btn.pr{padding:9px 30px;font-size:14px;border-radius:9px}
+.ct-foot .btn.pr:disabled{opacity:.4;cursor:default}
+.ct-foot .note{font-size:12px;color:var(--tt);min-height:18px;text-align:center}
+.ct-note{font-size:12px;color:var(--tt);margin-top:10px}
+/* 结果页两栏：左合同全文、右立场+结果。左栏 ``sticky`` 且**自己滚** ——
+   律师往下读结论时，左边正文要一直看得见；跟着一起滚掉就失去对照的意义了。 */
+.ct-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
+  gap:16px;align-items:start;margin-top:14px}
+.ct-doc{position:sticky;top:12px;border:1px solid var(--br);border-radius:12px;
+  background:var(--bg);overflow:hidden}
+.ct-doc-h{display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:12.5px;
+  color:var(--ts);border-bottom:1px solid var(--br)}
+.ct-doc-h .n{margin-left:auto;font-size:11.5px;color:var(--tt);font-variant-numeric:tabular-nums}
+/* 合同正文按"一份文稿"排版，不是一个日志框：律师要拿它跟纸质合同逐条对。
+   解析器留下的 ``<!-- 第 N 页 -->`` 与被 PDF 版面硬切断的半句话由
+   ``ctDocBlocks`` 处理（分页线 + 续行合并），这里只管样式。
+   字体走宋体（中文合同的印刷体），行距放大 —— 这一栏是要逐字核对的。 */
+.ct-paper{margin:0;padding:14px 18px;max-height:calc(100vh - 210px);overflow:auto;
+  font-family:SimSun,"宋体",serif;font-size:13.5px;line-height:2;color:var(--tp);
+  white-space:pre-wrap;word-break:break-word;outline:none}
+.ct-paper:focus{box-shadow:inset 0 0 0 2px var(--ac)}
+.ct-paper .ct-p{margin:0 0 2px}
+.ct-paper .ct-title{text-align:center;font-size:19px;font-weight:700;letter-spacing:3px;
+  margin:6px 0 16px;text-indent:0}
+.ct-paper .ct-chapter{font-weight:700;margin:14px 0 4px;text-indent:0}
+.ct-paper .ct-clause,.ct-paper .ct-para{text-indent:2em}
+.ct-paper .ct-sign{text-indent:0}
+/* 落款日期靠右下角 —— 合同上它本来就签在右下，跟着正文左缩进两格看着像漏了一行。
+   ``text-indent:0`` 必须写：``.ct-para`` 那套 2em 缩进会跟右对齐叠在一起。 */
+.ct-paper .ct-date{text-align:right;text-indent:0}
+.ct-paper .ct-head{font-family:var(--sans);font-size:11.5px;color:var(--tt);
+  text-indent:0;margin-bottom:8px}
+.ct-paper .ct-pagenum{text-align:center;font-family:var(--sans);font-size:11px;
+  color:var(--tq);text-indent:0}
+/* 分页线。原始的 ``<!-- 第 N 页 -->`` 存在 ``data-mark`` 里不外露，但
+   ``ctReadDoc`` 要把它原样收回文本 —— 那串标记是计进字数的（后端
+   ``count_chars`` 只排除空白与 ``_＿□``），丢了它就会"改一下少几十字"。 */
+.ct-paper .ct-sep{display:flex;align-items:center;gap:10px;margin:14px 0;
+  font-family:var(--sans);font-size:11px;color:var(--tt);text-indent:0}
+.ct-paper .ct-sep::before,.ct-paper .ct-sep::after{content:"";flex:1;height:1px;background:var(--br)}
+.ct-dirty{font-size:11px;color:var(--wn);border:1px solid var(--wn);border-radius:5px;padding:0 5px}
+.ct-doc-tip{font-size:11px;color:var(--tq)}
+/* 逐条风险卡。一条一卡、原文与建议分行：律师是拿着这几张卡回头改合同的，
+   糊成一段就没法一条条核。等级配色复用全站既有的 ``.risk-high/medium/low``。 */
+.ct-risk{border:1px solid var(--br);border-radius:10px;padding:10px 12px;margin:0 0 10px;
+  background:var(--bg)}
+.ct-risk-h{display:flex;align-items:baseline;gap:8px;font-size:13.5px;font-weight:600;
+  flex-wrap:wrap}
+.ct-risk-h .lv{margin-left:auto;font-size:12px;font-weight:600}
+.ct-risk-q{margin:8px 0;padding:6px 10px;border-left:3px solid var(--br);background:var(--mu);
+  color:var(--ts);font-size:12.5px;line-height:1.85;white-space:pre-wrap;
+  font-family:SimSun,"宋体",serif}
+.ct-risk-r{font-size:13px;line-height:1.85;margin:0 0 6px}
+.ct-risk-s{font-size:13px;line-height:1.85;color:var(--ac);margin:0}
+.ct-risk-b{font-size:11.5px;color:var(--tt);margin-top:6px;line-height:1.7}
+/* 完整报告折叠。它是后端 4000~8000 字的产出，不能丢，但不该压在风险卡上面。 */
+.ct-report{margin-top:14px;border-top:1px solid var(--br);padding-top:10px}
+.ct-report>summary{font-size:12.5px;color:var(--ts);cursor:pointer;list-style:revert}
+.ct-report>summary:hover{color:var(--tp)}
+/* 审查立场。选中态沿用全站既有的"选中卡片"写法（见 ``.ref.on``），
+   **不引橙色**：``:root`` 的颜色跟桌面端 ``theme.py`` 逐项对账，
+   多一个令牌就多一处不同步；参考图那个橙是本项目的题外话。 */
+.ct-stance{border:1px solid var(--br);border-radius:12px;background:var(--bg);
+  padding:12px 14px;margin-bottom:14px}
+.ct-stance-h{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ts);
+  margin-bottom:10px;flex-wrap:wrap}
+.ct-stance-h .mu{font-size:11.5px;color:var(--tt)}
+.ct-parties{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ct-party{padding:8px 11px;border:1px solid var(--br);border-radius:10px;background:var(--bg);
+  cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.ct-party:hover{border-color:var(--tq)}
+.ct-party.on{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}
+.ct-party .lb{font-size:12px;color:var(--tt)}
+/* 名称可改：是从正文里正则抽的，抽错或抽不到时律师能自己填 */
+.ct-party input{border:0;outline:0;background:none;padding:0;width:100%;font-size:13px;
+  font-weight:600;color:var(--tp);text-overflow:ellipsis}
+.ct-party input::placeholder{font-weight:400;color:var(--tq)}
+/* 中立那张没有输入框，用一行静态文字站住与名称框同样的位置与字重 */
+.ct-party .nm{font-size:13px;font-weight:600;color:var(--tp)}
+.ct-stance .go{margin-top:10px;width:100%;justify-content:center}
+.ct-stance .hintline{font-size:11.5px;color:var(--tt);margin-top:8px;line-height:1.6}
+/* 落地页与审查页互斥。默认（无 ``.run``）显示落地页。 */
+#pg-contract .ct-run{display:none}
+#pg-contract.run .ct-land{display:none}
+#pg-contract.run .ct-run{display:block}
+/* ≤960px 塌成单列，左栏不再吸顶（窄屏没有"并排"可言，吸顶只会挡住结果） */
+@media(max-width:960px){
+  .ct-cards{grid-template-columns:1fr}
+  .ct-split{grid-template-columns:1fr}
+  .ct-doc{position:static}
+  .ct-paper{max-height:320px}
+  .ct-parties{grid-template-columns:1fr}
+}
+
+/* ==================== 证据链（左栏独立页，2026-10-11） ====================
+   左列选案件、右列传材料与看链路。案件行的选中态复用全站既有的"选中卡片"
+   写法（见 ``.ct-party.on``）—— 同一个产品只用一套选中语言。
+   ⚠️ 颜色一律走既有令牌，不新增 :root 变量
+      （``tests/test_client_ui.py`` 拿 :root 跟桌面端 theme.py 逐项对账）。 */
+.evp-cases{display:flex;flex-direction:column;gap:4px;max-height:calc(100vh - 250px);
+  overflow:auto}
+.evp-case{display:flex;flex-direction:column;gap:2px;padding:9px 11px;border:1px solid var(--br);
+  border-radius:10px;background:var(--bg);cursor:pointer;text-align:left;width:100%}
+.evp-case:hover{border-color:var(--tq)}
+.evp-case.on{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}
+.evp-case .tt{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.evp-case .mm{font-size:11.5px;color:var(--tt);font-family:var(--mono);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* 案件搜索框。用 ``type="search"`` 是为了拿到浏览器自带的 ✕ 清除按钮
+   （自己做一个「清空」会多一行，而这一栏本来就只有 260px 宽）。 */
+.evp-q{width:100%;box-sizing:border-box;margin-bottom:8px;padding:6px 10px;font-size:12.5px;
+  border:1px solid var(--br);border-radius:8px;background:var(--bg);color:var(--tp);outline:0}
+.evp-q:focus{border-color:var(--tq)}
+.evp-q::placeholder{color:var(--tq)}
+/* 行尾的「已生成 N 条 / 未生成」小标签。**它是这个列表的主要决策信息**：
+   有链的可以直接起草带证据链的文书，没链的先去传材料。 */
+.evp-st{flex:none;font-size:10.5px;border-radius:6px;padding:0 6px;white-space:nowrap;
+  border:1px solid var(--br);color:var(--tt)}
+.evp-st.on{border-color:var(--ac);color:var(--ac)}
+.evp-case .hdr{display:flex;align-items:center;gap:6px}
+.evp-empty{padding:10px 4px;font-size:12.5px;color:var(--tt);line-height:1.7}
+/* 微信端命令速查。``code`` 用等宽 + 浅底：它写的是**要原样打出去的字**，
+   不是给眼睛看的说明，所以要和旁边的正文区分开，否则律师会把「/案件」当成普通词。 */
+.evp-cmds{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px;
+  font-size:12px;color:var(--tt)}
+.evp-cmds code{font-family:var(--mono);font-size:11.5px;color:var(--ts);
+  background:var(--mu);border:1px solid var(--br);border-radius:6px;padding:1px 7px}
+@media(max-width:960px){.evp-cases{max-height:260px}}
+/* 分页栏（历史会话 / 案件管理共用） */
+.pager{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 6px 2px;
+  font-size:12.5px;color:var(--tt);border-top:1px solid var(--br)}
+.pager .pginfo{margin-right:auto;color:var(--ts)}
+.pager .pgbtn,.pager .pgn{min-width:28px;height:26px;padding:0 8px;border:1px solid var(--br);
+  border-radius:6px;background:var(--bg);color:var(--tp);font-size:12.5px;cursor:pointer;
+  line-height:24px;text-align:center}
+.pager .pgbtn:hover:not(:disabled),.pager .pgn:hover{background:var(--mu)}
+.pager .pgn.on{background:var(--tp);color:var(--bg);border-color:var(--tp);font-weight:600}
+.pager .pgbtn:disabled{opacity:.45;cursor:not-allowed}
+.pager .pgs{min-width:20px;height:26px;line-height:26px;text-align:center;color:var(--ts);user-select:none}
+/* 监控中心：概览 KPI、图表容器、健康诊断、徽标 */
+.kpis-wrap{padding:14px 16px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.kpi{border:1px solid var(--br);border-radius:10px;padding:14px 16px;background:var(--mu);display:flex;flex-direction:column;gap:6px;min-width:0}
+.kpi .kpi-n{font-size:22px;font-weight:700;color:var(--tp);font-variant-numeric:tabular-nums;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .kpi-l{font-size:12px;color:var(--tt);white-space:nowrap}
+#pg-monitor .mon-cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+#pg-monitor .mon-side{display:flex;flex-direction:column;gap:14px;position:sticky;top:70px}
+@media(max-width:1100px){
+  #pg-monitor .mon-cols{grid-template-columns:1fr}
+  #pg-monitor .mon-side{position:static}
+}
+/* 分层飞轮：左标签栏 + 横向层卡 + 层间流程箭头。层编号不显示，
+   标签栏只放层的中文短名；箭头与底部回流条是静态流程说明，不承载实时数据。 */
+#pg-monitor .mon-flow{display:flex;flex-direction:column}
+#pg-monitor .mon-layer{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:stretch}
+#pg-monitor .mon-rail{display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--br);border-radius:10px;background:var(--mu);
+  font-size:12px;color:var(--tt);letter-spacing:2px;writing-mode:vertical-rl}
+#pg-monitor .mon-arrow{display:flex;align-items:center;justify-content:center;gap:6px;
+  margin:6px 0 6px 56px;font-size:11.5px;color:var(--tt)}
+#pg-monitor .mon-arrow::before{content:"▽";font-size:9px;color:var(--tq)}
+#pg-monitor .mon-recycle{margin:12px 0 0 56px;padding:10px 14px;
+  border:1px dashed var(--br);border-radius:10px;font-size:12px;color:var(--tt);text-align:center}
+#pg-monitor .mon-grp{font-size:12px;font-weight:600;color:var(--tt);letter-spacing:.4px}
+#pg-monitor #monAuto{border:1px solid var(--br);border-radius:8px;background:var(--bg);color:var(--tp);
+  font-family:inherit;font-size:12.5px;padding:5px 8px;cursor:pointer}
+#pg-monitor .mon-flow .card,#pg-monitor .mon-side .card{margin-bottom:0}
+@media(max-width:640px){
+  #pg-monitor .mon-layer{grid-template-columns:1fr}
+  #pg-monitor .mon-rail{writing-mode:horizontal-tb;justify-content:flex-start;padding:4px 10px;letter-spacing:1px}
+  #pg-monitor .mon-arrow,#pg-monitor .mon-recycle{margin-left:0}
+}
+#pg-monitor .mon-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+#pg-monitor .mon-chip{border:1px solid var(--br);background:var(--bg);border-radius:999px;
+  padding:4px 11px;font-size:12.5px;color:var(--ts);cursor:pointer}
+#pg-monitor .mon-chip.on{border-color:var(--ac);color:var(--ac)}
+#pg-monitor .mon-chip .dd{display:inline-block;width:6px;height:6px;border-radius:50%;
+  margin-right:5px;vertical-align:1px;background:var(--ps)}
+#pg-monitor .mon-chip .dd.warn{background:var(--wn)}
+#pg-monitor .mon-chip .dd.bad{background:var(--dg)}
+#pg-monitor .mon-svg{display:block;width:100%;height:auto}
+#pg-monitor .mon-mm{font-size:12px;color:var(--tt);line-height:1.6}
+#pg-monitor .mon-err{font-size:12.5px;color:var(--dg);padding:6px 0;line-height:1.6}
+#pg-monitor .mon-stale{opacity:.55;transition:opacity .15s}
+/* 键值行：**键名不收缩、值才换行**。默认两个 span 都是 flex-shrink:1，
+   值一长就把键名压到逐字断行（"原因" 变成两行）—— 那比值多占一行更难看。 */
+#pg-monitor .mon-kv{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+  font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--br)}
+#pg-monitor .mon-kv:last-child{border-bottom:0}
+#pg-monitor .mon-kv .k{color:var(--tt);flex:none;white-space:nowrap}
+#pg-monitor .mon-kv .v{color:var(--tp);font-variant-numeric:tabular-nums;text-align:right;
+  min-width:0;overflow-wrap:anywhere}
+#pg-monitor .mon-row{display:flex;align-items:center;gap:10px;font-size:12.5px;margin-top:8px}
+#pg-monitor .mon-row .nm{color:var(--ts);min-width:0;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+#pg-monitor .mon-row .num{margin-left:auto;color:var(--tp);font-variant-numeric:tabular-nums}
+#pg-monitor .mon-al{display:flex;gap:9px;align-items:flex-start;padding:8px 10px;
+  border-left:3px solid var(--wn);font-size:12.5px;line-height:1.55;color:var(--ts)}
+#pg-monitor .mon-al+.mon-al{margin-top:8px}
+#pg-monitor .mon-al.p0{border-left-color:var(--dg)}
+#pg-monitor .mon-al.p2{border-left-color:var(--tq)}
+#pg-monitor .mon-al .lv{font-weight:600;flex:none}
+#pg-monitor .mon-al.p0 .lv{color:var(--dg)}
+#pg-monitor .mon-al.p1 .lv{color:var(--wn)}
+#pg-monitor .mon-al.p2 .lv{color:var(--tt)}
+#pg-monitor .mon-al .ax{margin-left:auto;color:var(--ac);cursor:pointer;flex:none}
+#pg-monitor .mon-ev{display:flex;gap:10px;font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--br)}
+#pg-monitor .mon-ev:last-child{border-bottom:0}
+#pg-monitor .mon-ev .tm{color:var(--tt);white-space:nowrap;font-variant-numeric:tabular-nums}
+#pg-monitor .mon-ev .tx{color:var(--ts);line-height:1.5;min-width:0}
+#pg-monitor .mon-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#pg-monitor .mon-grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){#pg-monitor .mon-grid2{grid-template-columns:1fr}}
+/* 水平条与堆叠条用 CSS 画（不是 SVG）：SVG 的 rx 在非等比缩放下会被拉成椭圆，
+   而这里要的正好是恒定的 4px 圆角与恒定的 2px 间隙。 */
+#pg-monitor .mon-cap{font-size:12px;color:var(--tt);margin:14px 0 2px;letter-spacing:.2px}
+#pg-monitor .pc{color:var(--tt);font-size:11.5px}
+#pg-monitor .mon-dt{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
+#pg-monitor .mon-lg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--ts);margin-top:4px}
+#pg-monitor .mon-stk{display:flex;gap:2px;height:12px;margin:8px 0 10px}
+#pg-monitor .mon-stk i{display:block;min-width:2px}
+#pg-monitor .mon-stk i:first-child{border-radius:4px 0 0 4px}
+#pg-monitor .mon-stk i:last-child{border-radius:0 4px 4px 0}
+#pg-monitor .mon-stk i:only-child{border-radius:4px}
+#pg-monitor .mon-row .nm{flex:0 1 42%}
+#pg-monitor .mon-bar{flex:1 1 auto;height:8px;min-width:40px;background:var(--mu);border-radius:4px;overflow:hidden}
+#pg-monitor .mon-bar i{display:block;height:100%;border-radius:4px}
+#pg-monitor .mon-colax{display:flex;align-items:flex-end;gap:2px;height:58px;margin:6px 0 4px}
+#pg-monitor .mon-colax i{display:block;flex:1 1 0;min-height:3px;background:var(--ac);border-radius:3px 3px 0 0}
+#pg-monitor .mon-xlab{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;color:var(--tt)}
+#pg-monitor .mon-tb{display:block;width:100%;overflow-x:auto;border-collapse:collapse;font-size:12.5px;margin:6px 0 2px}
+#pg-monitor .mon-tb th{text-align:left;font-weight:500;color:var(--tt);padding:5px 10px 5px 0;border-bottom:1px solid var(--br);white-space:nowrap}
+#pg-monitor .mon-tb td{padding:5px 10px 5px 0;color:var(--ts);border-bottom:1px solid var(--br);font-variant-numeric:tabular-nums;white-space:nowrap}
+#pg-monitor .mon-tb tr:last-child td{border-bottom:0}
+#pg-monitor .mon-tb tr.bad td{color:var(--dg)}
+#pg-monitor .mon-tb tr.warn td{color:var(--wn)}
+#pg-monitor .mon-radar{display:block;width:100%;max-width:236px;height:auto;margin:6px auto}
+#pg-monitor .mon-scatter{display:block;width:100%;max-width:440px;height:auto;margin:6px auto}
+#pg-monitor .mon-fn{display:flex;gap:6px;margin:8px 0 2px}
+#pg-monitor .mon-fn i{flex:1 1 0;border:1px solid var(--br);border-radius:var(--r8);padding:6px 8px;
+  font-style:normal;font-size:12px;color:var(--tt);text-align:center;line-height:1.5}
+#pg-monitor .mon-fn i.on{border-color:var(--ac);color:var(--ac)}
+#pg-monitor .btn[disabled]{opacity:.45;cursor:not-allowed}
+</style>
+</head>
+<body>
+<div class="lp-app">
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.6 7-5.6s6.2 2 7 5.6"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M15.8 15.8 20.5 20.5"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v15"/><path d="M5 7h14"/><path d="M5 7l-2.6 6a3.1 3.1 0 0 0 5.2 0z"/><path d="M19 7l-2.6 6a3.1 3.1 0 0 0 5.2 0z"/><path d="M8.5 20.5h7"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16v9h-6.5L10 19v-3.5H4z"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.8 11.2 20.2 3.8l-5.8 16.4-3.2-6.8z"/><path d="M11.2 13.4 20.2 3.8"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5A2.5 2.5 0 0 1 6 4h4.2L12 6.5h6A2.5 2.5 0 0 1 20.5 9v8A2.5 2.5 0 0 1 18 19.5H6A2.5 2.5 0 0 1 3.5 17z"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5V8H17.5"/><path d="M9.5 12.5h5M9.5 15.8h5"/></symbol>
+<symbol id="i-todo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="4.5" width="15" height="15" rx="3.5"/><path d="M8.5 12.2l2.4 2.4 4.6-5"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15.5" rx="2.5"/><path d="M4 10h16M8.5 3v4M15.5 3v4"/></symbol>
+<symbol id="i-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v15.5h16"/><path d="M8.5 15.5v-4M13 15.5V8M17.5 15.5v-6.5"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5.5a6 6 0 0 1 12 0V16l1.8 2.8H4.2z"/><path d="M10 20.8a2.2 2.2 0 0 0 4 0"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.2 2.2"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1"/><path d="M20.5 3.5v5.2h-5.2"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 19 6v6c0 4.4-2.9 7.3-7 8.5-4.1-1.2-7-4.1-7-8.5V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l1.9 5 5.1 1.5-5.1 1.5-1.9 5-1.9-5-5.1-1.5 5.1-1.5z"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 18a8.5 8.5 0 1 1 15 0"/><path d="M12 14l3-5"/></symbol>
+<symbol id="i-gavel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 5.2 17.8 9.8M14.8 3.6l4.6 4.6"/><path d="M12.4 7.6 7.6 12.4"/><path d="M8.6 13.8 5.2 17.2"/><path d="M4.5 20.5H12"/></symbol>
+<symbol id="i-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5h10V20l-5-3.4L7 20z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+<symbol id="i-court" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 20.5h15"/><path d="M5 20.5V9.5L12 5l7 4.5v11"/><path d="M9.5 20.5v-6h5v6"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5h15"/><path d="M14.8 4.8l2.4 2.4-7.4 7.4-3 .6.6-3z"/></symbol>
+<symbol id="i-dl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10M7.8 10.5 12 14.7l4.2-4.2"/><path d="M4.5 19.5h15"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="18.5" cy="12" r="1.2" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></symbol>
+<symbol id="i-clip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 8.5v8a3.5 3.5 0 0 1-7 0V7a2.5 2.5 0 0 1 5 0v8.5a1.2 1.2 0 0 1-2.4 0V9"/></symbol>
+<!-- ``i-cross``：app.js 里两处 ``icon('cross')`` 一直引用着它，但 sprite 里**从来没有**
+     这个 symbol —— 于是「删除」按钮和草稿行的删除图标都渲染成空白（静默，不报错）。
+     ``i-pen`` 同理，改用已存在的 ``i-edit`` 修掉了，不另补。 -->
+<symbol id="i-cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 6.2 17.8 17.8M17.8 6.2 6.2 17.8"/></symbol>
+<!-- 文书编辑页用到的图标。``icon()`` 对**不存在的 symbol 不报错、直接渲染成空白**，
+     所以下面这些必须先在 sprite 里存在，再在 app.js 里接线 —— 顺序反了页面上
+     就是几个点不动的空白按钮，控制台一条错都没有。 -->
+<symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12h-15"/><path d="M10.5 6 4.5 12l6 6"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5H14a5.2 5.2 0 0 1 0 10.4H9.6"/><path d="M8.4 5.6 4.5 9.5l3.9 3.9"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 9.5H10a5.2 5.2 0 0 0 0 10.4h4.4"/><path d="M15.6 5.6l3.9 3.9-3.9 3.9"/></symbol>
+<symbol id="i-al" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6h15M4.5 10.5h9.5M4.5 15h15M4.5 19.5h9.5"/></symbol>
+<symbol id="i-ac" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6h15M7.3 10.5h9.4M4.5 15h15M7.3 19.5h9.4"/></symbol>
+<symbol id="i-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6h15M10 10.5h9.5M4.5 15h15M10 19.5h9.5"/></symbol>
+<symbol id="i-ul" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 6.5h10.5M9.5 12h10.5M9.5 17.5h10.5"/><circle cx="5" cy="6.5" r="1.15" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="5" cy="17.5" r="1.15" fill="currentColor" stroke="none"/></symbol>
+<!-- 有序列表：``<text>`` 在这个 sprite 里是唯一一处非 path 的图形。
+     1/2/3 用路径画会变成三个看不懂的折线，这里直接用字形。 -->
+<symbol id="i-ol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 6.5h10.5M9.5 12h10.5M9.5 17.5h10.5"/><text x="3.3" y="8.4" font-size="6.4" font-family="sans-serif" fill="currentColor" stroke="none">1</text><text x="3.3" y="13.9" font-size="6.4" font-family="sans-serif" fill="currentColor" stroke="none">2</text><text x="3.3" y="19.4" font-size="6.4" font-family="sans-serif" fill="currentColor" stroke="none">3</text></symbol>
+<symbol id="i-ind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6h15M10.5 10.5h9M10.5 15h9M4.5 19.5h15"/><path d="M5 10.6 7.6 13 5 15.4z" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-outd" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6h15M10.5 10.5h9M10.5 15h9M4.5 19.5h15"/><path d="M7.6 10.6 5 13l2.6 2.4z" fill="currentColor" stroke="none"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="brand"><svg class="ic" style="width:20px;height:20px"><use href="#i-scale"/></svg>衡律工作台<span class="ver">AI 2.4</span></div>
+  <div class="gs"><svg class="ic sm"><use href="#i-search"/></svg><input id="gs" placeholder="搜索案件、文书、法条、当事人…"><kbd>⌘K</kbd></div>
+  <div class="tr">
+    <button class="ibtn" id="themeBtn" title="切换主题"><svg class="ic sm"><use href="#i-moon"/></svg></button>
+    <button class="ibtn" title="新建" data-toast="新建入口：可快速立案、起草文书或录入日程"><svg class="ic sm"><use href="#i-plus"/></svg></button>
+    <button class="ibtn" title="通知" data-toast="3 条未读：传票送达 / 新证据 / 一审判决"><svg class="ic sm"><use href="#i-bell"/></svg><span class="dot"></span></button>
+    <div class="ava" data-toast="陈律师 · 上海某律师事务所">陈</div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="side">
+    <button class="nav on" data-pg="pg-dash"><svg class="ic"><use href="#i-bars"/></svg>工作台</button>
+    <!-- 三个 AI 分组。``.sgh`` 只是小标题，**不能带 ``.nav``** —— ``go()`` 靠
+         ``$$('.nav')`` 切换高亮，混进去会多出几个点不动的"假导航项"。 -->
+    <div class="sgh">AI 法律检索</div>
+    <button class="nav" data-pg="pg-ai"><svg class="ic"><use href="#i-chat"/></svg>AI 助手<span class="bdg">3</span></button>
+    <button class="nav" data-pg="pg-search"><svg class="ic"><use href="#i-search"/></svg>类案检索</button>
+    <div class="sgh">AI 法律审查</div>
+    <button class="nav" data-pg="pg-contract"><svg class="ic"><use href="#i-shield"/></svg>合同审查</button>
+    <!-- 证据链的生成入口。它原来只藏在「案件详情」弹层里，要先进案件管理才找得到；
+         2026-10-11 提到左栏独立成页（``#pg-evchain``）。只对「诉讼」案件开放。 -->
+    <button class="nav" data-pg="pg-evchain"><svg class="ic"><use href="#i-scale"/></svg>证据链</button>
+    <div class="sgh">AI 法律文书</div>
+    <button class="nav" data-pg="pg-doc"><svg class="ic"><use href="#i-doc"/></svg>文书中心</button>
+    <!-- ``.sep``：上一组的最后一项和这里之间要断开，否则「案件管理」「日程任务」
+         会看起来隶属于上面那个「AI 法律文书」组。 -->
+    <button class="nav sep" data-pg="pg-case"><svg class="ic"><use href="#i-folder"/></svg>案件管理<span class="bdg">12</span></button>
+    <button class="nav" data-pg="pg-cal"><svg class="ic"><use href="#i-cal"/></svg>日程任务</button>
+    <div class="sgh">智能体配置</div>
+    <button class="nav" data-pg="pg-expert"><svg class="ic"><use href="#i-user"/></svg>专家</button>
+    <button class="nav" data-pg="pg-skill"><svg class="ic"><use href="#i-zap"/></svg>技能</button>
+    <div class="sgh">系统</div>
+    <button class="nav" data-pg="pg-monitor"><svg class="ic"><use href="#i-bars"/></svg>监控中心</button>
+    <div style="flex:1"></div>
+    <div class="sft" id="sft"><div style="display:flex;gap:6px;align-items:center;color:var(--tt)"><svg class="ic sm"><use href="#i-shield"/></svg>案卷空间已加密</div><div class="bar"><i></i></div>连接后端中…</div>
+  </nav>
+
+  <main class="main">
+    <!-- 工作台 -->
+    <section class="pg on" id="pg-dash">
+      <div class="hello">
+        <div style="flex:1;min-width:220px"><h1 id="greet">晚上好，陈律师</h1><div class="sub" id="dateLine"></div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="sub" id="updAt" style="font-size:12px"></span>
+          <button class="btn" id="dashRefresh"><svg class="ic sm"><use href="#i-refresh"/></svg>刷新</button>
+          <button class="btn pr" data-toast="快速立案：AI 将辅助生成起诉状草稿与证据清单"><svg class="ic sm"><use href="#i-plus"/></svg>快速立案</button>
+        </div>
+      </div>
+      <div class="stats" id="dashStats">
+        <div class="stat" data-go="pg-case"><div class="lb">进行中案件</div><div class="vl">12</div><div class="tr">本月新增 <b>+2</b></div></div>
+        <div class="stat" data-go="pg-cal"><div class="lb">本周开庭</div><div class="vl">3</div><div class="tr">最近一场 <b>明天 09:30</b></div></div>
+        <div class="stat" data-go="pg-cal"><div class="lb">待办任务</div><div class="vl" id="todoN">8</div><div class="tr">已逾期 <b style="color:var(--dg)">2</b></div></div>
+        <div class="stat" data-go="pg-doc"><div class="lb">文书待审</div><div class="vl">5</div><div class="tr">AI 已预检 <b>3</b> 份</div></div>
+      </div>
+      <div class="cols">
+        <div>
+          <div class="card">
+            <div class="ch"><svg class="ic sm"><use href="#i-todo"/></svg>待办任务<button class="rt" data-go="pg-cal">全部任务<svg class="ic xs"><use href="#i-arrow"/></svg></button></div>
+            <div id="todoList">
+              <div class="task"><span class="pri" style="background:var(--dg)"></span><span class="box"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span style="flex:1"><div class="tt">核对建工案证据目录（明早 09:30 开庭）</div><div class="tm">21:00 前 · 关联案件 4 项</div></span></div>
+              <div class="task"><span class="pri" style="background:var(--wn)"></span><span class="box"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span style="flex:1"><div class="tt">审核《股权转让协议》修订稿第 3 轮</div><div class="tm">今天 · 客户 22:00 前反馈</div></span></div>
+              <div class="task"><span class="pri" style="background:var(--tq)"></span><span class="box"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span style="flex:1"><div class="tt">回复当事人陈女士的管辖权咨询</div><div class="tm">今天 · 微信留痕</div></span></div>
+              <div class="task done"><span class="pri" style="background:var(--tq)"></span><span class="box"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span style="flex:1"><div class="tt">缴纳某案诉讼费 ¥13,800</div><div class="tm">已完成 · 票据已归档</div></span></div>
+            </div>
+          </div>
+          <div class="card" id="dashActivity">
+            <div class="ch"><svg class="ic sm"><use href="#i-bell"/></svg>案件动态<button class="rt" data-go="pg-case">全部案件<svg class="ic xs"><use href="#i-arrow"/></svg></button></div>
+            <div class="it"><span class="ic"><svg class="ic sm"><use href="#i-court"/></svg></span><span class="tx">某建工集团案收到<b>开庭传票</b><span class="mt">，举证期限至 9 月 20 日，AI 已同步日程</span></span><span class="tm">10 分钟前</span></div>
+            <div class="it"><span class="ic"><svg class="ic sm"><use href="#i-doc"/></svg></span><span class="tx">陈某劳动争议案对方提交<b>3 组考勤记录</b><span class="mt">，真实性初检已完成</span></span><span class="tm">2 小时前</span></div>
+            <div class="it"><span class="ic"><svg class="ic sm"><use href="#i-scale"/></svg></span><span class="tx">某影视公司著作权案<b>一审判决</b>：部分胜诉，判赔 ¥420,000<span class="mt">，上诉期 15 日</span></span><span class="tm">昨天</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="card" id="dashSuggest">
+            <div class="ch"><svg class="ic sm"><use href="#i-zap"/></svg>AI 能力状态<span class="live" style="margin-left:auto" id="dashLive"><i></i>读取中</span></div>
+            <ul class="tips" id="dashTips">
+              <li><span class="n">1</span><span><b>建工集团案</b>明早开庭，证据目录尚有 2 份未归档，建议今晚完成核对。</span></li>
+              <li><span class="n">2</span><span><b>劳动争议案</b>新增考勤证据存在 3 处时间戳异常，可要求对方说明来源。</span></li>
+              <li><span class="n">3</span><span><b>《代理词》</b>初稿引用已失效司法解释 1 处，已给出替换建议。</span></li>
+            </ul>
+            <button class="btn pr" style="width:100%;justify-content:center" data-go="pg-ai"><svg class="ic sm"><use href="#i-chat"/></svg>向 AI 助手提问</button>
+          </div>
+          <div class="card">
+            <div class="ch"><svg class="ic sm"><use href="#i-zap"/></svg>快捷操作</div>
+            <div class="quick">
+              <div class="q" data-go="pg-doc"><span class="t"><svg class="ic sm"><use href="#i-doc"/></svg>AI 起草文书</span><span class="d">起诉状、答辩状一键生成初稿</span></div>
+              <div class="q" data-go="pg-search"><span class="t"><svg class="ic sm"><use href="#i-search"/></svg>类案检索</span><span class="d">按案情描述匹配相似判例</span></div>
+              <div class="q" data-go="pg-ai"><span class="t"><svg class="ic sm"><use href="#i-shield"/></svg>合同风险审查</span><span class="d">30 秒扫描 28 类常见风险点</span></div>
+              <div class="q" data-go="pg-ai"><span class="t"><svg class="ic sm"><use href="#i-gavel"/></svg>庭审提纲生成</span><span class="d">基于证据清单生成发问提纲</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI 助手 -->
+    <section class="pg" id="pg-ai">
+      <div class="ph"><h2>AI 助手</h2><span class="sub">LexPilot · 已接入民法典、案例库与您的在办案件</span><span class="sp"></span><button class="btn sm" data-toast="会话已归档至案件：某建工集团诉某置业案"><svg class="ic sm"><use href="#i-bookmark"/></svg>归档到案件</button></div>
+      <!-- 列宽必须显式写：.cols 默认是 ``1.6fr 1fr``，历史栏放第一栏会比对话区还宽。
+           窄屏由既有断点（≤960px 时 .cols 塌成单列）负责，这里不另写。 -->
+      <div class="cols" style="grid-template-columns:220px 1fr;align-items:stretch">
+        <div class="card" id="convCard" style="margin-bottom:0;display:flex;flex-direction:column">
+          <div class="ch"><svg class="ic sm"><use href="#i-clock"/></svg>历史会话<button class="rt" id="convNew" title="开一段新会话"><svg class="ic xs"><use href="#i-plus"/></svg>新建</button></div>
+          <!-- ⚠️ 这里**不能**加 data-toast：body 末尾有个全局委托会给任何 [data-toast] 弹提示，
+               于是按钮会"看起来生效了"而实际什么都没发生（旁边那个「归档到案件」正是如此）。 -->
+          <div id="convList" style="flex:1;overflow-y:auto;min-height:120px"></div>
+          <div id="convPager" class="pager" style="display:none"></div>
+        </div>
+        <div class="aiw">
+          <div class="aih">
+            <span class="av"><svg class="ic sm"><use href="#i-scale"/></svg></span>
+            <span><div class="tt">衡律 AI</div><div class="ds">引用可溯源 · 回答仅供参考，请结合执业判断使用</div></span>
+            <span class="live" style="margin-left:auto"><i></i>在线</span>
+          </div>
+          <div class="chat" id="chatbox"></div>
+          <div class="chips">
+            <button class="chip" data-q="违约金约定过高会被法院调整吗？">违约金过高调整规则</button>
+            <button class="chip" data-q="公司违法辞退员工，2N赔偿怎么计算？">违法解除 2N 计算</button>
+            <button class="chip" data-q="竞业限制补偿金的最低标准是多少？">竞业限制补偿标准</button>
+            <button class="chip" data-q="试用期最长可以约定多久？">试用期上限</button>
+          </div>
+          <div class="comp">
+            <textarea id="input" rows="1" placeholder="描述案情或提出问题，Enter 发送，Shift+Enter 换行"></textarea>
+            <button class="send" id="sendBtn"><svg class="ic"><use href="#i-send"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 合同审查。两段式，靠 ``#pg-contract`` 上的 ``.run`` 类切换（见样式表）：
+         落地页只做上传，正文由后端解析，页面里**没有任何输入框** ——
+         以前那个「把合同条款全文粘贴到这里」的大文本框已经删掉。 -->
+    <section class="pg" id="pg-contract">
+      <!-- ---------- 落地页 ---------- -->
+      <div class="ct-land">
+        <div class="ct-hero">
+          <h2>以范本合同作为范本审查合同</h2>
+          <span class="pill"><svg class="ic xs"><use href="#i-zap"/></svg>30 秒扫描 28 类常见风险点</span>
+        </div>
+
+        <div class="ct-cards">
+          <!-- 待审合同：**不是必填**了。任一框解析完都会自动开跑，不需要点任何按钮；
+               两份都在时这一份当被审查的材料，见 app.js 的 ``ctResolve``。 -->
+          <div class="ct-card" id="ctCardMain" title="点击或拖拽上传待审合同">
+            <svg class="ic" style="width:34px;height:34px"><use href="#i-doc"/></svg>
+            <div class="big">上传【待审合同】</div>
+            <div class="hint">支持 pdf、doc、docx、图片、txt，单份不超过 50M</div>
+            <div class="st" id="ctMainSt"></div>
+            <button class="x" id="ctMainX" title="移除" hidden>&times;</button>
+          </div>
+          <!-- 范本合同：可选。两份都给时它当比对基准；**只给它一份也照样开跑**
+               （那时它自己就是被审查的对象）。跑完才补传的那份会在结果页
+               变成重审按钮，不是死路。 -->
+          <div class="ct-card" id="ctCardTpl" title="点击或拖拽上传范本合同（可选）">
+            <svg class="ic" style="width:34px;height:34px"><use href="#i-doc"/></svg>
+            <div class="big">上传【范本合同】</div>
+            <div class="hint"><svg class="ic xs"><use href="#i-zap"/></svg> 选填。单独一份也能审查；与待审合同类型越一致，比对效果越好哦</div>
+            <div class="st" id="ctTplSt"></div>
+            <button class="x" id="ctTplX" title="移除" hidden>&times;</button>
+          </div>
+        </div>
+
+        <div class="ct-foot">
+          <button class="btn pr" id="ctStart" disabled><svg class="ic sm"><use href="#i-zap"/></svg>进入审查</button>
+          <div class="note" id="ctNote">上传任意一份合同后进入审查页，选好立场再开始</div>
+        </div>
+
+        <!-- 两个框各有一个 file input：**不能共用一个**，否则
+             ``handleFiles`` 无从知道这份文件该落到哪个框。
+             ``hidden`` 用属性而非 ``style="display:none"``，与文书中心一致。 -->
+        <input type="file" id="ctFileMain" hidden multiple
+               accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.bmp,.tiff,.webp,.txt,.md">
+        <input type="file" id="ctFileTpl" hidden
+               accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.bmp,.tiff,.webp,.txt,.md">
+      </div>
+
+      <!-- ---------- 审查页 ---------- -->
+      <div class="ct-run">
+        <!-- 复用 ``.de-top``：它就是「左返回 + 中间标题/副标题 + 右侧操作」的
+             通用顶栏（文书编辑页那套），这里不另写一份同样的 flex 规则。 -->
+        <div class="de-top">
+          <button class="btn sm" id="ctBack"><svg class="ic sm"><use href="#i-back"/></svg>返回</button>
+          <div class="de-ti">
+            <div class="tt">合同风险审查</div>
+            <div class="mm" id="ctMeta"></div>
+          </div>
+          <span class="sp"></span>
+          <!-- 文案与 title 由 ctReflow 按"变了什么"改写（换范本 / 换上待审 / 单纯换材料），
+               这里只给个初始值。文字单独包一层 span，免得去改按钮的 text node。 -->
+          <button class="btn sm" id="ctRetpl" hidden title="材料变了，用当前这套材料重新跑一次">
+            <svg class="ic sm"><use href="#i-refresh"/></svg><span id="ctRetplTx">重新审查</span>
+          </button>
+          <button class="btn sm" id="ctAgain" title="用同样的材料再跑一次">
+            <svg class="ic sm"><use href="#i-refresh"/></svg>重新审查
+          </button>
+        </div>
+
+        <div class="ct-split">
+          <!-- 左：合同全文。给律师核对"AI 到底读到了什么"，也是审查结论的对照面。
+               **可编辑**（2026-09-29 改）。这里原来只读，注释写着"落地页刻意没有
+               输入框，这里再放编辑框等于从后门把它放回来" —— 那条纪律已作废：
+               用户明确要求"劳动合同的格式，以及可以修改"。识别错的字、过时的金额
+               就地改掉，改完点立场/重审，发出去的就是改后的正文
+               （见 ctDocBlocks / ctReadDoc / ctDocCommit）。 -->
+          <div class="ct-doc">
+            <div class="ct-doc-h"><svg class="ic xs"><use href="#i-doc"/></svg>合同全文
+              <span class="n" id="ctDocChars"></span>
+              <span class="ct-dirty" id="ctDocDirty" hidden>已修改</span>
+              <span class="ct-doc-tip">可改</span></div>
+            <!-- ⚠️ 这块由 ctPaintDoc() 重绘，**不要**把内容写死进 HTML。
+                 整块一个 contenteditable（不是每段一个）：分段编辑时方向键与回车
+                 都过不去隔壁段。回收走 ctReadDoc()，按块取 innerText。 -->
+            <div class="ct-paper" id="ctSrcDoc" contenteditable="true" spellcheck="false"></div>
+          </div>
+
+          <!-- 右：审查立场 + 结果。 -->
+          <div>
+            <!-- 立场是**分析的输入**，不是标签：同一条违约金条款，站乙方是
+                 "过高可争取下调"，站甲方是"过低约束不足"，结论相反。
+                 选完点按钮重审；不选=中立，甲乙双方的风险都提示。 -->
+            <div class="ct-stance">
+              <div class="ct-stance-h"><svg class="ic xs"><use href="#i-scale"/></svg>审查立场
+                <span class="mu">同一份合同，站甲方还是乙方，结论不一样</span></div>
+              <div class="ct-parties">
+                <div class="ct-party" id="ctPartyA" data-party="甲方">
+                  <span class="lb">甲方</span>
+                  <input id="ctPartyAName" maxlength="60" placeholder="名称（可留空）">
+                </div>
+                <div class="ct-party" id="ctPartyB" data-party="乙方">
+                  <span class="lb">乙方</span>
+                  <input id="ctPartyBName" maxlength="60" placeholder="名称（可留空）">
+                </div>
+                <!-- 中立那张没有名称框：没有当事人可写名字。它发出去的 client_role
+                     是空串，后端按"中立（双向提示风险）"审。 -->
+                <div class="ct-party" id="ctPartyN" data-party="中立">
+                  <span class="lb">中立</span>
+                  <span class="nm">双方风险都提示</span>
+                </div>
+              </div>
+              <button class="btn pr go" id="ctPartyGo" hidden></button>
+              <div class="hintline" id="ctPartyHint">点一方开始审查。选「中立」则甲乙双方的风险都提示。</div>
+            </div>
+
+            <div class="card" style="margin-bottom:0;min-height:420px">
+              <div class="ch"><svg class="ic sm"><use href="#i-scale"/></svg>审查结果</div>
+              <!-- 结果区只有风险审查这一块。**「主体审查」页签已整块删除**
+                   （2026-09-29 用户点名："这个主体审查删掉，不管甲方还是乙方、
+                   还是中立，都删掉"）—— 没有工商数据源，那一页只能给出十项
+                   「未接入」，对律师是纯噪声。别再加回来。
+                   ``tests/test_ui_static.py`` 有专门的用例钉着它连类名一起清干净。 -->
+              <!-- ⚠️ ``id="contractResult"`` 不能改：``tests/test_ui_static.py``
+                   用它确认结果区没被误删。``.doc-preview`` 的样式在 app.js 的
+                   ``ensureModal`` 里注入（index.html 里搜不到这个类）。 -->
+              <div id="ctPaneRisk">
+                <div id="contractResult" class="doc-preview" style="max-height:none;min-height:300px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 证据链（左栏独立页，2026-10-11）
+         把「证据链的生成」从案件详情弹层提到左栏：选案件 → 传证据材料 → 生成，
+         不必先绕到案件管理再点开弹层。
+         ⚠️ 证据链只对「诉讼」案件开放，所以左侧列表按 case_type=litigation 过滤，
+            后端 case_service.assert_evidence_chain_allowed 另有一道闸门 ——
+            藏按钮只是"别把做不到的摆出来"，不是唯一防线。
+         ⚠️ 这一页的抓手全部以 `evp` 开头，**不与弹层里的 matListBox / evchainBox
+            重名**：重名会让 getElementById 取到另一处，两个界面互相写花且不报错。 -->
+    <section class="pg" id="pg-evchain">
+      <div class="ph"><h2>证据链</h2>
+        <span class="sub" id="evpSub">选择一件诉讼案件，基于卷宗材料自动梳理「主张 → 证据 → 缺口」</span>
+        <span class="sp"></span>
+        <button class="btn" id="evpRefresh"><svg class="ic sm"><use href="#i-refresh"/></svg>刷新</button>
+      </div>
+      <div class="cols" style="grid-template-columns:260px minmax(0,1fr);align-items:start">
+        <div class="card" style="margin-bottom:0">
+          <!-- 空态是个**死路**的话，律师只会去翻别处的菜单。这里是他的主路径，
+               所以「新建案件」直接摆在卡片头上（``data-go`` 由 app.js 的全局委托处理）。 -->
+          <div class="ch"><svg class="ic sm"><use href="#i-folder"/></svg>诉讼案件
+            <button class="btn sm" id="evpCaseNew" data-go="pg-case" style="margin-left:auto"><svg class="ic sm"><use href="#i-plus"/></svg>新建案件</button>
+          </div>
+          <!-- 搜索框。几十件案件时它是这个列表能不能用的分水岭 ——
+               列表只有 260px 宽，靠肉眼在几十行里找案号是不现实的。
+               滤的是**已拉到的全量**（后端一次给 100 件），不再发请求。 -->
+          <input type="search" id="evpCaseQ" class="evp-q" autocomplete="off"
+                 placeholder="搜索案件名 / 案号…">
+          <div class="evp-cases" id="evpCaseList"><p class="evp-empty">读取案件…</p></div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="ch"><svg class="ic sm"><use href="#i-scale"/></svg><span id="evpTitle">证据链</span>
+            <button class="btn sm" id="evpMatUp" style="margin-left:auto" hidden><svg class="ic sm"><use href="#i-plus"/></svg>上传证据材料</button>
+            <button class="btn sm pr" id="evpGen" hidden><svg class="ic sm"><use href="#i-scale"/></svg>生成证据链</button>
+          </div>
+          <!-- 未选案件时的引导。用全局既有的 ``.tips`` 三步式，而不是一整段话：
+               这一步的用户不知道"接下来会看到什么"，三步比一句说明更能把人带进去。 -->
+          <ul class="tips" id="evpHint">
+            <li><span class="n">1</span><span>在左侧选一件<b>诉讼</b>案件（只有诉讼案件能生成证据链）</span></li>
+            <li><span class="n">2</span><span>上传证据材料，或在下方「微信上传证据」里<b>直接用微信发图片/文件</b></span></li>
+            <li><span class="n">3</span><span>点右上角<b>生成证据链</b>，得到每条主张的支撑证据与缺口</span></li>
+          </ul>
+          <div id="evpMatBox" class="mat-box" hidden></div>
+          <div id="evpChainBox" class="evchain-box" hidden></div>
+          <input type="file" id="evpFile" hidden multiple
+                 accept=".pdf,.doc,.docx,.txt,.md,.jpg,.jpeg,.png,.bmp">
+        </div>
+      </div>
+
+      <!-- 微信上传（2026-10-11）。这是"从微信传证据"的**唯一绑入口**：
+           lawyer 在这里取一次性绑定码 → 在微信里发 /绑定 <码> → 之后直接发图片/文件，
+           服务端按绑定的律师身份归档到选中的诉讼案件并生成证据链。
+           ⚠️ 绑定码是授权凭证（凭它可以以本人口径读写案件），所以只在点击后
+               临时显示，且离开本页不缓存。 -->
+      <div class="card" id="evpWx" style="margin-top:16px;margin-bottom:0">
+        <div class="ch"><svg class="ic sm"><use href="#i-chat"/></svg>微信上传证据
+          <span class="live" style="margin-left:auto" id="evpWxState"><i></i>读取中</span>
+        </div>
+        <p class="evp-empty" id="evpWxHint">在微信里把证据照片/文件发给机器人，即可归档到当前案件并自动生成证据链。先绑定一次即可长期使用。</p>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn sm pr" id="evpWxCode"><svg class="ic sm"><use href="#i-plus"/></svg>生成绑定码</button>
+          <!-- 生成后这里放的是**那串码本身**（不是 `/绑定 <码>`）。
+               原因见 app.js 的 issueEvpWxCode：机器人里 `/绑定` 被另一个功能占用，
+               照着我们的话去打只会收到那个功能报的"绑定码无效"。 -->
+          <span id="evpWxCodeBox" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"></span>
+        </div>
+        <!-- 微信端命令速查。律师在手机上办事，不该为了记命令切回网页 ——
+             这几条是他在微信里唯一需要知道的东西。 -->
+        <div class="evp-cmds">
+          <span class="k">微信里可用：</span>
+          <code>/案件</code><code>/选 1</code><code>/证据链</code><code>/状态</code><code>/律师解绑</code>
+          <span class="k">绑定后直接发图片或文件即为上传证据。</span>
+        </div>
+        <div id="evpWxList" class="mat-box" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- 案件管理 -->
+    <section class="pg" id="pg-case">
+      <div class="ph"><h2>案件管理</h2><span class="sub" id="caseSub">读取中…</span><span class="sp"></span><button class="btn pr" id="caseNew"><svg class="ic sm"><use href="#i-plus"/></svg>新建案件</button></div>
+      <div class="fchips" id="caseFilter">
+        <button class="fchip on" data-f="all">全部</button>
+        <button class="fchip" data-f="litigation">诉讼</button>
+        <button class="fchip" data-f="contract">非诉/合同</button>
+        <button class="fchip" data-f="consult">咨询</button>
+      </div>
+      <div class="tblw">
+        <table class="tbl">
+          <thead><tr id="caseHead"><th>案件</th><th>类型</th><th>阶段</th><th>状态</th><th>更新时间</th><th></th></tr></thead>
+          <tbody id="caseTbody">
+            <tr data-f="su hot"><td><div class="cn">某建工集团 诉 某置业 · 建设工程施工合同纠纷</div><div class="cc">(2026)沪0115民初4521号</div></td><td><span class="tag ac"><i></i>一审审理中</span></td><td class="ct2">09-17 09:30</td><td><div class="prog"><i style="width:65%"></i></div><div class="prog-t">65%</div></td><td><span class="tag wn"><i></i>明早开庭</span></td><td><button class="ibtn" data-toast="打开案件详情：某建工集团诉某置业案"><svg class="ic sm"><use href="#i-arrow"/></svg></button></td></tr>
+            <tr data-f="su hot"><td><div class="cn">陈某 诉 某网络科技 · 劳动争议</div><div class="cc">(2026)京0105劳初2331号</div></td><td><span class="tag ac"><i></i>劳动仲裁</span></td><td class="ct2">09-18 14:00</td><td><div class="prog"><i style="width:40%"></i></div><div class="prog-t">40%</div></td><td><span class="tag dg"><i></i>新证据待质证</span></td><td><button class="ibtn" data-toast="打开案件详情：陈某劳动争议案"><svg class="ic sm"><use href="#i-arrow"/></svg></button></td></tr>
+            <tr data-f="su hot"><td><div class="cn">某影视传媒 诉 某平台 · 著作权侵权</div><div class="cc">(2025)粤0305知初8872号</div></td><td><span class="tag ac"><i></i>二审已受理</span></td><td class="ct2">09-22 10:00</td><td><div class="prog"><i style="width:80%"></i></div><div class="prog-t">80%</div></td><td><span class="tag ps"><i></i>一审部分胜诉</span></td><td><button class="ibtn" data-toast="打开案件详情：著作权侵权案"><svg class="ic sm"><use href="#i-arrow"/></svg></button></td></tr>
+            <tr data-f="su"><td><div class="cn">王某 诉 赵某 · 民间借贷纠纷</div><div class="cc">(2026)浙0102民初1108号</div></td><td><span class="tag ne"><i></i>执行程序</span></td><td class="ct2">—</td><td><div class="prog"><i style="width:92%"></i></div><div class="prog-t">92%</div></td><td><span class="tag ps"><i></i>已回款 28.6 万</span></td><td><button class="ibtn" data-toast="打开案件详情：王某民间借贷案"><svg class="ic sm"><use href="#i-arrow"/></svg></button></td></tr>
+            <tr data-f="fei"><td><div class="cn">某私募基金管理人 · 专项法律尽职调查</div><div class="cc">非诉 · 2026-LD-018</div></td><td><span class="tag ne"><i></i>非诉专项</span></td><td class="ct2">—</td><td><div class="prog"><i style="width:55%"></i></div><div class="prog-t">55%</div></td><td><span class="tag ne"><i></i>正常</span></td><td><button class="ibtn" data-toast="打开项目详情：私募尽调"><svg class="ic sm"><use href="#i-arrow"/></svg></button></td></tr>
+          </tbody>
+        </table>
+        <div id="casePager" class="pager" style="display:none"></div>
+      </div>
+    </section>
+
+    <!-- 文书中心 -->
+    <section class="pg" id="pg-doc">
+      <!-- 副标题写死在这里：以前这里还有一个「重新扫描」按钮和由 JS 写的
+           「模板 35 份 · …」，那是模板管理界面的痕迹，跟落地页的定位冲突。
+           ⚠️ `id="docSub"` 不能删 —— app.js 里有多处 `$('#docSub')`，
+              删了会静默取到 null（接口失败时的报错就没地方写了）。 -->
+      <div class="ph"><h2>文书中心</h2><span class="sub" id="docSub">输入起草需求，模板自动匹配</span></div>
+
+      <!-- 落地页：输入起草需求 → 自动选模板 → 生成。
+           模板细节收进下方卡片，不再暴露「模板下拉框」——
+           用户要的是"输入东西直接出文书"，不是先挑模板再填。 -->
+      <div class="doc-hero">
+        <h3>输入起草需求，一键生成专业文书</h3>
+        <div class="doc-box">
+          <!-- 关联案件（2026-10-12）。选出案件后，起草会**顺带调度该案证据链**，
+               把「主张 → 支撑证据 → 缺口」带进填充，事实与理由就不是凭空的。
+               **留空也能起草**：链不足、没生成、案件是非诉都只提示，不挡生成。 -->
+          <div class="doc-case">
+            <svg class="ic sm"><use href="#i-folder"/></svg>
+            <select id="docCase" title="关联案件：把该案证据链带进本次起草（可留空）">
+              <option value="">不关联案件（只按下面的文字起草）</option>
+            </select>
+            <span id="docCaseHint"></span>
+          </div>
+          <textarea id="docText" placeholder="说说要写什么：什么案子、谁告谁、诉求是什么…（例如：原告张三，2024 年 6 月被公司以经营困难为由辞退，未提前通知也未支付补偿，要求支付经济补偿金）"></textarea>
+          <div class="doc-bar">
+            <button class="btn sm" id="docAttach" title="上传 PDF / Word / 图片，自动识别成正文"><svg class="ic sm"><use href="#i-clip"/></svg>相关材料</button>
+            <span id="docAttachInfo" style="font-size:12px;color:var(--tt)"></span>
+            <!-- ⚠️ 下发没有 ``.small`` / ``.muted`` / ``.spacer`` 这几个类（老 markup 里写
+                 了但它们**从未定义过**），所以状态行与右推都直接写在这里。 -->
+            <button class="send" id="docComposeBtn" title="生成文书（Ctrl+Enter）"><svg class="ic sm"><use href="#i-send"/></svg></button>
+          </div>
+        </div>
+        <input type="file" id="docFiles" multiple hidden
+               accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg">
+      </div>
+
+      <div class="fchips" id="docChips"></div>
+      <div class="dgrid" id="docGrid"></div>
+
+      <div class="card" id="docCard">
+        <div class="ch"><svg class="ic sm"><use href="#i-clock"/></svg>最近文书<button class="rt" id="docAll">全部草稿<svg class="ic xs"><use href="#i-arrow"/></svg></button></div>
+      </div>
+    </section>
+
+    <!-- 文书编辑页。**侧边栏刻意不给它导航项** —— 这页只能由"生成一份文书 /
+         打开一份草稿"进入，返回目标是进来时所在的那一页（记在 docEdit.from）。
+         版式照参考图：左上返回、中间标题、右上历史版本与下载；左列一条对话流
+         （继续说一句话就能让 AI 改栏目），右列工具栏 + 一张按模板尺寸渲染的白纸。 -->
+    <section class="pg" id="pg-docedit">
+      <div class="de-top">
+        <button class="btn sm" id="deBack" title="返回（会先自动保存）"><svg class="ic sm"><use href="#i-back"/></svg>返回</button>
+        <div class="de-ti">
+          <div class="tt" id="deTitle">文书</div>
+          <div class="mm" id="deMeta"></div>
+        </div>
+        <span class="sp"></span>
+        <span class="de-sv" id="deSaved"></span>
+        <button class="btn sm" id="deHist"><svg class="ic sm"><use href="#i-clock"/></svg>历史版本</button>
+        <button class="btn sm" id="deWord"><svg class="ic sm"><use href="#i-dl"/></svg>下载 Word</button>
+        <button class="btn sm" id="dePdf"><svg class="ic sm"><use href="#i-dl"/></svg>下载 PDF</button>
+      </div>
+
+      <div class="de-wrap">
+        <aside class="de-side">
+          <div class="de-sh"><svg class="ic sm"><use href="#i-chat"/></svg>文书起草</div>
+          <div class="chat de-chat" id="deChat"></div>
+          <div class="comp de-comp">
+            <textarea id="deChatText" rows="2" placeholder="继续说：把请求事项第 2 条改成 80000 元…（Ctrl+Enter 发送）"></textarea>
+            <button class="send" id="deChatSend" title="发送"><svg class="ic sm"><use href="#i-send"/></svg></button>
+          </div>
+        </aside>
+
+        <div class="de-main">
+          <!-- 工具栏。全部走 ``document.execCommand``：已被标废弃，但当前主流浏览器
+               仍完整支持，而本项目是零依赖零构建（引 Quill/Tiptap 要连带打包产物）。
+               这是有意识的取舍，迁移路径见 app.js 里 docEditTools 的注释。 -->
+          <div class="de-tools" id="deTools">
+            <button class="de-tb" data-cmd="undo" title="撤销"><svg class="ic sm"><use href="#i-undo"/></svg></button>
+            <button class="de-tb" data-cmd="redo" title="重做"><svg class="ic sm"><use href="#i-redo"/></svg></button>
+            <span class="de-sep"></span>
+            <select class="de-sel" id="deBlock" title="段落样式">
+              <option value="p">正文</option><option value="h1">标题一</option>
+              <option value="h2">标题二</option><option value="h3">标题三</option>
+              <option value="blockquote">引用</option>
+            </select>
+            <select class="de-sel" id="deFont" title="字体">
+              <option value="">默认字体</option><option value="宋体">宋体</option>
+              <option value="仿宋_GB2312">仿宋</option><option value="黑体">黑体</option>
+              <option value="楷体">楷体</option><option value="Times New Roman">Times</option>
+            </select>
+            <select class="de-sel" id="deSize" title="字号">
+              <option value="">默认字号</option><option value="10.5">五号 10.5</option>
+              <option value="12">小四 12</option><option value="14">四号 14</option>
+              <option value="16">三号 16</option><option value="18">小二 18</option>
+              <option value="22">二号 22</option>
+            </select>
+            <span class="de-sep"></span>
+            <button class="de-tb" data-cmd="bold" title="加粗（Ctrl+B）"><b class="bb">B</b></button>
+            <button class="de-tb" data-cmd="italic" title="斜体（Ctrl+I）"><i class="ii">I</i></button>
+            <button class="de-tb" data-cmd="underline" title="下划线（Ctrl+U）"><u class="uu">U</u></button>
+            <button class="de-tb" data-cmd="strikeThrough" title="删除线"><s class="ss">S</s></button>
+            <span class="de-sep"></span>
+            <input type="color" class="de-sw" id="deColor" title="字色" value="#c00000">
+            <input type="color" class="de-sw" id="deHilite" title="高亮" value="#ffe08a">
+            <span class="de-sep"></span>
+            <button class="de-tb" data-cmd="outdent" title="减少缩进"><svg class="ic sm"><use href="#i-outd"/></svg></button>
+            <button class="de-tb" data-cmd="indent" title="增加缩进"><svg class="ic sm"><use href="#i-ind"/></svg></button>
+            <span class="de-sep"></span>
+            <button class="de-tb" data-cmd="justifyLeft" title="左对齐"><svg class="ic sm"><use href="#i-al"/></svg></button>
+            <button class="de-tb" data-cmd="justifyCenter" title="居中"><svg class="ic sm"><use href="#i-ac"/></svg></button>
+            <button class="de-tb" data-cmd="justifyRight" title="右对齐"><svg class="ic sm"><use href="#i-ar"/></svg></button>
+            <span class="de-sep"></span>
+            <button class="de-tb" data-cmd="insertUnorderedList" title="项目符号"><svg class="ic sm"><use href="#i-ul"/></svg></button>
+            <button class="de-tb" data-cmd="insertOrderedList" title="编号列表"><svg class="ic sm"><use href="#i-ol"/></svg></button>
+          </div>
+
+          <div class="de-scroll">
+            <div class="de-paper" id="dePaper">
+              <div class="de-doc" id="deDoc" contenteditable="true" spellcheck="false"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 类案检索。两段式：落地页（英雄区 + 输入卡 + 场景卡）↔ 结果态（紧凑输入卡
+         + 命中列表），切换靠 ``#pg-search`` 上的 ``.run`` 类，与合同审查页同一套
+         做法（见样式表里 ``.cs-only-land`` 那几条）。
+         ⚠️ 输入框**只有一个**（``#sInput``）—— 落地态与结果态是同一个元素换样式。
+         拆成两个的话，"全局搜索回车跳过来该填哪一个"会变成一个说不清的问题。 -->
+    <section class="pg" id="pg-search">
+      <div class="cs-hero cs-only-land">
+        <h2>精准类案，快速触达</h2>
+        <div class="cs-sub">输入案情问题，智能生成观点总结，高质量匹配相似案例
+          <span class="pill"><svg class="ic xs"><use href="#i-zap"/></svg>1 分钟上手类案检索</span></div>
+      </div>
+
+      <div class="cs-comp" id="sComp">
+        <textarea id="sInput" rows="3" placeholder="根据您的需求检索相关案例～"
+                  spellcheck="false"></textarea>
+        <div class="cs-bar">
+          <!-- 「设定检索范围」**不是装饰**：案由/法院层级/条数选中后会折进检索式
+               （关键词补强），见 ``csScopeQuery()``。本项目没有语音识别，
+               所以图里那枚麦克风**不做** —— 摆一个按下去不动的按钮，
+               律师会以为是自己点错了。 -->
+          <button class="cs-scope" id="sScopeBtn" aria-expanded="false">
+            <svg class="ic sm"><use href="#i-bars"/></svg>设定检索范围</button>
+          <span class="sp"></span>
+          <button class="cs-ic" id="sAttach" title="上传 PDF / Word / 图片，从文件里提取案情描述">
+            <svg class="ic"><use href="#i-clip"/></svg></button>
+          <button class="send" id="sBtn" title="检索（Enter）"><svg class="ic"><use href="#i-send"/></svg></button>
+        </div>
+        <div class="cs-panel" id="sPanel" hidden>
+          <div class="cs-row"><span class="k">案由</span><span class="vs" id="sCause"></span></div>
+          <div class="cs-row"><span class="k">法院层级</span><span class="vs" id="sCourt"></span></div>
+          <div class="cs-row"><span class="k">返回条数</span><span class="vs" id="sTopk"></span></div>
+          <p class="cs-note">范围词会加进检索式做关键词补强，<b>不是硬过滤</b>：
+            命中的案例仍可能来自其它法院层级或案由。</p>
+        </div>
+        <div class="cs-picked" id="sPicked"></div>
+        <input type="file" id="sFile" hidden multiple
+               accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp">
+      </div>
+
+      <div class="cs-div cs-only-land"><span>您可以按照以下场景提问</span></div>
+      <div class="cs-cases cs-only-land" id="sScenes"></div>
+
+      <!-- 结果态。``#searchSub`` 这行写的是**本次发出去的检索式**（含范围词），
+           律师能一眼看出"它到底拿什么去搜的"。 -->
+      <div class="cs-rw">
+        <div class="cs-rhead">
+          <span class="sub" id="searchSub">语义匹配 · 裁判要旨抽取 · 相似度排序</span>
+          <span class="sp"></span>
+          <button class="btn sm" id="sBack"><svg class="ic sm"><use href="#i-back"/></svg>新检索</button>
+        </div>
+        <div id="searchHits"></div>
+        <div class="cs-foot" id="searchFoot"></div>
+      </div>
+    </section>
+
+    <!-- 日程任务 -->
+    <section class="pg" id="pg-cal">
+      <div class="ph"><h2>日程任务</h2><span class="sub" id="calSub">读取中…</span><span class="sp"></span><button class="btn" id="calRefresh"><svg class="ic sm"><use href="#i-clock"/></svg>刷新</button></div>
+      <div class="cal" id="calBox"></div>
+    </section>
+
+    <!-- 专家 -->
+    <section class="pg" id="pg-expert">
+      <div class="ph"><h2>专家</h2><span class="sub" id="exSub">按领域配置的 AI 专家，点击即接入 AI 助手对话</span><span class="sp"></span>
+        <div class="ex-tools">
+          <span class="ex-sbox"><svg class="ic sm"><use href="#i-search"/></svg><input id="exSearch" placeholder="搜索专家职称或描述"></span>
+          <select class="ex-sort" id="exSort" title="排序方式"><option value="default">综合</option><option value="hot">最热</option><option value="latest">最新</option></select>
+        </div>
+        <button class="btn" id="exNew"><svg class="ic sm"><use href="#i-plus"/></svg>新建专家</button>
+      </div>
+
+      <div class="card">
+        <div class="ch"><svg class="ic sm"><use href="#i-user"/></svg>全部专家<span class="sp"></span><span class="muted" id="exCount"></span></div>
+        <span class="fchips" style="margin-left:0;margin-bottom:14px" id="exFilter"></span>
+        <div class="ex-grid" id="exGrid"><div class="tm" style="padding:18px;color:var(--tt)">正在加载专家…</div></div>
+        <div class="pager" id="exPager" style="display:none"></div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><svg class="ic sm"><use href="#i-star"/></svg>我的专家<span class="sp"></span><button class="btn sm" id="exMineReload"><svg class="ic xs"><use href="#i-refresh"/></svg>刷新</button></div>
+        <div id="exMine"><div class="tm" style="padding:8px 0;color:var(--tt)">正在读取…</div></div>
+      </div>
+    </section>
+
+    <!-- 技能 -->
+    <section class="pg" id="pg-skill">
+      <div class="ph"><h2>技能</h2><span class="sub" id="skSub">管理已安装技能与技能市场，启用后自动接入对话与各功能页</span><span class="sp"></span>
+        <div class="sk-bar" id="skBar">
+          <span class="ex-sbox"><svg class="ic sm"><use href="#i-search"/></svg><input id="skSearch" placeholder="搜索技能"></span>
+          <span class="sk-count" id="skCount" title="已安装技能数量">我安装的 0</span>
+          <div class="sk-add-wrap">
+            <button class="btn" id="skAdd"><svg class="ic sm"><use href="#i-plus"/></svg>添加技能</button>
+            <div class="sk-menu" id="skMenu" hidden>
+              <button class="sk-menu-item" data-act="lookup">查找技能</button>
+              <button class="sk-menu-item" data-act="upload">上传技能</button>
+              <button class="sk-menu-item" data-act="create">创建技能</button>
+            </div>
+          </div>
+        </div>
+        <div class="sk-bar" id="skDetail" hidden>
+          <button class="btn sm" id="skBack"><svg class="ic sm"><use href="#i-back"/></svg>返回</button>
+          <span class="sub">技能详情视图 · 点“返回”回到技能列表</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><span id="skViewTitle">我安装的技能</span><span class="sp"></span><span class="muted" id="skHint"></span></div>
+        <div class="sk-cats" id="skCats" hidden></div>
+        <div class="ex-grid" id="skGrid"><div class="tm" style="padding:18px;color:var(--tt)">正在加载技能…</div></div>
+        <div class="pager" id="skPager" style="display:none"></div>
+      </div>
+
+      <input type="file" id="skFile" accept=".json,application/json" hidden>
+    </section>
+
+    <section class="pg" id="pg-monitor">
+      <div class="ph"><h2>监控中心</h2><span class="sub" id="monSub">Skill 自进化飞轮 · Agent 运行观测</span><span class="sp"></span>
+        <span class="sub" id="monUpdated"></span>
+        <select id="monAuto" title="自动刷新间隔（停在本页且标签页可见时才生效）">
+          <option value="0">自动刷新：关</option>
+          <option value="10" selected>自动刷新：10 秒</option>
+          <option value="15">自动刷新：15 秒</option>
+          <option value="30">自动刷新：30 秒</option>
+          <option value="60">自动刷新：60 秒</option>
+        </select>
+        <button class="btn sm" id="monRefresh"><svg class="ic sm"><use href="#i-refresh"/></svg>刷新</button>
+      </div>
+
+      <div class="mon-chips" id="monChips"></div>
+
+      <div class="stats" id="monKpis">
+        <div class="stat"><div class="lb">任务通过率</div><div class="vl" id="monKpiPass">—</div><div class="tr" id="monKpiPassSub">按任务状态分布</div></div>
+        <div class="stat"><div class="lb">任务失败率</div><div class="vl" id="monKpiFail">—</div><div class="tr" id="monKpiFailSub">失败 + 降级占比</div></div>
+        <div class="stat"><div class="lb">Skill 健康</div><div class="vl" id="monKpiHealth">—</div><div class="tr" id="monKpiHealthSub">健康 / 全部原子 Skill</div></div>
+        <div class="stat"><div class="lb">数据延迟</div><div class="vl" id="monKpiLag">—</div><div class="tr" id="monKpiLagSub">距最新观测</div></div>
+      </div>
+
+      <div class="mon-cols">
+        <div class="mon-flow">
+          <div class="mon-layer">
+            <div class="mon-rail"><span>观测</span></div>
+            <div class="card" id="monCardL0">
+              <div class="ch"><svg class="ic sm"><use href="#i-bars"/></svg>数据观测域<span class="rt" id="monL0Sub"></span></div>
+              <div id="monL0Body"><p class="mon-mm">读取中…</p></div>
+            </div>
+          </div>
+          <div class="mon-arrow">健康画像与漂移信号</div>
+
+          <div class="mon-layer">
+            <div class="mon-rail"><span>诊断</span></div>
+            <div class="card" id="monCardL1">
+              <div class="ch"><svg class="ic sm"><use href="#i-shield"/></svg>健康诊断域<span class="rt" id="monL1Sub"></span></div>
+              <div id="monL1Body"><p class="mon-mm">读取中…</p></div>
+            </div>
+          </div>
+          <div class="mon-arrow">候选集与执行清单</div>
+
+          <div class="mon-layer">
+            <div class="mon-rail"><span>决策</span></div>
+            <div class="card" id="monCardL2">
+              <div class="ch"><svg class="ic sm"><use href="#i-scale"/></svg>进化决策域<span class="rt" id="monL2Sub"></span></div>
+              <div id="monL2Body"><p class="mon-mm">读取中…</p></div>
+            </div>
+          </div>
+          <div class="mon-arrow">定向进化</div>
+
+          <div class="mon-layer">
+            <div class="mon-rail"><span>执行</span></div>
+            <div class="card" id="monCardL3">
+              <div class="ch"><svg class="ic sm"><use href="#i-edit"/></svg>进化执行域<span class="rt" id="monL3Sub"></span></div>
+              <div id="monL3Body"><p class="mon-mm">读取中…</p></div>
+            </div>
+          </div>
+          <div class="mon-arrow">差分守门</div>
+
+          <div class="mon-layer">
+            <div class="mon-rail"><span>验证</span></div>
+            <div class="card" id="monCardL4">
+              <div class="ch"><svg class="ic sm"><use href="#i-check"/></svg>验证守门域 · 对比实验<span class="rt" id="monL4Sub"></span></div>
+              <div id="monL4Body"><p class="mon-mm">读取中…</p></div>
+            </div>
+          </div>
+          <div class="mon-arrow">状态刷新与治理</div>
+
+          <div class="mon-layer">
+            <div class="mon-rail"><span>治理</span></div>
+            <div class="card" id="monCardL5">
+              <div class="ch"><svg class="ic sm"><use href="#i-bookmark"/></svg>状态与治理域<span class="rt" id="monL5Sub"></span></div>
+              <div id="monL5Body"><p class="mon-mm">读取中…</p></div>
+            </div>
+          </div>
+
+          <div class="mon-recycle" id="monRecycle">闭环回流：results.tsv + 新基线 + bandit 后验更新 → 回到观测，进入下一周期</div>
+        </div>
+
+        <div class="mon-side">
+          <div class="mon-grp">横切能力</div>
+          <div class="card" id="monCardSkillUse">
+            <div class="ch"><svg class="ic sm"><use href="#i-al"/></svg>Skill 使用</div>
+            <div id="monSkillUseBody"><p class="mon-mm">读取中…</p></div>
+          </div>
+          <div class="card" id="monCardUsage">
+            <div class="ch"><svg class="ic sm"><use href="#i-user"/></svg>对话使用记录<span class="rt" id="monUsageSub"></span></div>
+            <div id="monUsageBody"><p class="mon-mm">读取中…</p></div>
+          </div>
+          <div class="card">
+            <div class="ch"><svg class="ic sm"><use href="#i-clip"/></svg>工具调用 · MCP<span class="rt" id="monToolsSub"></span></div>
+            <div id="monToolsBody"><p class="mon-mm">读取中…</p></div>
+          </div>
+
+          <div class="mon-grp">北极星指标</div>
+          <div class="card">
+            <div class="ch"><svg class="ic sm"><use href="#i-zap"/></svg>北极星指标</div>
+            <div id="monNorthBody"><p class="mon-mm">读取中…</p></div>
+          </div>
+
+          <div class="mon-grp">人在环上 · 告警</div>
+          <div class="card" id="monCardHITL">
+            <div class="ch"><svg class="ic sm"><use href="#i-user"/></svg>人在环上干预台</div>
+            <div id="monHITLBody"><p class="mon-mm">读取中…</p></div>
+          </div>
+          <div class="card">
+            <div class="ch"><svg class="ic sm"><use href="#i-bell"/></svg>告警中心<span class="rt" id="monAlertsSub"></span></div>
+            <div id="monAlertsBody"><p class="mon-mm">读取中…</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   登录守卫
+   ------------------------------------------------------------
+   有令牌  → 向 /api/v1/auth/me 校验，有效放行，失效踢回登录页
+   无令牌  → 后端在线则踢回登录页；后端离线则放行（离线演示模式），
+             否则登录页允许的演示进入会被这里再踢回去，形成死循环
+   ?logout → 主动退出（清会话 + 跳登录页）
+   ============================================================ */
+(function(){
+var API='/api/v1',LOGIN='login.html';
+var html=document.documentElement;
+/* file:// 直接双击打开时，相对路径 /api/v1 会被解析成 file:///api/v1 而必然失败，
+   守卫就会误判成"后端离线"而放行。这里与登录页用同一套探测：
+   用户设置的 lp_api → 127.0.0.1:8000 → 127.0.0.1:8123，取第一个通的。 */
+var baseReady=(function(){
+  if(location.protocol!=='file:')return Promise.resolve('');
+  var cands=[];
+  try{var s=localStorage.getItem('lp_api');if(s)cands.push(s)}catch(e){}
+  cands.push('http://127.0.0.1:8000','http://127.0.0.1:8123');
+  function probe(i){
+    if(i>=cands.length)return Promise.resolve('');
+    return fetch(cands[i]+'/health',{cache:'no-store'}).then(function(r){
+      if(!r.ok)throw 0;return cands[i];
+    }).catch(function(){return probe(i+1)});
+  }
+  return probe(0).then(function(b){if(b)API=b+'/api/v1';return b});
+})();
+function api(p,o){return baseReady.then(function(){return fetch(API+p,o)})}
+function release(){html.classList.remove('guard')}
+function clearSession(){try{sessionStorage.removeItem('lp_token');sessionStorage.removeItem('lp_user')}catch(e){}}
+function token(){try{return sessionStorage.getItem('lp_token')||''}catch(e){return ''}}
+function kick(){clearSession();location.replace(LOGIN+'?next='+encodeURIComponent('index.html'))}
+if(/[?&]logout\b/.test(location.search)){kick();return}
+
+function mountLogout(user,demo){
+  var sprite=document.querySelector('svg[style*="display:none"]');
+  if(sprite&&!sprite.querySelector('#i-out')){
+    sprite.insertAdjacentHTML('beforeend','<symbol id="i-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4.5H18A1.5 1.5 0 0 1 19.5 6v12a1.5 1.5 0 0 1-1.5 1.5h-3.5"/><path d="M10 8.5 6.5 12 10 15.5"/><path d="M6.5 12H15"/></symbol>');
+  }
+  var tr=document.querySelector('.tr'),ava=tr&&tr.querySelector('.ava');
+  if(user){
+    var nm=user.full_name||user.username||'';
+    if(ava&&nm){ava.textContent=nm.slice(0,1);ava.setAttribute('data-toast',nm+(user.username&&user.username!==nm?'（'+user.username+'）':''))}
+  }
+  if(tr){
+    var b=document.createElement('button');
+    b.className='ibtn';b.id='logoutBtn';b.title=demo?'退出演示':'退出登录';
+    b.innerHTML='<svg class="ic sm"><use href="#i-out"/></svg>';
+    b.addEventListener('click',function(){
+      var t=token();
+      if(t){try{fetch(API+'/auth/logout',{method:'POST',headers:{'Authorization':'Bearer '+t}})}catch(e){}}
+      clearSession();location.replace(LOGIN);
+    });
+    tr.insertBefore(b,ava||null);
+  }
+}
+
+var t=token();
+if(t){
+  /* 已登录：校验令牌，失效即踢回 */
+  api('/auth/me',{headers:{'Authorization':'Bearer '+t}})
+    .then(function(r){
+      if(!r.ok){kick();return null}
+      return r.json().catch(function(){return {}});
+    })
+    .then(function(u){
+      if(!u)return;
+      release();mountLogout(u,false);
+    })
+    .catch(function(){ release();mountLogout(null,true); });
+}else{
+  /* 未登录：探后端。401/403 都算"在线"，只有网络层失败才算离线 */
+  api('/auth/me',{cache:'no-store'})
+    .then(function(){ kick(); })
+    .catch(function(){ release();mountLogout(null,true); });
+}
+})();
+</script>
+
+<script>
+(function(){
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var toastEl=$('#toast'),toastTimer=null;
+function toast(m){toastEl.textContent=m;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove('show')},2400)}
+document.addEventListener('click',function(e){var t=e.target.closest('[data-toast]');if(t)toast(t.getAttribute('data-toast'))});
+var themeBtn=$('#themeBtn'),saved=localStorage.getItem('lp-theme');
+if(saved)document.documentElement.setAttribute('data-theme',saved);
+themeBtn.addEventListener('click',function(){var cur=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',cur);localStorage.setItem('lp-theme',cur);toast(cur==='dark'?'已切换到深色模式':'已切换到浅色模式')});
+(function(){var h=new Date().getHours();var g=h<6?'夜深了':h<12?'早上好':h<14?'中午好':h<18?'下午好':'晚上好';$('#greet').textContent=g+'，陈律师';var d=new Date(),wk=['日','一','二','三','四','五','六'];$('#dateLine').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+wk[d.getDay()]+' · 今天有 2 项庭审安排、5 项待办'})();
+function go(id){$$('.pg').forEach(function(p){p.classList.toggle('on',p.id===id)});$$('.nav').forEach(function(n){n.classList.toggle('on',n.getAttribute('data-pg')===id)});window.scrollTo({top:0,behavior:'smooth'})}
+$$('.nav').forEach(function(n){n.addEventListener('click',function(){go(n.getAttribute('data-pg'))})});
+document.addEventListener('click',function(e){var g=e.target.closest('[data-go]');if(g)go(g.getAttribute('data-go'))});
+$$('#caseFilter .fchip').forEach(function(c){c.addEventListener('click',function(){$$('#caseFilter .fchip').forEach(function(x){x.classList.remove('on')});c.classList.add('on');var f=c.getAttribute('data-f');$$('#pg-case tbody tr').forEach(function(r){r.style.display=(f==='all'||r.getAttribute('data-f').indexOf(f)>-1)?'':'none'})})});
+$$('#pg-search .fchips .fchip').forEach(function(c){c.addEventListener('click',function(){c.classList.toggle('on')})});
+$$('#exFilter .fchip').forEach(function(c){c.addEventListener('click',function(){$$('#exFilter .fchip').forEach(function(x){x.classList.remove('on')});c.classList.add('on');var f=c.getAttribute('data-cat');$$('#exGrid .ex').forEach(function(r){r.style.display=(f==='all'||r.getAttribute('data-cat')===f)?'':'none'})})});
+/* 会话与检索由 app.js 接后端真实接口；此处不再内置示例问答。 */
+document.addEventListener('keydown',function(e){if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#gs').focus()}});
+})();
+</script>
+<!-- 数据层：把上面这份界面接到后端真实接口（会话流式、案件、文书、类案、任务） -->
+<script src="vendor/echarts.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

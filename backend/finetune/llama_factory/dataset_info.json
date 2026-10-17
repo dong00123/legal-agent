@@ -1,0 +1,12 @@
+{
+  "legal_sft": {
+    "file_name": "sft.jsonl",
+    "formatting": "alpaca",
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output",
+      "system": "system"
+    }
+  }
+}

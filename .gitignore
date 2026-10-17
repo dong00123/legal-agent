@@ -1,0 +1,68 @@
+# ============================================================ 凭证（最重要）
+# 所有层级都忽略：根目录 .env 是本机开发配置，deploy/.env 是**生产配置**。
+# 后者里有真实的 SECRET_KEY 与初始管理员口令，一旦进版本库，
+# 就算事后删掉，历史记录里的那份也还能被用来伪造 JWT —— 只能作废重签。
+# 不含斜杠的 pattern 匹配**任意层级**的同名文件，所以这里不用写 `**/`。
+# 否定写在后面才生效：先把所有 .env.* 排除，再把 .example 加回来。
+.env
+.env.*
+!.env.example
+
+# 桌面端打包产物
+build/
+dist/
+*.spec
+!client/legal_agent.spec
+
+# 运行时数据（语料 PDF、模型权重、SQLite、导出文书）
+# 只忽略**仓库根目录**的 data/（本机数据）。同样不能写成 `data/`：那会连
+# backend/app/data/ 下的种子数据一起误伤 —— 少了它们，克隆下来一启动
+# 专家/技能列表就是空的（见 app/services/expert_registry.py、skill_registry.py）。
+/data/
+!/backend/app/data/
+!/backend/app/data/experts_seed.json
+!/backend/app/data/skills_seed.json
+# 但该目录下的用户态文件（自建 / 收藏状态）属运行时数据，不入库
+/backend/app/data/skill_user_state.json
+# corpus/ 只忽略**仓库根目录**下的原始语料。
+# 不能写成 `corpus/`（不带前导斜杠）：那样会匹配任意层级，
+# 把 backend/corpus/（case_pdf / guidelines / ingest / templates 源码包）一起误伤。
+/corpus/
+!/backend/corpus/
+!/backend/corpus/**
+*.db
+*.sqlite3
+
+# 向量索引缓存
+/data/index/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# 前端
+node_modules/
+
+# 日志与临时调试产物
+# 注意：这里**不要**写 `*.txt` —— requirements.lock.txt 必须入库。
+logs/
+*.log
+*.err.log
+err.txt
+out.txt
+temp_probe.txt
+
+# 本机一次性脚本（硬编码本机口令 / 仅本地运行，不进公开仓库）
+/migrate_sqlite_to_mysql.py
+/probe_e2e.py
+
+# 编辑器与系统
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

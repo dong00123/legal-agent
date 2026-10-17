@@ -1,0 +1,61 @@
+# Qwen2.5-7B-Instruct + LoRA 微调（法律咨询 / 合同审查）
+#
+# 用法（LLaMA-Factory 仓库根目录）：
+#   cp <项目>/data/finetune/sft.jsonl  data/sft.jsonl
+#   cp <项目>/backend/finetune/llama_factory/dataset_info.json  data/dataset_info.json
+#   llamafactory-cli train backend/finetune/llama_factory/qwen2p5_7b_lora_sft.yaml
+#
+# 字段口径来自 LLaMA-Factory 的官方 schema：
+#   dataset_info.json 的 columns 映射是 prompt=instruction / query=input /
+#   response=output / system=system（alpaca 格式）。不要把字段名写成
+#   "instruction"/"input" —— 那是**数据文件**里的键名，不是这里的键名。
+
+### 模型
+model_name_or_path: Qwen/Qwen2.5-7B-Instruct
+
+### 方法
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 16
+lora_alpha: 32
+lora_dropout: 0.05
+# 只挂注意力投影层。全挂（lora_target: all）在 7B 上显存能吃下，
+# 但**法律领域样本少**，挂太多层更容易把通用能力学坏；
+# 只调 q/v 是"少改动、够用"的选择。
+lora_target: q_proj,v_proj
+
+### 数据
+dataset: legal_sft
+template: qwen
+# 报告较长（含引用清单），截太短会把「引用依据」整段切掉 ——
+# 那等于在教模型"可以不给依据"。4096 是 A100 40G 上稳妥的值。
+cutoff_len: 4096
+max_samples: 100000
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+### 输出
+output_dir: saves/qwen2p5-7b/lora/legal
+logging_steps: 5
+save_steps: 50
+plot_loss: true
+overwrite_output_dir: true
+
+### 训练
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-4
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true
+# 样本量小（几十到几百条）时 epochs=3 是为了让它看熟；
+# 样本量上千后要降到 2，否则过拟合会表现为"回答越来越像训练集里的那几份"。
+
+### 评估
+val_size: 0.1
+per_device_eval_batch_size: 1
+eval_strategy: steps
+eval_steps: 50
+load_best_model_at_end: true

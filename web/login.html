@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>登录 · 衡律工作台</title>
+<style>
+:root{--sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;--mono:ui-monospace,Menlo,Consolas,monospace;--tp:#1a1a1a;--ts:#4d4d4d;--tt:#8a8a8a;--tq:#b3b3b3;--bg:#fff;--mu:#f5f5f5;--br:#e6e6e6;--dg:#dc3b3b;--ps:#1d9e57;--ac:#2f6bff;--r8:8px;--r10:10px;--r12:12px}
+[data-theme="dark"]{--tp:#f2f2f2;--ts:#c4c4c4;--tt:#8f8f8f;--tq:#666;--bg:#171717;--mu:#222;--br:#333;--dg:#f25555;--ps:#3ecf7a;--ac:#5b8cff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--tp);font-size:14px;line-height:1.55;background:var(--bg);-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+/* .sm / .xs 一律挂 .ic 之下，避免裸类名误伤其它元素（如 class="btn sm" 的按钮） */
+.ic{width:18px;height:18px;flex:none}.ic.sm{width:15px;height:15px}.ic.xs{width:12px;height:12px}
+.wrap{display:flex;min-height:100vh}
+/* 左侧品牌区 */
+.left{flex:1.25;background:var(--tp);color:var(--bg);padding:48px 56px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.left::after{content:"";position:absolute;right:-120px;bottom:-120px;width:420px;height:420px;border:1px solid color-mix(in srgb,currentColor 14%,transparent);border-radius:50%}
+.left::before{content:"";position:absolute;right:-40px;bottom:-40px;width:260px;height:260px;border:1px solid color-mix(in srgb,currentColor 10%,transparent);border-radius:50%}
+.brand{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600;position:relative;z-index:1}
+.brand .lg{width:34px;height:34px;border-radius:9px;background:var(--bg);color:var(--tp);display:flex;align-items:center;justify-content:center}
+.brand .ver{font-size:11px;font-weight:400;opacity:.55;border:1px solid color-mix(in srgb,currentColor 30%,transparent);border-radius:6px;padding:1px 6px}
+.mid{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1;padding-right:40px}
+.mid h1{font-size:34px;font-weight:600;line-height:1.3;letter-spacing:.5px}
+.mid .sub{margin-top:14px;font-size:15px;opacity:.6;max-width:420px}
+.feats{margin-top:44px;display:flex;flex-direction:column;gap:18px}
+.feat{display:flex;gap:14px;align-items:flex-start}
+.feat .ic{width:36px;height:36px;flex:none;border:1px solid color-mix(in srgb,currentColor 22%,transparent);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.feat .t{font-size:14px;font-weight:600}
+.feat .d{font-size:12.5px;opacity:.55;margin-top:2px}
+.bot{position:relative;z-index:1;font-size:12px;opacity:.4;display:flex;gap:16px;flex-wrap:wrap}
+/* 右侧表单区 */
+.right{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 24px;position:relative}
+.themeBtn{position:absolute;top:20px;right:20px;width:34px;height:34px;border:1px solid var(--br);border-radius:8px;background:var(--bg);color:var(--ts);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+.themeBtn:hover{background:var(--mu);color:var(--tp)}
+.form{width:min(384px,100%);animation:up .4s cubic-bezier(.2,.7,.3,1)}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.form h2{font-size:24px;font-weight:600}
+.form .fs{font-size:13.5px;color:var(--tt);margin-top:6px}
+/* 后端未启动时的提示条 */
+.net{margin-top:12px;font-size:12px;line-height:1.5;border:1px dashed var(--br);border-radius:8px;padding:7px 10px;color:var(--tt);display:none}
+.net.show{display:block}
+.net.off{border-color:color-mix(in srgb,var(--wn,#e0a63e) 45%,transparent);color:var(--ts)}
+.tabs{display:flex;gap:4px;margin:26px 0 20px;background:var(--mu);border:1px solid var(--br);border-radius:10px;padding:4px}
+.tab{flex:1;border:0;background:none;border-radius:8px;padding:8px 2px;font-size:13px;color:var(--ts);cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--bg);color:var(--tp);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px}
+.inp{display:flex;align-items:center;gap:9px;border:1px solid var(--br);border-radius:10px;padding:0 12px;background:var(--bg);transition:border-color .15s}
+.inp:focus-within{border-color:var(--tp)}
+.inp .ic{color:var(--tq)}
+.inp input{flex:1;border:0;outline:0;background:none;height:44px;font-size:14px;color:var(--tp);min-width:0}
+.inp input::placeholder{color:var(--tq)}
+.eye{border:0;background:none;color:var(--tq);cursor:pointer;padding:4px;display:flex}
+.eye:hover{color:var(--tp)}
+.inp.err{border-color:var(--dg);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.codebtn{flex:none;border:0;background:none;font-size:12.5px;color:var(--tp);font-weight:600;cursor:pointer;padding:6px 4px;white-space:nowrap}
+.codebtn:disabled{color:var(--tq);font-weight:400;cursor:default}
+.hint{font-size:11.5px;color:var(--dg);margin-top:5px;display:none}
+.hint.show{display:block}
+.opts{display:flex;align-items:center;justify-content:space-between;margin:2px 0 18px;font-size:12.5px;gap:8px}
+.rmb{display:flex;align-items:center;gap:7px;color:var(--ts);cursor:pointer;user-select:none;line-height:1.4}
+.rmb input{display:none}
+.rmb .bx{width:15px;height:15px;flex:none;border:1.5px solid var(--tq);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--bg);transition:all .15s}
+.rmb .bx svg{width:9px;height:9px;opacity:0}
+.rmb input:checked+.bx{background:var(--tp);border-color:var(--tp)}
+.rmb input:checked+.bx svg{opacity:1}
+.rmb a{color:var(--tp);text-decoration:none;border-bottom:1px solid var(--br)}
+.fgt{border:0;background:none;color:var(--ts);cursor:pointer;font-size:12.5px;white-space:nowrap}
+.fgt:hover{color:var(--tp)}
+.submit{width:100%;height:46px;border:0;border-radius:10px;background:var(--tp);color:var(--bg);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;white-space:nowrap}
+.submit:hover{opacity:.88}
+.submit:disabled{opacity:.5;cursor:default}
+.spin{width:16px;height:16px;border:2px solid color-mix(in srgb,currentColor 30%,transparent);border-top-color:currentColor;border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.div{display:flex;align-items:center;gap:12px;margin:22px 0;color:var(--tq);font-size:12px}
+.div::before,.div::after{content:"";flex:1;height:1px;background:var(--br)}
+.oauth{display:flex;justify-content:center;gap:14px}
+.ob{width:40px;height:40px;border:1px solid var(--br);border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--ts);cursor:pointer}
+.ob:hover{background:var(--mu);color:var(--tp)}
+.reg{text-align:center;margin-top:24px;font-size:12.5px;color:var(--tt)}
+.reg a{color:var(--tp);font-weight:600;text-decoration:none;border-bottom:1px solid var(--br);cursor:pointer}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(16px);background:var(--tp);color:var(--bg);font-size:13px;padding:9px 18px;border-radius:10px;opacity:0;transition:.25s;z-index:99;pointer-events:none;max-width:80vw}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@media(max-width:860px){.left{display:none}.right{flex:1}}
+/* hidden 属性必须真的能隐藏：三个登录表单靠 $('#fPwd').hidden = … 切换，
+   #fSms / #fReg 初始就带 hidden 属性。浏览器 UA 样式表那条
+   [hidden]{display:none} 优先级极低，将来只要某个 form 或它的祖先被写上
+   display，三个表单就会同时显示，而且不报任何错。这里显式兜住，别删。 */
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- 品牌区 -->
+  <div class="left">
+    <div class="brand"><span class="lg"><svg class="ic"><use href="#i-scale"/></svg></span>衡律工作台<span class="ver">AI 2.4</span></div>
+    <div class="mid">
+      <h1>让 AI 成为<br>律师的第二位合伙人</h1>
+      <p class="sub">案件管理、类案检索、文书起草与日程安排，在同一工作台完成。数据加密存储，符合律师执业保密要求。</p>
+      <div class="feats">
+        <div class="feat"><span class="ic"><svg class="ic"><use href="#i-search"/></svg></span><span><div class="t">类案智能检索</div><div class="d">按案情语义匹配相似判例，自动抽取裁判要旨</div></span></div>
+        <div class="feat"><span class="ic"><svg class="ic"><use href="#i-doc"/></svg></span><span><div class="t">文书 AI 起草</div><div class="d">起诉状、答辩状、代理词一键生成，引用实时校验</div></span></div>
+        <div class="feat"><span class="ic"><svg class="ic"><use href="#i-cal"/></svg></span><span><div class="t">庭审日程中枢</div><div class="d">开庭、举证期限、上诉期自动提醒，逾期预警</div></span></div>
+      </div>
+    </div>
+    <div class="bot"><span>© 2026 衡律科技</span><span>沪ICP备XXXXXXXX号</span><span>沪公网安备 XXXXXXXXXXXXX号</span></div>
+  </div>
+
+  <!-- 表单区 -->
+  <div class="right">
+    <button class="themeBtn" id="themeBtn" title="切换主题"><svg class="ic sm"><use href="#i-moon"/></svg></button>
+    <div class="form">
+      <h2 id="title">欢迎回来</h2>
+      <p class="fs" id="subTitle">登录以继续使用衡律工作台</p>
+      <div class="net" id="netTip"></div>
+      <div class="tabs">
+        <button class="tab on" data-mode="pwd">密码登录</button>
+        <button class="tab" data-mode="sms">短信登录</button>
+        <button class="tab" data-mode="reg">注册账号</button>
+      </div>
+
+      <!-- 密码登录 -->
+      <form id="fPwd" novalidate>
+        <div class="fld">
+          <label>用户名 / 手机号 / 邮箱</label>
+          <div class="inp"><svg class="ic sm"><use href="#i-user"/></svg><input name="id" placeholder="请输入用户名" autocomplete="username"></div>
+          <div class="hint">请输入用户名</div>
+        </div>
+        <div class="fld">
+          <label>密码</label>
+          <div class="inp"><svg class="ic sm"><use href="#i-lock"/></svg><input name="pwd" type="password" placeholder="请输入密码" autocomplete="current-password"><button type="button" class="eye" data-eye><svg class="ic sm"><use href="#i-eye"/></svg></button></div>
+          <div class="hint">密码至少 6 位</div>
+        </div>
+        <div class="opts">
+          <label class="rmb"><input type="checkbox" id="rmb" checked><span class="bx"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></span>记住账号</label>
+          <button type="button" class="fgt" data-toast="请联系律所系统管理员重置口令">忘记密码？</button>
+        </div>
+        <button class="submit" type="submit">登 录</button>
+      </form>
+
+      <!-- 短信登录 -->
+      <form id="fSms" novalidate hidden>
+        <div class="fld">
+          <label>手机号</label>
+          <div class="inp"><svg class="ic sm"><use href="#i-phone"/></svg><input name="tel" placeholder="请输入 11 位手机号" inputmode="numeric" maxlength="11"></div>
+          <div class="hint">请输入有效的 11 位手机号</div>
+        </div>
+        <div class="fld">
+          <label>验证码</label>
+          <div class="inp"><svg class="ic sm"><use href="#i-shield"/></svg><input name="code" placeholder="6 位验证码" inputmode="numeric" maxlength="6"><button type="button" class="codebtn" id="codeBtn">获取验证码</button></div>
+          <div class="hint">请输入 6 位数字验证码</div>
+        </div>
+        <div class="opts"><span></span></div>
+        <button class="submit" type="submit">登 录</button>
+      </form>
+
+      <!-- 注册账号 -->
+      <form id="fReg" novalidate hidden>
+        <div class="fld">
+          <label>姓名</label>
+          <div class="inp"><svg class="ic sm"><use href="#i-user"/></svg><input name="name" placeholder="真实姓名（将用于电子签名）" maxlength="20"></div>
+          <div class="hint">请输入姓名</div>
+        </div>
+        <div class="fld">
+          <label>手机号</label>
+          <div class="inp"><svg class="ic sm"><use href="#i-phone"/></svg><input name="tel" placeholder="请输入 11 位手机号" inputmode="numeric" maxlength="11"></div>
+          <div class="hint">请输入有效的 11 位手机号</div>
+        </div>
+        <div class="fld">
+          <label>短信验证码</label>
+          <div class="inp"><svg class="ic sm"><use href="#i-shield"/></svg><input name="code" placeholder="6 位验证码" inputmode="numeric" maxlength="6"><button type="button" class="codebtn" id="regCodeBtn">获取验证码</button></div>
+          <div class="hint">请输入 6 位数字验证码</div>
+        </div>
+        <div class="fld">
+          <label>设置密码</label>
+          <div class="inp"><svg class="ic sm"><use href="#i-lock"/></svg><input name="pwd" type="password" placeholder="8–20 位，建议字母与数字组合" autocomplete="new-password"><button type="button" class="eye" data-eye><svg class="ic sm"><use href="#i-eye"/></svg></button></div>
+          <div class="hint">密码需为 8–20 位（后端要求至少 8 位）</div>
+        </div>
+        <div class="fld">
+          <label>确认密码</label>
+          <div class="inp"><svg class="ic sm"><use href="#i-lock"/></svg><input name="pwd2" type="password" placeholder="再次输入密码" autocomplete="new-password"><button type="button" class="eye" data-eye><svg class="ic sm"><use href="#i-eye"/></svg></button></div>
+          <div class="hint">两次输入的密码不一致</div>
+        </div>
+        <div class="opts" style="margin-top:0">
+          <label class="rmb"><input type="checkbox" id="agree"><span class="bx"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span>我已阅读并同意<a data-toast="《用户协议》">《用户协议》</a>与<a data-toast="《隐私政策》">《隐私政策》</a></span></label>
+        </div>
+        <button class="submit" type="submit">注册并登录</button>
+      </form>
+
+      <div id="oauthWrap">
+        <div class="div">其他登录方式</div>
+        <div class="oauth">
+          <button class="ob" data-toast="正在跳转企业微信授权…" title="企业微信"><svg class="ic"><use href="#i-wechat"/></svg></button>
+          <button class="ob" data-toast="正在跳转律协统一认证…" title="律协认证"><svg class="ic"><use href="#i-court"/></svg></button>
+        </div>
+      </div>
+      <p class="reg" id="regLink">还没有账号？<a id="goReg">注册账号</a></p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v15"/><path d="M5 7h14"/><path d="M5 7l-2.6 6a3.1 3.1 0 0 0 5.2 0z"/><path d="M19 7l-2.6 6a3.1 3.1 0 0 0 5.2 0z"/><path d="M8.5 20.5h7"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M15.8 15.8 20.5 20.5"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5V8H17.5"/><path d="M9.5 12.5h5M9.5 15.8h5"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15.5" rx="2.5"/><path d="M4 10h16M8.5 3v4M15.5 3v4"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.3-3.2 3.8-4.8 7-4.8s5.7 1.6 7 4.8"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="10.5" width="13" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></symbol>
+<symbol id="i-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 16"/><path d="M9.9 5.9A9.4 9.4 0 0 1 12 5.7c6 0 9.5 6.3 9.5 6.3a17 17 0 0 1-3 3.7M6 8.3A16 16 0 0 0 2.5 12S6 18.3 12 18.3c1 0 2-.2 2.9-.5"/><path d="M9.5 9.8a2.8 2.8 0 0 0 4 4"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 19 6v6c0 4.4-2.9 7.3-7 8.5-4.1-1.2-7-4.1-7-8.5V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-wechat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 4C4.9 4 2 6.5 2 9.6c0 1.8 1 3.4 2.4 4.4l-.6 2 2.2-1.1c.8.2 1.7.3 2.5.3"/><path d="M15.5 8.5c-3.3 0-6 2.2-6 5s2.7 5 6 5c.7 0 1.4-.1 2-.3l1.9 1-.5-1.8c1.2-.9 2.1-2.2 2.1-3.9 0-2.8-2.7-5-5.5-5z"/><circle cx="6.5" cy="8" r=".9" fill="currentColor" stroke="none"/><circle cx="10.5" cy="8" r=".9" fill="currentColor" stroke="none"/><circle cx="13.5" cy="12.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="12.5" r=".9" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-court" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 20.5h15"/><path d="M5 20.5V9.5L12 5l7 4.5v11"/><path d="M9.5 20.5v-6h5v6"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></symbol>
+</svg>
+
+<script>
+(function(){
+/* ============================================================
+   衡律工作台 · 登录页
+   ------------------------------------------------------------
+   后端对接约定（backend/app/api/v1/auth.py）：
+     POST /api/v1/auth/login   {username, password}
+     → {access_token, token_type, expires_in, user}
+   令牌只放 sessionStorage（关标签页即失效，不落盘）；
+   「记住账号」只记用户名，不记令牌 —— 详见下方 remember 处理。
+   ============================================================ */
+var API='/api/v1';
+/* 后端基址解析：
+   - 经 /ui/ 访问（同源）→ 直接用相对路径 /api/v1
+   - 双击文件打开（file://）→ 相对路径会被解析成 file:///api/v1，必然失败。
+     此时按 [用户设置的 lp_api] → 8000 → 8123 逐个探测 /health，选第一个通的。
+   baseReady 是一个 Promise，所有接口调用都 await 它，避免探测未完就发请求。 */
+var baseReady=(function(){
+  if(location.protocol!=='file:')return Promise.resolve('');
+  var cands=[];
+  try{var saved=localStorage.getItem('lp_api');if(saved)cands.push(saved)}catch(e){}
+  cands.push('http://127.0.0.1:8000','http://127.0.0.1:8123');
+  function probe(i){
+    if(i>=cands.length)return Promise.resolve('');
+    return fetch(cands[i]+'/health',{cache:'no-store'}).then(function(r){
+      if(!r.ok)throw 0;return cands[i];
+    }).catch(function(){return probe(i+1)});
+  }
+  return probe(0).then(function(b){if(b)API=b+'/api/v1';return b});
+})();
+function api(path,opt){
+  return baseReady.then(function(){ return fetch(API+path,opt); });
+}
+/* 支持 ?next=index.html（工作台守卫踢回来时带上的回跳地址）。
+   只认站内 index.html，避免 ?next=http://evil.com 这类开放重定向。 */
+var _nx=(location.search.match(/[?&]next=([^&]*)/)||[])[1];
+try{_nx=_nx?decodeURIComponent(_nx):''}catch(e){_nx=''}
+var HOME=/^(?:\/ui\/)?index\.html$/.test(_nx)?_nx:'index.html';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+/* Toast */
+var toastEl=$('#toast'),timer=null;
+function toast(m){toastEl.textContent=m;toastEl.classList.add('show');clearTimeout(timer);timer=setTimeout(function(){toastEl.classList.remove('show')},2400)}
+document.addEventListener('click',function(e){var t=e.target.closest('[data-toast]');if(t){e.preventDefault();toast(t.getAttribute('data-toast'))}});
+
+/* 主题（与工作台共用 lp-theme） */
+var saved=localStorage.getItem('lp-theme');if(saved)document.documentElement.setAttribute('data-theme',saved);
+$('#themeBtn').addEventListener('click',function(){var cur=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',cur);localStorage.setItem('lp-theme',cur);toast(cur==='dark'?'已切换到深色模式':'已切换到浅色模式')});
+
+/* 后端连通性探测：探测结果决定「离线时是否放行演示模式」 */
+var online=false;
+var netTip=$('#netTip');
+baseReady.then(function(base){
+  return fetch((base||'')+'/health',{cache:'no-store'});
+}).then(function(r){ online=r.ok; return r.ok })
+  .catch(function(){ online=false })
+  .then(function(ok){
+    if(!ok){ netTip.textContent='未检测到后端服务：可先在设置中确认后端地址，或启动后端后再登录（当前将以演示模式进入工作台）。';
+             netTip.classList.add('show','off'); }
+  });
+
+/* 模式切换 */
+function setMode(m){
+  $$('.tab').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-mode')===m)});
+  $('#fPwd').hidden=m!=='pwd';$('#fSms').hidden=m!=='sms';$('#fReg').hidden=m!=='reg';
+  var reg=m==='reg';
+  $('#title').textContent=reg?'创建账号':'欢迎回来';
+  $('#subTitle').textContent=reg?'注册后即可使用衡律工作台全部功能':'登录以继续使用衡律工作台';
+  $('#oauthWrap').style.display=reg?'none':'';
+  $('#regLink').innerHTML=reg?'已有账号？<a id="goPwd">直接登录</a>':'还没有账号？<a id="goReg">注册账号</a>';
+  bindRegLinks();
+}
+function bindRegLinks(){
+  var gr=$('#goReg'),gp=$('#goPwd');
+  if(gr)gr.addEventListener('click',function(){setMode('reg')});
+  if(gp)gp.addEventListener('click',function(){setMode('pwd')});
+}
+$$('.tab').forEach(function(t){t.addEventListener('click',function(){setMode(t.getAttribute('data-mode'))})});
+bindRegLinks();
+
+/* 密码可见切换 */
+$$('[data-eye]').forEach(function(b){b.addEventListener('click',function(){var i=b.parentElement.querySelector('input');var show=i.type==='password';i.type=show?'text':'password';b.innerHTML='<svg class="ic sm"><use href="#i-'+(show?'eyeoff':'eye')+'"/></svg>'})});
+
+/* 验证码倒计时（登录/注册独立） */
+function bindCode(btnSel,formSel){
+  var btn=$(btnSel);
+  btn.addEventListener('click',function(){
+    var tel=$(formSel+' [name=tel]').value.trim();
+    if(!/^1[3-9]\d{9}$/.test(tel)){err($(formSel+' [name=tel]'),'请先输入有效的 11 位手机号');return}
+    if(btn.disabled)return;
+    var cd=60;btn.disabled=true;
+    toast('短信网关尚未接入，当前为演示倒计时');
+    btn.textContent='60 秒后重发';
+    var t=setInterval(function(){cd--;btn.textContent=cd>0?cd+' 秒后重发':'获取验证码';if(cd<=0){clearInterval(t);btn.disabled=false}},1000);
+  });
+}
+bindCode('#codeBtn','#fSms');
+bindCode('#regCodeBtn','#fReg');
+
+/* 校验 */
+/* 校验。加 null 保护：同意协议的 checkbox 不在 .inp 容器内，
+   不给它做 closest('.inp') 判断会直接抛 TypeError。 */
+function err(input,msg){var w=input.closest('.inp');if(!w)return;w.classList.remove('err');void w.offsetWidth;w.classList.add('err');var h=w.parentElement.querySelector('.hint');if(msg)h.textContent=msg;h.classList.add('show')}
+function ok(input){var w=input.closest('.inp');if(!w)return;w.classList.remove('err');w.parentElement.querySelector('.hint').classList.remove('show')}
+$$('input').forEach(function(i){i.addEventListener('input',function(){ok(i)})});
+function vTel(f){if(!/^1[3-9]\d{9}$/.test(f.tel.value.trim())){err(f.tel,'请输入有效的 11 位手机号');return false}return true}
+function vCode(f){if(!/^\d{6}$/.test(f.code.value.trim())){err(f.code,'请输入 6 位数字验证码');return false}return true}
+
+/* 进入工作台 */
+function enter(msg){
+  toast(msg);
+  setTimeout(function(){ location.href=HOME; },600);
+}
+/* 登录成功后保存会话：令牌进 sessionStorage，用户名可按「记住账号」落 localStorage */
+function saveSession(data,username){
+  try{
+    sessionStorage.setItem('lp_token',data.access_token);
+    sessionStorage.setItem('lp_user',JSON.stringify(data.user||{}));
+    if($('#rmb').checked)localStorage.setItem('lp_last_id',username);
+    else localStorage.removeItem('lp_last_id');
+  }catch(e){}
+}
+/* 记住的账号回填 */
+try{var lastId=localStorage.getItem('lp_last_id');if(lastId)$('#fPwd [name=id]').value=lastId;}catch(e){}
+
+/* 统一提交按钮状态 */
+function busy(btn,on){
+  if(on){ btn._old=btn.textContent; btn.disabled=true;
+          btn.innerHTML='<span class="spin"></span>正在'+(btn._old.indexOf('注册')>-1?'注册':'登录')+'…'; }
+  else { btn.disabled=false; btn.textContent=btn._old||'登 录'; }
+}
+
+/* 真实登录：连不上后端时退回演示模式，保证页面不是死路 */
+function doLogin(username,password,btn){
+  busy(btn,true);
+  api('/auth/login',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({username:username,password:password})
+  }).then(function(r){
+    return r.json().catch(function(){return {}}).then(function(j){return {status:r.status,body:j}});
+  }).then(function(res){
+    busy(btn,false);
+    if(res.status===200&&res.body.access_token){
+      saveSession(res.body,username);
+      enter('登录成功，正在进入工作台…');
+      return;
+    }
+    var msg=(res.body&&res.body.detail)||'账号或口令不正确';
+    if(res.status===403)msg=(res.body&&res.body.detail)||'账号已停用，请联系管理员';
+    err($('#fPwd [name=pwd]'),msg);
+    toast(msg);
+  }).catch(function(){
+    /* 网络层失败：后端没起来（或跨域配置异常），走演示模式 */
+    busy(btn,false);
+    online=false;
+    netTip.textContent='后端服务不可达，已进入演示模式（数据为本地示例）。';
+    netTip.classList.add('show','off');
+    enter('后端未启动，正在以演示模式进入工作台…');
+  });
+}
+
+$('#fPwd').addEventListener('submit',function(e){e.preventDefault();
+  var idEl=this.querySelector('[name=id]'),pwdEl=this.querySelector('[name=pwd]');
+  var id=idEl.value.trim();
+  if(!id){err(idEl,'请输入用户名');return}
+  if(pwdEl.value.length<6){err(pwdEl,'密码至少 6 位');return}
+  doLogin(id,pwdEl.value,this.querySelector('.submit'));
+});
+
+/* 短信登录：后端暂无短信通道，明确告知并引导到密码登录 */
+$('#fSms').addEventListener('submit',function(e){e.preventDefault();
+  if(!vTel(this)||!vCode(this))return;
+  toast('短信登录尚未接入短信网关，请使用密码登录');
+  setMode('pwd');
+});
+
+/* 注册：调 /auth/register，注册成功直接签发令牌进入工作台。
+   短信验证码目前无网关，前端只做格式校验并在提示里说明，不伪造校验结果。 */
+function doRegister(name,tel,password,btn){
+  busy(btn,true);
+  api('/auth/register',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({username:tel,password:password,full_name:name,license_no:''})
+  }).then(function(r){
+    return r.json().catch(function(){return {}}).then(function(j){return {status:r.status,body:j}});
+  }).then(function(res){
+    busy(btn,false);
+    if((res.status===201||res.status===200)&&res.body.access_token){
+      try{localStorage.setItem('lp_last_id',tel)}catch(e){}
+      saveSession(res.body,tel);
+      enter('注册成功，正在进入工作台…');
+      return;
+    }
+    var msg=(res.body&&res.body.detail)||'注册失败，请稍后重试';
+    var target=res.status===409||/已存在/.test(msg)?$('#fReg [name=tel]'):$('#fReg [name=pwd]');
+    err(target,msg);toast(msg);
+  }).catch(function(){
+    busy(btn,false);
+    toast('无法连接后端服务，注册未完成');
+  });
+}
+$('#fReg').addEventListener('submit',function(e){e.preventDefault();
+  var nameEl=this.querySelector('[name=name]'),telEl=this.querySelector('[name=tel]'),
+      pwdEl=this.querySelector('[name=pwd]'),pwd2El=this.querySelector('[name=pwd2]');
+  if(!nameEl.value.trim()){err(nameEl,'请输入姓名');return}
+  if(!vTel(this)||!vCode(this))return;
+  var p=pwdEl.value;
+  if(p.length<8||p.length>20){err(pwdEl,'密码需为 8–20 位');return}
+  if(p!==pwd2El.value){err(pwd2El,'两次输入的密码不一致');return}
+  if(!$('#agree').checked){toast('请先阅读并同意《用户协议》与《隐私政策》');return}
+  doRegister(nameEl.value.trim(),telEl.value.trim(),p,this.querySelector('.submit'));
+});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,3853 @@
+{
+  "version": 1,
+  "description": "技能功能种子数据：启动时由 services/skill_registry.py 加载进内存注册表（单一数据源，派生不另写一份）。对齐 WorkBuddy 技能形态：市场 = 全部技能，已安装 = 启用中的技能；开关状态记录在用户配置中，不修改本文件。",
+  "skills": [
+    {
+      "id": "sk-ai-consult",
+      "name": "AI法律咨询",
+      "author": "LegalAgent",
+      "description": "接入衡律 AI 助手进行法律问答，回答可溯源到法条与判例，供律师快速判断案件方向。",
+      "tags": [
+        "AI对话",
+        "法律问答",
+        "可溯源"
+      ],
+      "category": "咨询",
+      "hot": 999,
+      "enabled": true,
+      "icon": "i-chat",
+      "page": "pg-ai",
+      "created_at": "2026-03-02T10:00:00+08:00"
+    },
+    {
+      "id": "sk-statute",
+      "name": "法条检索",
+      "author": "LegalAgent",
+      "description": "引用民法典、公司法等法条原文，并标注效力状态与生效日期。",
+      "tags": [
+        "法条原文",
+        "效力校验"
+      ],
+      "category": "检索",
+      "hot": 920,
+      "enabled": true,
+      "icon": "i-bookmark",
+      "page": "pg-search",
+      "created_at": "2026-03-02T10:05:00+08:00"
+    },
+    {
+      "id": "sk-case-match",
+      "name": "类案匹配",
+      "author": "LegalAgent",
+      "description": "语义检索相似判例，输出裁判要旨与相似度排序，辅助类案检索。",
+      "tags": [
+        "语义检索",
+        "要旨抽取"
+      ],
+      "category": "检索",
+      "hot": 886,
+      "enabled": true,
+      "icon": "i-search",
+      "page": "pg-search",
+      "created_at": "2026-03-03T09:00:00+08:00"
+    },
+    {
+      "id": "sk-doc-draft",
+      "name": "文书起草",
+      "author": "LegalAgent",
+      "description": "起诉状、答辩状、律师函等文书一键生成初稿，进入文书页起草。",
+      "tags": [
+        "起诉状",
+        "答辩状"
+      ],
+      "category": "文书",
+      "hot": 854,
+      "enabled": true,
+      "icon": "i-doc",
+      "page": "pg-doc",
+      "created_at": "2026-03-03T10:00:00+08:00"
+    },
+    {
+      "id": "sk-contract-scan",
+      "name": "合同风险扫描",
+      "author": "LegalAgent",
+      "description": "逐条扫描合同，标注风险等级并给出修改建议，进入合同页扫描。",
+      "tags": [
+        "28类风险",
+        "修订建议"
+      ],
+      "category": "合同",
+      "hot": 831,
+      "enabled": true,
+      "icon": "i-shield",
+      "page": "pg-contract",
+      "created_at": "2026-03-04T09:30:00+08:00"
+    },
+    {
+      "id": "sk-timeline",
+      "name": "时间线梳理",
+      "author": "LegalAgent",
+      "description": "从证据与笔录中抽取时间节点，自动生成案件时间轴，进入证据链页查看。",
+      "tags": [
+        "时间轴",
+        "节点抽取"
+      ],
+      "category": "案件",
+      "hot": 776,
+      "enabled": true,
+      "icon": "i-cal",
+      "page": "pg-evchain",
+      "created_at": "2026-03-05T14:00:00+08:00"
+    },
+    {
+      "id": "sk-hearing-outline",
+      "name": "庭审提纲生成",
+      "author": "LegalAgent",
+      "description": "围绕争议焦点生成发问提纲与质证意见，进入案件页配套使用。",
+      "tags": [
+        "发问提纲",
+        "质证意见"
+      ],
+      "category": "案件",
+      "hot": 735,
+      "enabled": true,
+      "icon": "i-gavel",
+      "page": "pg-case",
+      "created_at": "2026-03-06T11:00:00+08:00"
+    },
+    {
+      "id": "sk-award-estimate",
+      "name": "判赔测算",
+      "author": "LegalAgent",
+      "description": "参考类案判赔区间，估算本案赔偿金额范围，接入 AI 助手测算。",
+      "tags": [
+        "判赔区间",
+        "金额估算"
+      ],
+      "category": "咨询",
+      "hot": 688,
+      "enabled": true,
+      "icon": "i-bars",
+      "page": "pg-ai",
+      "created_at": "2026-03-07T09:00:00+08:00"
+    },
+    {
+      "id": "sk-case-manage",
+      "name": "案件管理",
+      "author": "LegalAgent",
+      "description": "统一管理案件流程、证据材料与归档状态，进入案件页操作。",
+      "tags": [
+        "案卷",
+        "流程",
+        "归档"
+      ],
+      "category": "案件",
+      "hot": 801,
+      "enabled": true,
+      "icon": "i-folder",
+      "page": "pg-case",
+      "created_at": "2026-03-08T10:00:00+08:00"
+    },
+    {
+      "id": "sk-kb-qa",
+      "name": "知识库问答",
+      "author": "LegalAgent",
+      "description": "基于沉淀的知识库进行检索问答，回答引用库内文档，接入 AI 助手。",
+      "tags": [
+        "知识库",
+        "检索问答"
+      ],
+      "category": "咨询",
+      "hot": 742,
+      "enabled": true,
+      "icon": "i-clip",
+      "page": "pg-ai",
+      "created_at": "2026-03-09T09:30:00+08:00"
+    },
+    {
+      "id": "sk-expert-consult",
+      "name": "专家咨询",
+      "author": "LegalAgent",
+      "description": "按领域配置的 AI 专家，点击进入专家页选择身份后带人设对话。",
+      "tags": [
+        "专家人设",
+        "领域咨询"
+      ],
+      "category": "咨询",
+      "hot": 663,
+      "enabled": true,
+      "icon": "i-user",
+      "page": "pg-expert",
+      "created_at": "2026-03-10T10:00:00+08:00"
+    },
+    {
+      "id": "sk-task-manage",
+      "name": "任务管理",
+      "author": "LegalAgent",
+      "description": "跟踪办案任务与日程提醒，进入日历页查看任务清单。",
+      "tags": [
+        "任务清单",
+        "日程提醒"
+      ],
+      "category": "任务",
+      "hot": 718,
+      "enabled": true,
+      "icon": "i-todo",
+      "page": "pg-cal",
+      "created_at": "2026-03-11T09:00:00+08:00"
+    },
+    {
+      "id": "sk-evidence-review",
+      "name": "证据三性审查",
+      "author": "LegalAgent",
+      "description": "按真实性、合法性、关联性逐项审查证据，标注疑点与补证建议。",
+      "tags": [
+        "真实性",
+        "合法性",
+        "关联性"
+      ],
+      "category": "证据",
+      "hot": 647,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "pg-evchain",
+      "created_at": "2026-04-02T10:00:00+08:00"
+    },
+    {
+      "id": "sk-limitation-warning",
+      "name": "诉讼时效预警",
+      "author": "LegalAgent",
+      "description": "自动计算诉讼时效起算与届满日期，临近届满时给出预警提醒。",
+      "tags": [
+        "时效计算",
+        "届满预警"
+      ],
+      "category": "案件",
+      "hot": 602,
+      "enabled": false,
+      "icon": "i-clock",
+      "page": "pg-case",
+      "created_at": "2026-04-03T09:00:00+08:00"
+    },
+    {
+      "id": "sk-lawyer-letter",
+      "name": "律师函生成",
+      "author": "LegalAgent",
+      "description": "根据案件事实与诉求生成律师函、催告函等函件初稿。",
+      "tags": [
+        "律师函",
+        "催告函"
+      ],
+      "category": "文书",
+      "hot": 577,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "pg-doc",
+      "created_at": "2026-04-04T11:00:00+08:00"
+    },
+    {
+      "id": "sk-sentencing-range",
+      "name": "量刑区间预测",
+      "author": "LegalAgent",
+      "description": "参考类案量刑统计，结合情节给出量刑区间参考，接入 AI 助手预测。",
+      "tags": [
+        "量刑参考",
+        "类案统计"
+      ],
+      "category": "咨询",
+      "hot": 531,
+      "enabled": false,
+      "icon": "i-scale",
+      "page": "pg-ai",
+      "created_at": "2026-04-05T09:30:00+08:00"
+    },
+    {
+      "id": "sk-compliance-check",
+      "name": "企业合规体检",
+      "author": "LegalAgent",
+      "description": "按行业合规清单体检企业制度与合同文本，输出风险清单与整改建议。",
+      "tags": [
+        "合规审查",
+        "风险清单"
+      ],
+      "category": "合同",
+      "hot": 498,
+      "enabled": false,
+      "icon": "i-shield",
+      "page": "pg-contract",
+      "created_at": "2026-04-06T10:00:00+08:00"
+    },
+    {
+      "id": "sk-translate",
+      "name": "外文文献翻译",
+      "author": "LegalAgent",
+      "description": "翻译外文判例与文献，辅助比较法研究；默认关闭，可按需启用。",
+      "tags": [
+        "翻译",
+        "外文判例"
+      ],
+      "category": "翻译",
+      "hot": 0,
+      "enabled": false,
+      "icon": "i-dl",
+      "page": "pg-doc",
+      "created_at": "2026-04-07T09:00:00+08:00"
+    },
+    {
+      "id": "sk-pdf-convert",
+      "name": "PDF转换",
+      "author": "WorkBuddy",
+      "description": "合并、拆分、转 Word、加水印、OCR 识别扫描件与提取文字，一句话批量处理 PDF。",
+      "tags": [
+        "合并拆分",
+        "转Word",
+        "OCR"
+      ],
+      "category": "办公效率",
+      "hot": 598,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-05-06T09:00:00+08:00"
+    },
+    {
+      "id": "sk-docx-editor",
+      "name": "DOCX文档",
+      "author": "WorkBuddy",
+      "description": "生成带封面、目录、标题层级与表格的 .docx 文件，支持批量替换文字与合并多份文档。",
+      "tags": [
+        "生成",
+        "目录",
+        "合并"
+      ],
+      "category": "办公效率",
+      "hot": 566,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-05-06T10:00:00+08:00"
+    },
+    {
+      "id": "sk-xlsx-processor",
+      "name": "XLSX表格",
+      "author": "WorkBuddy",
+      "description": "清洗数据、去重、批量公式、透视表与图表生成，直接输出可用的 .xlsx 文件。",
+      "tags": [
+        "数据清洗",
+        "透视表",
+        "图表"
+      ],
+      "category": "办公效率",
+      "hot": 542,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-05-07T09:30:00+08:00"
+    },
+    {
+      "id": "sk-pptx-creator",
+      "name": "PPTX生成",
+      "author": "WorkBuddy",
+      "description": "输入主题与要点自动生成完整 PPT，布局、配色、图标、动画一键成型。",
+      "tags": [
+        "一键生成",
+        "商务风"
+      ],
+      "category": "办公效率",
+      "hot": 530,
+      "enabled": false,
+      "icon": "i-edit",
+      "page": "",
+      "created_at": "2026-05-07T14:00:00+08:00"
+    },
+    {
+      "id": "sk-doc-formatter",
+      "name": "文档格式化",
+      "author": "WorkBuddy",
+      "description": "按模板统一文档排版：字体、标题层级、行距、页眉页脚一键规范化。",
+      "tags": [
+        "排版",
+        "模板"
+      ],
+      "category": "办公效率",
+      "hot": 488,
+      "enabled": false,
+      "icon": "i-edit",
+      "page": "",
+      "created_at": "2026-05-08T10:00:00+08:00"
+    },
+    {
+      "id": "sk-email-writer",
+      "name": "邮件撰写",
+      "author": "WorkBuddy",
+      "description": "根据要点撰写商务邮件，支持中英双语与语气调整，附主题与称呼落款。",
+      "tags": [
+        "商务邮件",
+        "双语"
+      ],
+      "category": "办公效率",
+      "hot": 476,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-05-08T11:00:00+08:00"
+    },
+    {
+      "id": "sk-meeting-notes",
+      "name": "会议纪要",
+      "author": "WorkBuddy",
+      "description": "会议录音转文字并结构化整理，提取结论、待办、责任人与时间节点。",
+      "tags": [
+        "录音转写",
+        "待办提取"
+      ],
+      "category": "办公效率",
+      "hot": 465,
+      "enabled": false,
+      "icon": "i-clip",
+      "page": "",
+      "created_at": "2026-05-09T09:00:00+08:00"
+    },
+    {
+      "id": "sk-weekly-report",
+      "name": "周报生成",
+      "author": "WorkBuddy",
+      "description": "根据工作记录按已完成/进行中/待启动分类生成周报，附下周计划。",
+      "tags": [
+        "周报",
+        "工作计划"
+      ],
+      "category": "办公效率",
+      "hot": 452,
+      "enabled": false,
+      "icon": "i-cal",
+      "page": "",
+      "created_at": "2026-05-09T15:00:00+08:00"
+    },
+    {
+      "id": "sk-doc-summarize",
+      "name": "文档总结",
+      "author": "WorkBuddy",
+      "description": "百页报告 30 秒提炼核心观点、关键数据与行动项，支持逐章摘要。",
+      "tags": [
+        "提炼观点",
+        "关键数据"
+      ],
+      "category": "办公效率",
+      "hot": 440,
+      "enabled": false,
+      "icon": "i-bookmark",
+      "page": "",
+      "created_at": "2026-05-10T09:30:00+08:00"
+    },
+    {
+      "id": "sk-batch-rename",
+      "name": "文件批量重命名",
+      "author": "WorkBuddy",
+      "description": "按规则批量重命名本地文件：序号、日期、关键词替换，预览后执行。",
+      "tags": [
+        "批量",
+        "规则"
+      ],
+      "category": "办公效率",
+      "hot": 418,
+      "enabled": false,
+      "icon": "i-redo",
+      "page": "",
+      "created_at": "2026-05-11T10:00:00+08:00"
+    },
+    {
+      "id": "sk-format-converter",
+      "name": "格式转换",
+      "author": "WorkBuddy",
+      "description": "文档/图片/表格多格式互转：PDF↔Word、图片↔PDF、表格转格式等。",
+      "tags": [
+        "PDF↔Word",
+        "图片转PDF"
+      ],
+      "category": "办公效率",
+      "hot": 405,
+      "enabled": false,
+      "icon": "i-refresh",
+      "page": "",
+      "created_at": "2026-05-12T09:00:00+08:00"
+    },
+    {
+      "id": "sk-scheduled-tasks",
+      "name": "定时任务自动化",
+      "author": "WorkBuddy",
+      "description": "设定定时规则自动执行重复工作流，如每周五自动汇总周报并发送。",
+      "tags": [
+        "定时",
+        "自动化"
+      ],
+      "category": "办公效率",
+      "hot": 392,
+      "enabled": false,
+      "icon": "i-clock",
+      "page": "",
+      "created_at": "2026-05-13T10:00:00+08:00"
+    },
+    {
+      "id": "sk-wechat-article",
+      "name": "公众号写作",
+      "author": "WorkBuddy",
+      "description": "按公众号排版习惯撰写文章，自动分段、设标题与小标题，附摘要与金句。",
+      "tags": [
+        "公众号",
+        "排版"
+      ],
+      "category": "内容创作",
+      "hot": 388,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-05-15T09:00:00+08:00"
+    },
+    {
+      "id": "sk-xiaohongshu-notes",
+      "name": "小红书笔记",
+      "author": "WorkBuddy",
+      "description": "生成小红书种草笔记：吸睛标题、正文、话题标签与表情排版。",
+      "tags": [
+        "种草笔记",
+        "话题标签"
+      ],
+      "category": "内容创作",
+      "hot": 382,
+      "enabled": false,
+      "icon": "i-chat",
+      "page": "",
+      "created_at": "2026-05-16T10:00:00+08:00"
+    },
+    {
+      "id": "sk-ai-humanizer",
+      "name": "去AI味humanizer",
+      "author": "WorkBuddy",
+      "description": "检测并改写 AI 写作痕迹：对仗句式、高频词、模板化收尾，输出更像人写的文案。",
+      "tags": [
+        "AI检测",
+        "改写润色"
+      ],
+      "category": "内容创作",
+      "hot": 375,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "",
+      "created_at": "2026-05-17T09:30:00+08:00"
+    },
+    {
+      "id": "sk-cover-image",
+      "name": "封面图生成",
+      "author": "WorkBuddy",
+      "description": "根据标题与主题生成文章封面图、公众号头图与视频封面。",
+      "tags": [
+        "封面",
+        "配图"
+      ],
+      "category": "内容创作",
+      "hot": 360,
+      "enabled": false,
+      "icon": "i-zap",
+      "page": "",
+      "created_at": "2026-05-18T10:00:00+08:00"
+    },
+    {
+      "id": "sk-infographic-maker",
+      "name": "信息图制作",
+      "author": "WorkBuddy",
+      "description": "把数据与要点转为可视化信息图：流程图、时间轴、对比图等。",
+      "tags": [
+        "可视化",
+        "信息图"
+      ],
+      "category": "内容创作",
+      "hot": 348,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-05-19T11:00:00+08:00"
+    },
+    {
+      "id": "sk-gif-search",
+      "name": "GIF搜索",
+      "author": "WorkBuddy",
+      "description": "按关键词搜索表情包与动图素材，一键复制链接或下载。",
+      "tags": [
+        "表情包",
+        "动图"
+      ],
+      "category": "内容创作",
+      "hot": 335,
+      "enabled": false,
+      "icon": "i-more",
+      "page": "",
+      "created_at": "2026-05-20T09:00:00+08:00"
+    },
+    {
+      "id": "sk-video-transcript",
+      "name": "视频转录",
+      "author": "WorkBuddy",
+      "description": "视频/录音转文字稿，支持时间戳分段、说话人区分与字幕导出。",
+      "tags": [
+        "转写",
+        "字幕"
+      ],
+      "category": "内容创作",
+      "hot": 322,
+      "enabled": false,
+      "icon": "i-dl",
+      "page": "",
+      "created_at": "2026-05-21T10:00:00+08:00"
+    },
+    {
+      "id": "sk-web-scraper",
+      "name": "网页抓取",
+      "author": "WorkBuddy",
+      "description": "按规则抓取网页内容：文章、列表、表格数据，支持翻页与导出。",
+      "tags": [
+        "爬取",
+        "结构化导出"
+      ],
+      "category": "数据采集",
+      "hot": 318,
+      "enabled": false,
+      "icon": "i-search",
+      "page": "",
+      "created_at": "2026-06-03T09:00:00+08:00"
+    },
+    {
+      "id": "sk-web-search",
+      "name": "Web搜索",
+      "author": "WorkBuddy",
+      "description": "联网搜索实时资讯与网页，返回带来源的摘要，解决知识时效问题。",
+      "tags": [
+        "实时搜索",
+        "来源引用"
+      ],
+      "category": "数据采集",
+      "hot": 310,
+      "enabled": false,
+      "icon": "i-search",
+      "page": "",
+      "created_at": "2026-06-04T10:00:00+08:00"
+    },
+    {
+      "id": "sk-price-monitor",
+      "name": "竞品价格监控",
+      "author": "WorkBuddy",
+      "description": "定时监控竞品商品价格变动并生成日报，价格异常自动提醒。",
+      "tags": [
+        "价格监控",
+        "异常提醒"
+      ],
+      "category": "数据采集",
+      "hot": 298,
+      "enabled": false,
+      "icon": "i-bell",
+      "page": "",
+      "created_at": "2026-06-05T09:30:00+08:00"
+    },
+    {
+      "id": "sk-hot-topic-tracker",
+      "name": "热点追踪",
+      "author": "WorkBuddy",
+      "description": "追踪全网热点话题与行业动态，按热度排序生成每日情报。",
+      "tags": [
+        "热点",
+        "每日情报"
+      ],
+      "category": "数据采集",
+      "hot": 285,
+      "enabled": false,
+      "icon": "i-bell",
+      "page": "",
+      "created_at": "2026-06-06T10:00:00+08:00"
+    },
+    {
+      "id": "sk-github-trending",
+      "name": "GitHub趋势监控",
+      "author": "WorkBuddy",
+      "description": "监控 GitHub 热门仓库与中文项目趋势，自动生成每日榜单。",
+      "tags": [
+        "GitHub",
+        "趋势榜单"
+      ],
+      "category": "数据采集",
+      "hot": 275,
+      "enabled": false,
+      "icon": "i-folder",
+      "page": "",
+      "created_at": "2026-06-07T11:00:00+08:00"
+    },
+    {
+      "id": "sk-baidu-seo-check",
+      "name": "百度SEO检查",
+      "author": "WorkBuddy",
+      "description": "检查站点收录情况、关键词排名与收录异常，输出 SEO 诊断报告。",
+      "tags": [
+        "SEO",
+        "收录检查"
+      ],
+      "category": "数据采集",
+      "hot": 268,
+      "enabled": false,
+      "icon": "i-search",
+      "page": "",
+      "created_at": "2026-06-08T09:00:00+08:00"
+    },
+    {
+      "id": "sk-kb-sync",
+      "name": "知识库同步",
+      "author": "WorkBuddy",
+      "description": "把文档、笔记批量同步进知识库并自动索引，保持多端一致。",
+      "tags": [
+        "同步",
+        "索引"
+      ],
+      "category": "知识管理",
+      "hot": 260,
+      "enabled": false,
+      "icon": "i-clip",
+      "page": "",
+      "created_at": "2026-06-15T09:00:00+08:00"
+    },
+    {
+      "id": "sk-doc-auto-archive",
+      "name": "文档自动归档",
+      "author": "WorkBuddy",
+      "description": "按类型/项目/时间自动归类整理文档，重名自动改名并生成整理清单。",
+      "tags": [
+        "自动归类",
+        "整理清单"
+      ],
+      "category": "知识管理",
+      "hot": 255,
+      "enabled": false,
+      "icon": "i-folder",
+      "page": "",
+      "created_at": "2026-06-16T10:00:00+08:00"
+    },
+    {
+      "id": "sk-obsidian-link",
+      "name": "Obsidian联动",
+      "author": "WorkBuddy",
+      "description": "读写 Obsidian 库：整理笔记、补全双链、把录音转成结构化笔记写入 Vault。",
+      "tags": [
+        "Obsidian",
+        "双链"
+      ],
+      "category": "知识管理",
+      "hot": 248,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-06-17T09:30:00+08:00"
+    },
+    {
+      "id": "sk-notion-bridge",
+      "name": "Notion对接",
+      "author": "WorkBuddy",
+      "description": "对接 Notion 工作区：创建页面、更新数据库、按模板写入结构化内容。",
+      "tags": [
+        "Notion",
+        "数据库"
+      ],
+      "category": "知识管理",
+      "hot": 240,
+      "enabled": false,
+      "icon": "i-clip",
+      "page": "",
+      "created_at": "2026-06-18T10:00:00+08:00"
+    },
+    {
+      "id": "sk-self-improving",
+      "name": "自我进化agent",
+      "author": "WorkBuddy",
+      "description": "记录执行错误、提炼经验并优化后续行为，越用越贴合个人工作习惯。",
+      "tags": [
+        "自我进化",
+        "经验沉淀"
+      ],
+      "category": "知识管理",
+      "hot": 232,
+      "enabled": false,
+      "icon": "i-redo",
+      "page": "",
+      "created_at": "2026-06-19T11:00:00+08:00"
+    },
+    {
+      "id": "sk-code-review",
+      "name": "代码审查",
+      "author": "WorkBuddy",
+      "description": "自动 Review 代码质量：检测 Bug、潜在缺陷与坏味道，输出逐条意见。",
+      "tags": [
+        "Review",
+        "缺陷检测"
+      ],
+      "category": "开发辅助",
+      "hot": 228,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "",
+      "created_at": "2026-07-05T09:00:00+08:00"
+    },
+    {
+      "id": "sk-git-master",
+      "name": "Git管理",
+      "author": "WorkBuddy",
+      "description": "Git 操作专家：原子提交、分支合并、历史搜索、Issue/PR 与 CI 管理。",
+      "tags": [
+        "提交",
+        "合并",
+        "PR"
+      ],
+      "category": "开发辅助",
+      "hot": 222,
+      "enabled": false,
+      "icon": "i-redo",
+      "page": "",
+      "created_at": "2026-07-06T10:00:00+08:00"
+    },
+    {
+      "id": "sk-code-refactor",
+      "name": "代码重构",
+      "author": "WorkBuddy",
+      "description": "分析代码结构并给出重构方案，自动执行安全重命名与函数拆分。",
+      "tags": [
+        "重构",
+        "优化"
+      ],
+      "category": "开发辅助",
+      "hot": 215,
+      "enabled": false,
+      "icon": "i-refresh",
+      "page": "",
+      "created_at": "2026-07-07T09:30:00+08:00"
+    },
+    {
+      "id": "sk-testing-expert",
+      "name": "测试专家",
+      "author": "WorkBuddy",
+      "description": "根据功能说明生成单元测试与集成测试，覆盖边界场景并输出测试报告。",
+      "tags": [
+        "单元测试",
+        "集成测试"
+      ],
+      "category": "开发辅助",
+      "hot": 208,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "",
+      "created_at": "2026-07-08T10:00:00+08:00"
+    },
+    {
+      "id": "sk-security-audit",
+      "name": "安全审计",
+      "author": "WorkBuddy",
+      "description": "扫描代码与依赖的安全漏洞、异常网络访问与凭证获取风险，给出风险评级。",
+      "tags": [
+        "漏洞扫描",
+        "风险评级"
+      ],
+      "category": "开发辅助",
+      "hot": 202,
+      "enabled": false,
+      "icon": "i-shield",
+      "page": "",
+      "created_at": "2026-07-09T11:00:00+08:00"
+    },
+    {
+      "id": "sk-skill-creator",
+      "name": "技能创建器",
+      "author": "WorkBuddy",
+      "description": "把重复工作流封装成技能：描述需求生成代码框架，调试后即可发布复用。",
+      "tags": [
+        "封装工作流",
+        "发布"
+      ],
+      "category": "开发辅助",
+      "hot": 196,
+      "enabled": false,
+      "icon": "i-zap",
+      "page": "",
+      "created_at": "2026-07-10T09:00:00+08:00"
+    },
+    {
+      "id": "sk-db-query",
+      "name": "数据库查询",
+      "author": "WorkBuddy",
+      "description": "自然语言转 SQL 查询数据库，支持常见库类型，返回结果并解释。",
+      "tags": [
+        "NL2SQL",
+        "查询"
+      ],
+      "category": "开发辅助",
+      "hot": 190,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-07-11T10:00:00+08:00"
+    },
+    {
+      "id": "sk-api-caller",
+      "name": "API调用",
+      "author": "WorkBuddy",
+      "description": "调试与调用第三方 API：构造请求、处理鉴权、解析响应并生成调用示例。",
+      "tags": [
+        "API调试",
+        "鉴权"
+      ],
+      "category": "开发辅助",
+      "hot": 184,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-07-12T09:30:00+08:00"
+    },
+    {
+      "id": "sk-tencent-docs",
+      "name": "腾讯文档",
+      "author": "WorkBuddy",
+      "description": "对接腾讯文档：新建/编辑协作文档、表格与幻灯片，同步内容回本地。",
+      "tags": [
+        "协作文档",
+        "同步"
+      ],
+      "category": "办公协作",
+      "hot": 178,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-07-20T09:00:00+08:00"
+    },
+    {
+      "id": "sk-tencent-meeting",
+      "name": "腾讯会议",
+      "author": "WorkBuddy",
+      "description": "对接腾讯会议：创建/预约会议、转写纪要、提取待办事项。",
+      "tags": [
+        "会议",
+        "纪要"
+      ],
+      "category": "办公协作",
+      "hot": 172,
+      "enabled": false,
+      "icon": "i-chat",
+      "page": "",
+      "created_at": "2026-07-21T10:00:00+08:00"
+    },
+    {
+      "id": "sk-tapd-project",
+      "name": "TAPD项目管理",
+      "author": "WorkBuddy",
+      "description": "对接 TAPD：创建需求/缺陷/迭代，更新任务状态，生成项目周报。",
+      "tags": [
+        "项目管理",
+        "迭代"
+      ],
+      "category": "办公协作",
+      "hot": 166,
+      "enabled": false,
+      "icon": "i-todo",
+      "page": "",
+      "created_at": "2026-07-22T09:30:00+08:00"
+    },
+    {
+      "id": "sk-tencent-lexiang",
+      "name": "腾讯乐享",
+      "author": "WorkBuddy",
+      "description": "对接腾讯乐享：发布知识内容、管理课程与企业社区内容。",
+      "tags": [
+        "企业知识",
+        "课程"
+      ],
+      "category": "办公协作",
+      "hot": 158,
+      "enabled": false,
+      "icon": "i-bookmark",
+      "page": "",
+      "created_at": "2026-07-23T10:00:00+08:00"
+    },
+    {
+      "id": "sk-tencent-cos",
+      "name": "腾讯COS",
+      "author": "WorkBuddy",
+      "description": "对接腾讯云对象存储：上传/下载/批量管理文件，生成分享链接。",
+      "tags": [
+        "对象存储",
+        "文件管理"
+      ],
+      "category": "办公协作",
+      "hot": 152,
+      "enabled": false,
+      "icon": "i-folder",
+      "page": "",
+      "created_at": "2026-07-24T11:00:00+08:00"
+    },
+    {
+      "id": "sk-qq-mail",
+      "name": "QQ邮箱",
+      "author": "WorkBuddy",
+      "description": "对接 QQ 邮箱：收发邮件、管理收件箱、定时发送与邮件归档。",
+      "tags": [
+        "收发邮件",
+        "归档"
+      ],
+      "category": "办公协作",
+      "hot": 146,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-07-25T09:00:00+08:00"
+    },
+    {
+      "id": "sk-smart-mailbox",
+      "name": "智能邮件箱",
+      "author": "WorkBuddy",
+      "description": "聚合多个邮箱：自动分类重要邮件、生成摘要、起草回复与定时提醒。",
+      "tags": [
+        "邮件聚合",
+        "智能分类"
+      ],
+      "category": "办公协作",
+      "hot": 140,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-07-26T10:00:00+08:00"
+    },
+    {
+      "id": "sk-browser-automation",
+      "name": "浏览器自动化",
+      "author": "WorkBuddy",
+      "description": "自动打开网页、登录、填表、截图与抓取数据，支持定时执行浏览器任务。",
+      "tags": [
+        "自动填表",
+        "截图"
+      ],
+      "category": "办公协作",
+      "hot": 135,
+      "enabled": false,
+      "icon": "i-zap",
+      "page": "",
+      "created_at": "2026-07-27T09:30:00+08:00"
+    },
+    {
+      "id": "sk-mbti-test",
+      "name": "MBTI测试",
+      "author": "WorkBuddy",
+      "description": "在线完成 MBTI 人格测试，输出性格类型、特点解析与适配建议。",
+      "tags": [
+        "人格测试",
+        "解析"
+      ],
+      "category": "生活娱乐",
+      "hot": 128,
+      "enabled": false,
+      "icon": "i-user",
+      "page": "",
+      "created_at": "2026-08-08T09:00:00+08:00"
+    },
+    {
+      "id": "sk-emoji-search",
+      "name": "表情包搜索",
+      "author": "WorkBuddy",
+      "description": "按场景关键词搜索斗图表情包与配图文案，一键复制发送。",
+      "tags": [
+        "斗图",
+        "表情包"
+      ],
+      "category": "生活娱乐",
+      "hot": 122,
+      "enabled": false,
+      "icon": "i-more",
+      "page": "",
+      "created_at": "2026-08-09T10:00:00+08:00"
+    },
+    {
+      "id": "sk-movie-recommend",
+      "name": "电影推荐",
+      "author": "WorkBuddy",
+      "description": "根据偏好与评分推荐电影，附简介、看点与观影平台信息。",
+      "tags": [
+        "观影推荐",
+        "评分"
+      ],
+      "category": "生活娱乐",
+      "hot": 115,
+      "enabled": false,
+      "icon": "i-moon",
+      "page": "",
+      "created_at": "2026-08-10T09:30:00+08:00"
+    },
+    {
+      "id": "sk-health-checkin",
+      "name": "健康打卡",
+      "author": "WorkBuddy",
+      "description": "每日健康打卡提醒：饮水、运动、睡眠记录，生成周度健康小结。",
+      "tags": [
+        "打卡",
+        "健康小结"
+      ],
+      "category": "生活娱乐",
+      "hot": 108,
+      "enabled": false,
+      "icon": "i-cal",
+      "page": "",
+      "created_at": "2026-08-11T10:00:00+08:00"
+    },
+    {
+      "id": "sk-wind-research",
+      "name": "Wind研报写作",
+      "author": "WorkBuddy",
+      "description": "基于 Wind 数据撰写个股/行业研究简报，一页纸投资摘要与关键财务指标。",
+      "tags": [
+        "Wind",
+        "研报"
+      ],
+      "category": "金融",
+      "hot": 102,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-09-05T09:00:00+08:00"
+    },
+    {
+      "id": "sk-stock-screener",
+      "name": "选股筛选",
+      "author": "WorkBuddy",
+      "description": "按财务指标、估值与行业条件筛选股票，输出候选池与筛选依据。",
+      "tags": [
+        "选股",
+        "财务筛选"
+      ],
+      "category": "金融",
+      "hot": 96,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-09-06T10:00:00+08:00"
+    },
+    {
+      "id": "sk-fund-investment",
+      "name": "基金投资",
+      "author": "WorkBuddy",
+      "description": "基金产品对比、净值跟踪与定投策略建议，生成投资分析简报。",
+      "tags": [
+        "基金",
+        "定投"
+      ],
+      "category": "金融",
+      "hot": 90,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-09-07T09:30:00+08:00"
+    },
+    {
+      "id": "sk-credit-research",
+      "name": "信用研究",
+      "author": "WorkBuddy",
+      "description": "债券与主体信用分析：评级变动、利差走势与违约风险提示。",
+      "tags": [
+        "信用分析",
+        "评级"
+      ],
+      "category": "金融",
+      "hot": 84,
+      "enabled": false,
+      "icon": "i-shield",
+      "page": "",
+      "created_at": "2026-09-08T10:00:00+08:00"
+    },
+    {
+      "id": "sk-001",
+      "name": "会议纪要整理",
+      "author": "LegalAgent",
+      "description": "将会议录音转文字并生成结构化纪要，自动归纳决议、待办与负责人。",
+      "tags": [
+        "会议记录",
+        "纪要整理"
+      ],
+      "category": "办公效率",
+      "hot": 57,
+      "enabled": false,
+      "icon": "i-bookmark",
+      "page": "",
+      "created_at": "2026-09-15T09:05:00+08:00"
+    },
+    {
+      "id": "sk-002",
+      "name": "日程规划",
+      "author": "LegalAgent",
+      "description": "根据任务优先级与截止时间智能安排每日工作日程。",
+      "tags": [
+        "日程",
+        "时间管理"
+      ],
+      "category": "办公效率",
+      "hot": 94,
+      "enabled": false,
+      "icon": "i-search",
+      "page": "",
+      "created_at": "2026-09-15T09:10:00+08:00"
+    },
+    {
+      "id": "sk-003",
+      "name": "邮件起草",
+      "author": "LegalAgent",
+      "description": "根据要点一键生成专业邮件，支持语气与收件人关系调节。",
+      "tags": [
+        "邮件",
+        "写作"
+      ],
+      "category": "办公效率",
+      "hot": 131,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-09-15T09:15:00+08:00"
+    },
+    {
+      "id": "sk-004",
+      "name": "待办清单管理",
+      "author": "LegalAgent",
+      "description": "集中管理多项目待办事项，支持优先级与截止日期提醒。",
+      "tags": [
+        "待办",
+        "任务管理"
+      ],
+      "category": "办公效率",
+      "hot": 168,
+      "enabled": false,
+      "icon": "i-shield",
+      "page": "",
+      "created_at": "2026-09-15T09:20:00+08:00"
+    },
+    {
+      "id": "sk-005",
+      "name": "周报生成",
+      "author": "LegalAgent",
+      "description": "汇总本周工作内容、成果与问题，自动生成周报。",
+      "tags": [
+        "周报",
+        "汇报"
+      ],
+      "category": "办公效率",
+      "hot": 205,
+      "enabled": false,
+      "icon": "i-cal",
+      "page": "",
+      "created_at": "2026-09-15T09:25:00+08:00"
+    },
+    {
+      "id": "sk-006",
+      "name": "日报生成",
+      "author": "LegalAgent",
+      "description": "汇总当日工作进展与明日计划，快速生成日报。",
+      "tags": [
+        "日报",
+        "汇报"
+      ],
+      "category": "办公效率",
+      "hot": 242,
+      "enabled": false,
+      "icon": "i-gavel",
+      "page": "",
+      "created_at": "2026-09-15T09:30:00+08:00"
+    },
+    {
+      "id": "sk-007",
+      "name": "PPT大纲生成",
+      "author": "LegalAgent",
+      "description": "根据主题与听众自动生成演示文稿大纲与分页要点。",
+      "tags": [
+        "PPT",
+        "大纲"
+      ],
+      "category": "办公效率",
+      "hot": 279,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-09-15T09:35:00+08:00"
+    },
+    {
+      "id": "sk-008",
+      "name": "简历优化",
+      "author": "LegalAgent",
+      "description": "优化简历措辞与经历描述，突出与目标岗位的匹配度。",
+      "tags": [
+        "简历",
+        "求职"
+      ],
+      "category": "办公效率",
+      "hot": 316,
+      "enabled": false,
+      "icon": "i-folder",
+      "page": "",
+      "created_at": "2026-09-15T09:40:00+08:00"
+    },
+    {
+      "id": "sk-009",
+      "name": "面试问题准备",
+      "author": "LegalAgent",
+      "description": "根据岗位要求生成针对性面试问题与考察要点。",
+      "tags": [
+        "面试",
+        "招聘"
+      ],
+      "category": "办公效率",
+      "hot": 353,
+      "enabled": false,
+      "icon": "i-clip",
+      "page": "",
+      "created_at": "2026-09-15T09:45:00+08:00"
+    },
+    {
+      "id": "sk-010",
+      "name": "效率模板库",
+      "author": "LegalAgent",
+      "description": "提供常用办公模板（纪要/周报/计划/清单），开箱即用。",
+      "tags": [
+        "模板",
+        "办公"
+      ],
+      "category": "办公效率",
+      "hot": 390,
+      "enabled": false,
+      "icon": "i-user",
+      "page": "",
+      "created_at": "2026-09-15T09:50:00+08:00"
+    },
+    {
+      "id": "sk-011",
+      "name": "表格公式助手",
+      "author": "LegalAgent",
+      "description": "根据自然语言描述生成 Excel 公式并解释用法。",
+      "tags": [
+        "Excel",
+        "公式"
+      ],
+      "category": "办公效率",
+      "hot": 427,
+      "enabled": false,
+      "icon": "i-todo",
+      "page": "",
+      "created_at": "2026-09-15T09:55:00+08:00"
+    },
+    {
+      "id": "sk-012",
+      "name": "数据透视分析",
+      "author": "LegalAgent",
+      "description": "指导生成数据透视表，快速完成多维度汇总分析。",
+      "tags": [
+        "数据分析",
+        "透视表"
+      ],
+      "category": "办公效率",
+      "hot": 464,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "",
+      "created_at": "2026-09-15T10:00:00+08:00"
+    },
+    {
+      "id": "sk-013",
+      "name": "批量重命名",
+      "author": "LegalAgent",
+      "description": "按规则批量整理文件名，支持序号、日期、关键词替换。",
+      "tags": [
+        "文件管理",
+        "重命名"
+      ],
+      "category": "办公效率",
+      "hot": 21,
+      "enabled": false,
+      "icon": "i-clock",
+      "page": "",
+      "created_at": "2026-09-15T10:05:00+08:00"
+    },
+    {
+      "id": "sk-014",
+      "name": "文件归档",
+      "author": "LegalAgent",
+      "description": "按类型、日期或关键词自动归档散落文件。",
+      "tags": [
+        "归档",
+        "文件整理"
+      ],
+      "category": "办公效率",
+      "hot": 58,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-09-15T10:10:00+08:00"
+    },
+    {
+      "id": "sk-015",
+      "name": "报销单填写",
+      "author": "LegalAgent",
+      "description": "根据票据信息生成报销单说明与费用明细。",
+      "tags": [
+        "报销",
+        "财务"
+      ],
+      "category": "办公效率",
+      "hot": 95,
+      "enabled": false,
+      "icon": "i-scale",
+      "page": "",
+      "created_at": "2026-09-15T10:15:00+08:00"
+    },
+    {
+      "id": "sk-016",
+      "name": "出差行程助手",
+      "author": "LegalAgent",
+      "description": "根据目的地与会期规划交通、住宿与行程安排。",
+      "tags": [
+        "出差",
+        "行程"
+      ],
+      "category": "办公效率",
+      "hot": 132,
+      "enabled": false,
+      "icon": "i-dl",
+      "page": "",
+      "created_at": "2026-09-15T10:20:00+08:00"
+    },
+    {
+      "id": "sk-017",
+      "name": "跨设备办公同步",
+      "author": "LegalAgent",
+      "description": "梳理跨设备文件同步方案，保持工作资料一致。",
+      "tags": [
+        "同步",
+        "办公"
+      ],
+      "category": "办公效率",
+      "hot": 169,
+      "enabled": false,
+      "icon": "i-edit",
+      "page": "",
+      "created_at": "2026-09-15T10:25:00+08:00"
+    },
+    {
+      "id": "sk-018",
+      "name": "快捷指令管理",
+      "author": "LegalAgent",
+      "description": "将高频操作整理为快捷指令入口，提升操作效率。",
+      "tags": [
+        "快捷指令",
+        "效率"
+      ],
+      "category": "办公效率",
+      "hot": 206,
+      "enabled": false,
+      "icon": "i-redo",
+      "page": "",
+      "created_at": "2026-09-15T10:30:00+08:00"
+    },
+    {
+      "id": "sk-019",
+      "name": "演示文稿美化",
+      "author": "LegalAgent",
+      "description": "优化 PPT 排版与配色，统一字体与版式风格。",
+      "tags": [
+        "PPT",
+        "排版"
+      ],
+      "category": "办公效率",
+      "hot": 243,
+      "enabled": false,
+      "icon": "i-refresh",
+      "page": "",
+      "created_at": "2026-09-15T10:35:00+08:00"
+    },
+    {
+      "id": "sk-020",
+      "name": "打印排版优化",
+      "author": "LegalAgent",
+      "description": "调整文档打印样式，减少纸张浪费并保证可读性。",
+      "tags": [
+        "打印",
+        "排版"
+      ],
+      "category": "办公效率",
+      "hot": 280,
+      "enabled": false,
+      "icon": "i-zap",
+      "page": "",
+      "created_at": "2026-09-15T10:40:00+08:00"
+    },
+    {
+      "id": "sk-021",
+      "name": "会议安排协调",
+      "author": "LegalAgent",
+      "description": "根据参会人空闲时间智能推荐会议时间与时长。",
+      "tags": [
+        "会议",
+        "协调"
+      ],
+      "category": "办公效率",
+      "hot": 317,
+      "enabled": false,
+      "icon": "i-more",
+      "page": "",
+      "created_at": "2026-09-15T10:45:00+08:00"
+    },
+    {
+      "id": "sk-022",
+      "name": "OKR目标拆解",
+      "author": "LegalAgent",
+      "description": "将目标拆解为可执行的关键结果与行动计划。",
+      "tags": [
+        "OKR",
+        "目标管理"
+      ],
+      "category": "办公效率",
+      "hot": 354,
+      "enabled": false,
+      "icon": "i-bell",
+      "page": "",
+      "created_at": "2026-09-15T10:50:00+08:00"
+    },
+    {
+      "id": "sk-023",
+      "name": "时间统计",
+      "author": "LegalAgent",
+      "description": "统计各类任务耗时分布，找出效率瓶颈。",
+      "tags": [
+        "时间管理",
+        "统计"
+      ],
+      "category": "办公效率",
+      "hot": 391,
+      "enabled": false,
+      "icon": "i-moon",
+      "page": "",
+      "created_at": "2026-09-15T10:55:00+08:00"
+    },
+    {
+      "id": "sk-024",
+      "name": "汇报提纲生成",
+      "author": "LegalAgent",
+      "description": "根据汇报主题与对象整理汇报要点与结构。",
+      "tags": [
+        "汇报",
+        "提纲"
+      ],
+      "category": "办公效率",
+      "hot": 428,
+      "enabled": false,
+      "icon": "i-chat",
+      "page": "",
+      "created_at": "2026-09-15T11:00:00+08:00"
+    },
+    {
+      "id": "sk-025",
+      "name": "代码审查助手",
+      "author": "LegalAgent",
+      "description": "静态审查代码质量，指出潜在缺陷与改进建议。",
+      "tags": [
+        "代码审查",
+        "质量"
+      ],
+      "category": "开发辅助",
+      "hot": 465,
+      "enabled": false,
+      "icon": "i-bookmark",
+      "page": "",
+      "created_at": "2026-09-15T11:05:00+08:00"
+    },
+    {
+      "id": "sk-026",
+      "name": "Bug定位分析",
+      "author": "LegalAgent",
+      "description": "根据报错信息与调用链定位问题根源并给出修复建议。",
+      "tags": [
+        "Bug",
+        "调试"
+      ],
+      "category": "开发辅助",
+      "hot": 22,
+      "enabled": false,
+      "icon": "i-search",
+      "page": "",
+      "created_at": "2026-09-15T11:10:00+08:00"
+    },
+    {
+      "id": "sk-027",
+      "name": "单元测试生成",
+      "author": "LegalAgent",
+      "description": "为函数与模块自动生成单元测试用例。",
+      "tags": [
+        "测试",
+        "单元测试"
+      ],
+      "category": "开发辅助",
+      "hot": 59,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-09-15T11:15:00+08:00"
+    },
+    {
+      "id": "sk-028",
+      "name": "接口文档生成",
+      "author": "LegalAgent",
+      "description": "从代码或 OpenAPI 定义生成接口文档。",
+      "tags": [
+        "API",
+        "文档"
+      ],
+      "category": "开发辅助",
+      "hot": 96,
+      "enabled": false,
+      "icon": "i-shield",
+      "page": "",
+      "created_at": "2026-09-15T11:20:00+08:00"
+    },
+    {
+      "id": "sk-029",
+      "name": "代码注释补全",
+      "author": "LegalAgent",
+      "description": "为代码自动补全函数说明与关键逻辑注释。",
+      "tags": [
+        "注释",
+        "可读性"
+      ],
+      "category": "开发辅助",
+      "hot": 133,
+      "enabled": false,
+      "icon": "i-cal",
+      "page": "",
+      "created_at": "2026-09-15T11:25:00+08:00"
+    },
+    {
+      "id": "sk-030",
+      "name": "SQL优化",
+      "author": "LegalAgent",
+      "description": "分析 SQL 执行计划并给出索引与写法优化建议。",
+      "tags": [
+        "SQL",
+        "数据库"
+      ],
+      "category": "开发辅助",
+      "hot": 170,
+      "enabled": false,
+      "icon": "i-gavel",
+      "page": "",
+      "created_at": "2026-09-15T11:30:00+08:00"
+    },
+    {
+      "id": "sk-031",
+      "name": "正则表达式助手",
+      "author": "LegalAgent",
+      "description": "根据需求生成并调试正则表达式。",
+      "tags": [
+        "正则",
+        "文本处理"
+      ],
+      "category": "开发辅助",
+      "hot": 207,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-09-15T11:35:00+08:00"
+    },
+    {
+      "id": "sk-032",
+      "name": "环境配置检查",
+      "author": "LegalAgent",
+      "description": "检查开发环境依赖版本与配置项是否一致。",
+      "tags": [
+        "环境配置",
+        "依赖"
+      ],
+      "category": "开发辅助",
+      "hot": 244,
+      "enabled": false,
+      "icon": "i-folder",
+      "page": "",
+      "created_at": "2026-09-15T11:40:00+08:00"
+    },
+    {
+      "id": "sk-033",
+      "name": "数据库设计助手",
+      "author": "LegalAgent",
+      "description": "根据业务描述生成表结构与字段说明。",
+      "tags": [
+        "数据库",
+        "设计"
+      ],
+      "category": "开发辅助",
+      "hot": 281,
+      "enabled": false,
+      "icon": "i-clip",
+      "page": "",
+      "created_at": "2026-09-15T11:45:00+08:00"
+    },
+    {
+      "id": "sk-034",
+      "name": "Git提交规范",
+      "author": "LegalAgent",
+      "description": "根据改动内容生成符合规范的提交信息。",
+      "tags": [
+        "Git",
+        "提交信息"
+      ],
+      "category": "开发辅助",
+      "hot": 318,
+      "enabled": false,
+      "icon": "i-user",
+      "page": "",
+      "created_at": "2026-09-15T11:50:00+08:00"
+    },
+    {
+      "id": "sk-035",
+      "name": "代码重构建议",
+      "author": "LegalAgent",
+      "description": "识别重复与坏味道，给出渐进式重构方案。",
+      "tags": [
+        "重构",
+        "代码质量"
+      ],
+      "category": "开发辅助",
+      "hot": 355,
+      "enabled": false,
+      "icon": "i-todo",
+      "page": "",
+      "created_at": "2026-09-15T11:55:00+08:00"
+    },
+    {
+      "id": "sk-036",
+      "name": "依赖分析",
+      "author": "LegalAgent",
+      "description": "分析项目依赖关系与版本兼容性风险。",
+      "tags": [
+        "依赖",
+        "版本"
+      ],
+      "category": "开发辅助",
+      "hot": 392,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "",
+      "created_at": "2026-09-15T12:00:00+08:00"
+    },
+    {
+      "id": "sk-037",
+      "name": "前端调试助手",
+      "author": "LegalAgent",
+      "description": "排查前端渲染与交互问题，定位控制台报错。",
+      "tags": [
+        "前端",
+        "调试"
+      ],
+      "category": "开发辅助",
+      "hot": 429,
+      "enabled": false,
+      "icon": "i-clock",
+      "page": "",
+      "created_at": "2026-09-15T12:05:00+08:00"
+    },
+    {
+      "id": "sk-038",
+      "name": "API测试用例",
+      "author": "LegalAgent",
+      "description": "为接口生成请求用例与断言脚本。",
+      "tags": [
+        "接口测试",
+        "API"
+      ],
+      "category": "开发辅助",
+      "hot": 466,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-09-15T12:10:00+08:00"
+    },
+    {
+      "id": "sk-039",
+      "name": "日志分析",
+      "author": "LegalAgent",
+      "description": "分析应用日志，归纳错误模式与告警原因。",
+      "tags": [
+        "日志",
+        "运维"
+      ],
+      "category": "开发辅助",
+      "hot": 23,
+      "enabled": false,
+      "icon": "i-scale",
+      "page": "",
+      "created_at": "2026-09-15T12:15:00+08:00"
+    },
+    {
+      "id": "sk-040",
+      "name": "部署检查清单",
+      "author": "LegalAgent",
+      "description": "生成上线前检查清单，覆盖配置、迁移与回滚。",
+      "tags": [
+        "部署",
+        "上线"
+      ],
+      "category": "开发辅助",
+      "hot": 60,
+      "enabled": false,
+      "icon": "i-dl",
+      "page": "",
+      "created_at": "2026-09-15T12:20:00+08:00"
+    },
+    {
+      "id": "sk-041",
+      "name": "技术选型对比",
+      "author": "LegalAgent",
+      "description": "对比候选技术方案的优缺点与适用场景。",
+      "tags": [
+        "技术选型",
+        "对比"
+      ],
+      "category": "开发辅助",
+      "hot": 97,
+      "enabled": false,
+      "icon": "i-edit",
+      "page": "",
+      "created_at": "2026-09-15T12:25:00+08:00"
+    },
+    {
+      "id": "sk-042",
+      "name": "代码脚手架生成",
+      "author": "LegalAgent",
+      "description": "根据技术栈生成项目骨架与目录规范。",
+      "tags": [
+        "脚手架",
+        "项目初始化"
+      ],
+      "category": "开发辅助",
+      "hot": 134,
+      "enabled": false,
+      "icon": "i-redo",
+      "page": "",
+      "created_at": "2026-09-15T12:30:00+08:00"
+    },
+    {
+      "id": "sk-043",
+      "name": "会议记录共享",
+      "author": "LegalAgent",
+      "description": "整理会议记录并生成共享文档，方便团队同步。",
+      "tags": [
+        "会议",
+        "共享"
+      ],
+      "category": "办公协作",
+      "hot": 171,
+      "enabled": false,
+      "icon": "i-refresh",
+      "page": "",
+      "created_at": "2026-09-15T12:35:00+08:00"
+    },
+    {
+      "id": "sk-044",
+      "name": "团队任务分配",
+      "author": "LegalAgent",
+      "description": "根据成员职责与负载合理分配团队任务。",
+      "tags": [
+        "任务分配",
+        "团队"
+      ],
+      "category": "办公协作",
+      "hot": 208,
+      "enabled": false,
+      "icon": "i-zap",
+      "page": "",
+      "created_at": "2026-09-15T12:40:00+08:00"
+    },
+    {
+      "id": "sk-045",
+      "name": "项目进度同步",
+      "author": "LegalAgent",
+      "description": "汇总各成员进度生成项目状态同步信息。",
+      "tags": [
+        "进度",
+        "项目管理"
+      ],
+      "category": "办公协作",
+      "hot": 245,
+      "enabled": false,
+      "icon": "i-more",
+      "page": "",
+      "created_at": "2026-09-15T12:45:00+08:00"
+    },
+    {
+      "id": "sk-046",
+      "name": "协作文档评论整理",
+      "author": "LegalAgent",
+      "description": "汇总文档评论意见并归纳待处理事项。",
+      "tags": [
+        "文档协作",
+        "评论"
+      ],
+      "category": "办公协作",
+      "hot": 282,
+      "enabled": false,
+      "icon": "i-bell",
+      "page": "",
+      "created_at": "2026-09-15T12:50:00+08:00"
+    },
+    {
+      "id": "sk-047",
+      "name": "群公告撰写",
+      "author": "LegalAgent",
+      "description": "根据事项起草清晰得体的群公告。",
+      "tags": [
+        "公告",
+        "沟通"
+      ],
+      "category": "办公协作",
+      "hot": 319,
+      "enabled": false,
+      "icon": "i-moon",
+      "page": "",
+      "created_at": "2026-09-15T12:55:00+08:00"
+    },
+    {
+      "id": "sk-048",
+      "name": "团队周会要点",
+      "author": "LegalAgent",
+      "description": "整理周会汇报要点与讨论议程。",
+      "tags": [
+        "周会",
+        "团队"
+      ],
+      "category": "办公协作",
+      "hot": 356,
+      "enabled": false,
+      "icon": "i-chat",
+      "page": "",
+      "created_at": "2026-09-15T13:00:00+08:00"
+    },
+    {
+      "id": "sk-049",
+      "name": "需求评审记录",
+      "author": "LegalAgent",
+      "description": "记录需求评审结论、疑问与负责人。",
+      "tags": [
+        "需求",
+        "评审"
+      ],
+      "category": "办公协作",
+      "hot": 393,
+      "enabled": false,
+      "icon": "i-bookmark",
+      "page": "",
+      "created_at": "2026-09-15T13:05:00+08:00"
+    },
+    {
+      "id": "sk-050",
+      "name": "项目复盘报告",
+      "author": "LegalAgent",
+      "description": "汇总项目数据与经验教训，生成复盘报告。",
+      "tags": [
+        "复盘",
+        "项目总结"
+      ],
+      "category": "办公协作",
+      "hot": 430,
+      "enabled": false,
+      "icon": "i-search",
+      "page": "",
+      "created_at": "2026-09-15T13:10:00+08:00"
+    },
+    {
+      "id": "sk-051",
+      "name": "新人入职指引",
+      "author": "LegalAgent",
+      "description": "为新成员生成岗位须知与团队资源指引。",
+      "tags": [
+        "入职",
+        "指引"
+      ],
+      "category": "办公协作",
+      "hot": 467,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-09-15T13:15:00+08:00"
+    },
+    {
+      "id": "sk-052",
+      "name": "部门知识共享",
+      "author": "LegalAgent",
+      "description": "整理部门常用资料与经验形成共享目录。",
+      "tags": [
+        "知识共享",
+        "协作"
+      ],
+      "category": "办公协作",
+      "hot": 24,
+      "enabled": false,
+      "icon": "i-shield",
+      "page": "",
+      "created_at": "2026-09-15T13:20:00+08:00"
+    },
+    {
+      "id": "sk-053",
+      "name": "项目风险登记",
+      "author": "LegalAgent",
+      "description": "识别项目风险项并登记风险等级与应对措施。",
+      "tags": [
+        "风险管理",
+        "项目"
+      ],
+      "category": "办公协作",
+      "hot": 61,
+      "enabled": false,
+      "icon": "i-cal",
+      "page": "",
+      "created_at": "2026-09-15T13:25:00+08:00"
+    },
+    {
+      "id": "sk-054",
+      "name": "里程碑提醒",
+      "author": "LegalAgent",
+      "description": "设置项目里程碑与关键节点提醒。",
+      "tags": [
+        "里程碑",
+        "提醒"
+      ],
+      "category": "办公协作",
+      "hot": 98,
+      "enabled": false,
+      "icon": "i-gavel",
+      "page": "",
+      "created_at": "2026-09-15T13:30:00+08:00"
+    },
+    {
+      "id": "sk-055",
+      "name": "跨部门沟通函",
+      "author": "LegalAgent",
+      "description": "起草跨部门协作与资源协调的沟通函。",
+      "tags": [
+        "沟通函",
+        "协作"
+      ],
+      "category": "办公协作",
+      "hot": 135,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-09-15T13:35:00+08:00"
+    },
+    {
+      "id": "sk-056",
+      "name": "会议决策跟进",
+      "author": "LegalAgent",
+      "description": "跟踪会议决策事项的落实进度与责任人。",
+      "tags": [
+        "决策",
+        "跟进"
+      ],
+      "category": "办公协作",
+      "hot": 172,
+      "enabled": false,
+      "icon": "i-folder",
+      "page": "",
+      "created_at": "2026-09-15T13:40:00+08:00"
+    },
+    {
+      "id": "sk-057",
+      "name": "团队OKR对齐",
+      "author": "LegalAgent",
+      "description": "对齐团队目标与个人目标，梳理依赖关系。",
+      "tags": [
+        "OKR",
+        "对齐"
+      ],
+      "category": "办公协作",
+      "hot": 209,
+      "enabled": false,
+      "icon": "i-clip",
+      "page": "",
+      "created_at": "2026-09-15T13:45:00+08:00"
+    },
+    {
+      "id": "sk-058",
+      "name": "工作交接文档",
+      "author": "LegalAgent",
+      "description": "生成岗位工作交接文档，覆盖职责与进行中事项。",
+      "tags": [
+        "交接",
+        "文档"
+      ],
+      "category": "办公协作",
+      "hot": 246,
+      "enabled": false,
+      "icon": "i-user",
+      "page": "",
+      "created_at": "2026-09-15T13:50:00+08:00"
+    },
+    {
+      "id": "sk-059",
+      "name": "公众号文章",
+      "author": "LegalAgent",
+      "description": "根据主题与受众生成公众号推文，含标题与正文。",
+      "tags": [
+        "公众号",
+        "推文"
+      ],
+      "category": "内容创作",
+      "hot": 283,
+      "enabled": false,
+      "icon": "i-todo",
+      "page": "",
+      "created_at": "2026-09-15T13:55:00+08:00"
+    },
+    {
+      "id": "sk-060",
+      "name": "短视频脚本",
+      "author": "LegalAgent",
+      "description": "生成短视频分镜脚本，含口播与画面建议。",
+      "tags": [
+        "短视频",
+        "脚本"
+      ],
+      "category": "内容创作",
+      "hot": 320,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "",
+      "created_at": "2026-09-15T14:00:00+08:00"
+    },
+    {
+      "id": "sk-061",
+      "name": "小红书文案",
+      "author": "LegalAgent",
+      "description": "生成种草类笔记文案，含标题、正文与话题标签。",
+      "tags": [
+        "小红书",
+        "文案"
+      ],
+      "category": "内容创作",
+      "hot": 357,
+      "enabled": false,
+      "icon": "i-clock",
+      "page": "",
+      "created_at": "2026-09-15T14:05:00+08:00"
+    },
+    {
+      "id": "sk-062",
+      "name": "产品卖点提炼",
+      "author": "LegalAgent",
+      "description": "从产品资料中提炼卖点与用户价值主张。",
+      "tags": [
+        "卖点",
+        "营销"
+      ],
+      "category": "内容创作",
+      "hot": 394,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-09-15T14:10:00+08:00"
+    },
+    {
+      "id": "sk-063",
+      "name": "营销海报文案",
+      "author": "LegalAgent",
+      "description": "生成海报主标题、副标题与行动号召文案。",
+      "tags": [
+        "海报",
+        "文案"
+      ],
+      "category": "内容创作",
+      "hot": 431,
+      "enabled": false,
+      "icon": "i-scale",
+      "page": "",
+      "created_at": "2026-09-15T14:15:00+08:00"
+    },
+    {
+      "id": "sk-064",
+      "name": "新闻通稿",
+      "author": "LegalAgent",
+      "description": "根据事件信息撰写正式新闻通稿。",
+      "tags": [
+        "新闻稿",
+        "通稿"
+      ],
+      "category": "内容创作",
+      "hot": 468,
+      "enabled": false,
+      "icon": "i-dl",
+      "page": "",
+      "created_at": "2026-09-15T14:20:00+08:00"
+    },
+    {
+      "id": "sk-065",
+      "name": "演讲稿",
+      "author": "LegalAgent",
+      "description": "根据场合与时长撰写感染力强的演讲稿。",
+      "tags": [
+        "演讲",
+        "文稿"
+      ],
+      "category": "内容创作",
+      "hot": 25,
+      "enabled": false,
+      "icon": "i-edit",
+      "page": "",
+      "created_at": "2026-09-15T14:25:00+08:00"
+    },
+    {
+      "id": "sk-066",
+      "name": "品牌故事",
+      "author": "LegalAgent",
+      "description": "梳理品牌脉络生成有温度的品牌故事。",
+      "tags": [
+        "品牌",
+        "故事"
+      ],
+      "category": "内容创作",
+      "hot": 62,
+      "enabled": false,
+      "icon": "i-redo",
+      "page": "",
+      "created_at": "2026-09-15T14:30:00+08:00"
+    },
+    {
+      "id": "sk-067",
+      "name": "广告语生成",
+      "author": "LegalAgent",
+      "description": "为产品与品牌生成简洁有力的广告语。",
+      "tags": [
+        "广告语",
+        "创意"
+      ],
+      "category": "内容创作",
+      "hot": 99,
+      "enabled": false,
+      "icon": "i-refresh",
+      "page": "",
+      "created_at": "2026-09-15T14:35:00+08:00"
+    },
+    {
+      "id": "sk-068",
+      "name": "书籍摘要",
+      "author": "LegalAgent",
+      "description": "生成书籍章节摘要与核心观点提炼。",
+      "tags": [
+        "读书",
+        "摘要"
+      ],
+      "category": "内容创作",
+      "hot": 136,
+      "enabled": false,
+      "icon": "i-zap",
+      "page": "",
+      "created_at": "2026-09-15T14:40:00+08:00"
+    },
+    {
+      "id": "sk-069",
+      "name": "诗歌创作",
+      "author": "LegalAgent",
+      "description": "根据主题与风格创作现代诗。",
+      "tags": [
+        "诗歌",
+        "创作"
+      ],
+      "category": "内容创作",
+      "hot": 173,
+      "enabled": false,
+      "icon": "i-more",
+      "page": "",
+      "created_at": "2026-09-15T14:45:00+08:00"
+    },
+    {
+      "id": "sk-070",
+      "name": "歌词创作",
+      "author": "LegalAgent",
+      "description": "根据主题与韵脚生成歌词段落。",
+      "tags": [
+        "歌词",
+        "创作"
+      ],
+      "category": "内容创作",
+      "hot": 210,
+      "enabled": false,
+      "icon": "i-bell",
+      "page": "",
+      "created_at": "2026-09-15T14:50:00+08:00"
+    },
+    {
+      "id": "sk-071",
+      "name": "儿童故事",
+      "author": "LegalAgent",
+      "description": "生成适合儿童的童话与启蒙故事。",
+      "tags": [
+        "童话",
+        "儿童"
+      ],
+      "category": "内容创作",
+      "hot": 247,
+      "enabled": false,
+      "icon": "i-moon",
+      "page": "",
+      "created_at": "2026-09-15T14:55:00+08:00"
+    },
+    {
+      "id": "sk-072",
+      "name": "剧本分镜",
+      "author": "LegalAgent",
+      "description": "将故事构思转化为剧本与分镜脚本。",
+      "tags": [
+        "剧本",
+        "分镜"
+      ],
+      "category": "内容创作",
+      "hot": 284,
+      "enabled": false,
+      "icon": "i-chat",
+      "page": "",
+      "created_at": "2026-09-15T15:00:00+08:00"
+    },
+    {
+      "id": "sk-073",
+      "name": "选题策划",
+      "author": "LegalAgent",
+      "description": "根据领域与热点生成内容选题清单。",
+      "tags": [
+        "选题",
+        "内容策划"
+      ],
+      "category": "内容创作",
+      "hot": 321,
+      "enabled": false,
+      "icon": "i-bookmark",
+      "page": "",
+      "created_at": "2026-09-15T15:05:00+08:00"
+    },
+    {
+      "id": "sk-074",
+      "name": "标题优化",
+      "author": "LegalAgent",
+      "description": "为文章与视频生成高点击率标题候选。",
+      "tags": [
+        "标题",
+        "优化"
+      ],
+      "category": "内容创作",
+      "hot": 358,
+      "enabled": false,
+      "icon": "i-search",
+      "page": "",
+      "created_at": "2026-09-15T15:10:00+08:00"
+    },
+    {
+      "id": "sk-075",
+      "name": "长文润色",
+      "author": "LegalAgent",
+      "description": "润色长文措辞，使表达更流畅专业。",
+      "tags": [
+        "润色",
+        "写作"
+      ],
+      "category": "内容创作",
+      "hot": 395,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-09-15T15:15:00+08:00"
+    },
+    {
+      "id": "sk-076",
+      "name": "评论区运营",
+      "author": "LegalAgent",
+      "description": "生成与内容调性一致的回复与互动话术。",
+      "tags": [
+        "评论",
+        "运营"
+      ],
+      "category": "内容创作",
+      "hot": 432,
+      "enabled": false,
+      "icon": "i-shield",
+      "page": "",
+      "created_at": "2026-09-15T15:20:00+08:00"
+    },
+    {
+      "id": "sk-077",
+      "name": "活动策划案",
+      "author": "LegalAgent",
+      "description": "生成活动主题、流程与执行分工策划案。",
+      "tags": [
+        "活动策划",
+        "方案"
+      ],
+      "category": "内容创作",
+      "hot": 469,
+      "enabled": false,
+      "icon": "i-cal",
+      "page": "",
+      "created_at": "2026-09-15T15:25:00+08:00"
+    },
+    {
+      "id": "sk-078",
+      "name": "图文排版建议",
+      "author": "LegalAgent",
+      "description": "给出图文内容的结构与视觉排版建议。",
+      "tags": [
+        "排版",
+        "图文"
+      ],
+      "category": "内容创作",
+      "hot": 26,
+      "enabled": false,
+      "icon": "i-gavel",
+      "page": "",
+      "created_at": "2026-09-15T15:30:00+08:00"
+    },
+    {
+      "id": "sk-079",
+      "name": "网页正文提取",
+      "author": "LegalAgent",
+      "description": "从网页中提取正文内容并去除广告与噪音。",
+      "tags": [
+        "网页",
+        "提取"
+      ],
+      "category": "数据采集",
+      "hot": 63,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-09-15T15:35:00+08:00"
+    },
+    {
+      "id": "sk-080",
+      "name": "表格数据抽取",
+      "author": "LegalAgent",
+      "description": "抽取网页或文档中的表格数据为结构化格式。",
+      "tags": [
+        "表格",
+        "抽取"
+      ],
+      "category": "数据采集",
+      "hot": 100,
+      "enabled": false,
+      "icon": "i-folder",
+      "page": "",
+      "created_at": "2026-09-15T15:40:00+08:00"
+    },
+    {
+      "id": "sk-081",
+      "name": "舆情关键词监控",
+      "author": "LegalAgent",
+      "description": "围绕关键词梳理舆情信息与传播趋势。",
+      "tags": [
+        "舆情",
+        "监控"
+      ],
+      "category": "数据采集",
+      "hot": 137,
+      "enabled": false,
+      "icon": "i-clip",
+      "page": "",
+      "created_at": "2026-09-15T15:45:00+08:00"
+    },
+    {
+      "id": "sk-082",
+      "name": "价格信息收集",
+      "author": "LegalAgent",
+      "description": "收集商品价格信息并对比渠道差异。",
+      "tags": [
+        "价格",
+        "比价"
+      ],
+      "category": "数据采集",
+      "hot": 174,
+      "enabled": false,
+      "icon": "i-user",
+      "page": "",
+      "created_at": "2026-09-15T15:50:00+08:00"
+    },
+    {
+      "id": "sk-083",
+      "name": "学术文献收集",
+      "author": "LegalAgent",
+      "description": "按主题收集论文元数据与摘要信息。",
+      "tags": [
+        "学术",
+        "文献"
+      ],
+      "category": "数据采集",
+      "hot": 211,
+      "enabled": false,
+      "icon": "i-todo",
+      "page": "",
+      "created_at": "2026-09-15T15:55:00+08:00"
+    },
+    {
+      "id": "sk-084",
+      "name": "新闻聚合",
+      "author": "LegalAgent",
+      "description": "聚合多源新闻并按主题归类摘要。",
+      "tags": [
+        "新闻",
+        "聚合"
+      ],
+      "category": "数据采集",
+      "hot": 248,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "",
+      "created_at": "2026-09-15T16:00:00+08:00"
+    },
+    {
+      "id": "sk-085",
+      "name": "公开数据查询",
+      "author": "LegalAgent",
+      "description": "查询公开数据源并按口径整理结果。",
+      "tags": [
+        "公开数据",
+        "查询"
+      ],
+      "category": "数据采集",
+      "hot": 285,
+      "enabled": false,
+      "icon": "i-clock",
+      "page": "",
+      "created_at": "2026-09-15T16:05:00+08:00"
+    },
+    {
+      "id": "sk-086",
+      "name": "表单数据汇总",
+      "author": "LegalAgent",
+      "description": "汇总多份表单数据并统一字段口径。",
+      "tags": [
+        "表单",
+        "汇总"
+      ],
+      "category": "数据采集",
+      "hot": 322,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-09-15T16:10:00+08:00"
+    },
+    {
+      "id": "sk-087",
+      "name": "市场数据采集",
+      "author": "LegalAgent",
+      "description": "采集市场规模、竞品等公开数据用于分析。",
+      "tags": [
+        "市场",
+        "数据"
+      ],
+      "category": "数据采集",
+      "hot": 359,
+      "enabled": false,
+      "icon": "i-scale",
+      "page": "",
+      "created_at": "2026-09-15T16:15:00+08:00"
+    },
+    {
+      "id": "sk-088",
+      "name": "图片OCR采集",
+      "author": "LegalAgent",
+      "description": "批量识别图片文字并输出为可编辑文本。",
+      "tags": [
+        "OCR",
+        "文字识别"
+      ],
+      "category": "数据采集",
+      "hot": 396,
+      "enabled": false,
+      "icon": "i-dl",
+      "page": "",
+      "created_at": "2026-09-15T16:20:00+08:00"
+    },
+    {
+      "id": "sk-089",
+      "name": "数据清洗",
+      "author": "LegalAgent",
+      "description": "清洗脏数据，处理缺失值与格式问题。",
+      "tags": [
+        "数据清洗",
+        "质量"
+      ],
+      "category": "数据采集",
+      "hot": 433,
+      "enabled": false,
+      "icon": "i-edit",
+      "page": "",
+      "created_at": "2026-09-15T16:25:00+08:00"
+    },
+    {
+      "id": "sk-090",
+      "name": "数据去重",
+      "author": "LegalAgent",
+      "description": "识别并合并重复记录，保留有效版本。",
+      "tags": [
+        "去重",
+        "数据质量"
+      ],
+      "category": "数据采集",
+      "hot": 470,
+      "enabled": false,
+      "icon": "i-redo",
+      "page": "",
+      "created_at": "2026-09-15T16:30:00+08:00"
+    },
+    {
+      "id": "sk-091",
+      "name": "字段映射",
+      "author": "LegalAgent",
+      "description": "建立源字段与目标字段的映射关系说明。",
+      "tags": [
+        "字段映射",
+        "数据"
+      ],
+      "category": "数据采集",
+      "hot": 27,
+      "enabled": false,
+      "icon": "i-refresh",
+      "page": "",
+      "created_at": "2026-09-15T16:35:00+08:00"
+    },
+    {
+      "id": "sk-092",
+      "name": "定时采集提醒",
+      "author": "LegalAgent",
+      "description": "制定定时采集计划并提醒任务执行。",
+      "tags": [
+        "定时任务",
+        "采集"
+      ],
+      "category": "数据采集",
+      "hot": 64,
+      "enabled": false,
+      "icon": "i-zap",
+      "page": "",
+      "created_at": "2026-09-15T16:40:00+08:00"
+    },
+    {
+      "id": "sk-093",
+      "name": "数据导出整理",
+      "author": "LegalAgent",
+      "description": "将采集结果整理为标准格式并导出。",
+      "tags": [
+        "导出",
+        "整理"
+      ],
+      "category": "数据采集",
+      "hot": 101,
+      "enabled": false,
+      "icon": "i-more",
+      "page": "",
+      "created_at": "2026-09-15T16:45:00+08:00"
+    },
+    {
+      "id": "sk-094",
+      "name": "知识库搭建",
+      "author": "LegalAgent",
+      "description": "根据领域资料规划知识库目录与标签体系。",
+      "tags": [
+        "知识库",
+        "搭建"
+      ],
+      "category": "知识管理",
+      "hot": 138,
+      "enabled": false,
+      "icon": "i-bell",
+      "page": "",
+      "created_at": "2026-09-15T16:50:00+08:00"
+    },
+    {
+      "id": "sk-095",
+      "name": "文档分类打标",
+      "author": "LegalAgent",
+      "description": "自动为文档分类并打上主题标签。",
+      "tags": [
+        "分类",
+        "标签"
+      ],
+      "category": "知识管理",
+      "hot": 175,
+      "enabled": false,
+      "icon": "i-moon",
+      "page": "",
+      "created_at": "2026-09-15T16:55:00+08:00"
+    },
+    {
+      "id": "sk-096",
+      "name": "文档摘要生成",
+      "author": "LegalAgent",
+      "description": "生成长文档摘要与关键信息提取。",
+      "tags": [
+        "摘要",
+        "文档"
+      ],
+      "category": "知识管理",
+      "hot": 212,
+      "enabled": false,
+      "icon": "i-chat",
+      "page": "",
+      "created_at": "2026-09-15T17:00:00+08:00"
+    },
+    {
+      "id": "sk-097",
+      "name": "关键词提取",
+      "author": "LegalAgent",
+      "description": "从文本中提取核心关键词与主题词。",
+      "tags": [
+        "关键词",
+        "文本分析"
+      ],
+      "category": "知识管理",
+      "hot": 249,
+      "enabled": false,
+      "icon": "i-bookmark",
+      "page": "",
+      "created_at": "2026-09-15T17:05:00+08:00"
+    },
+    {
+      "id": "sk-098",
+      "name": "知识问答",
+      "author": "LegalAgent",
+      "description": "基于知识库内容回答专业问题并给出出处。",
+      "tags": [
+        "问答",
+        "知识库"
+      ],
+      "category": "知识管理",
+      "hot": 286,
+      "enabled": false,
+      "icon": "i-search",
+      "page": "",
+      "created_at": "2026-09-15T17:10:00+08:00"
+    },
+    {
+      "id": "sk-099",
+      "name": "文档版本管理",
+      "author": "LegalAgent",
+      "description": "对比文档版本差异并记录变更要点。",
+      "tags": [
+        "版本",
+        "文档"
+      ],
+      "category": "知识管理",
+      "hot": 323,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-09-15T17:15:00+08:00"
+    },
+    {
+      "id": "sk-100",
+      "name": "参考资料整理",
+      "author": "LegalAgent",
+      "description": "整理参考资料目录并标注用途与优先级。",
+      "tags": [
+        "资料",
+        "整理"
+      ],
+      "category": "知识管理",
+      "hot": 360,
+      "enabled": false,
+      "icon": "i-shield",
+      "page": "",
+      "created_at": "2026-09-15T17:20:00+08:00"
+    },
+    {
+      "id": "sk-101",
+      "name": "思维导图生成",
+      "author": "LegalAgent",
+      "description": "将主题与要点组织为思维导图结构。",
+      "tags": [
+        "思维导图",
+        "结构化"
+      ],
+      "category": "知识管理",
+      "hot": 397,
+      "enabled": false,
+      "icon": "i-cal",
+      "page": "",
+      "created_at": "2026-09-15T17:25:00+08:00"
+    },
+    {
+      "id": "sk-102",
+      "name": "概念解释",
+      "author": "LegalAgent",
+      "description": "用通俗语言解释专业术语与概念。",
+      "tags": [
+        "术语",
+        "解释"
+      ],
+      "category": "知识管理",
+      "hot": 434,
+      "enabled": false,
+      "icon": "i-gavel",
+      "page": "",
+      "created_at": "2026-09-15T17:30:00+08:00"
+    },
+    {
+      "id": "sk-103",
+      "name": "学习路径规划",
+      "author": "LegalAgent",
+      "description": "根据目标拆解学习路线与阶段任务。",
+      "tags": [
+        "学习",
+        "路径"
+      ],
+      "category": "知识管理",
+      "hot": 471,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-09-15T17:35:00+08:00"
+    },
+    {
+      "id": "sk-104",
+      "name": "笔记整理",
+      "author": "LegalAgent",
+      "description": "将散乱笔记重组为结构化知识卡片。",
+      "tags": [
+        "笔记",
+        "整理"
+      ],
+      "category": "知识管理",
+      "hot": 28,
+      "enabled": false,
+      "icon": "i-folder",
+      "page": "",
+      "created_at": "2026-09-15T17:40:00+08:00"
+    },
+    {
+      "id": "sk-105",
+      "name": "知识关系梳理",
+      "author": "LegalAgent",
+      "description": "梳理知识点之间的关联与依赖关系。",
+      "tags": [
+        "知识图谱",
+        "关系"
+      ],
+      "category": "知识管理",
+      "hot": 65,
+      "enabled": false,
+      "icon": "i-clip",
+      "page": "",
+      "created_at": "2026-09-15T17:45:00+08:00"
+    },
+    {
+      "id": "sk-106",
+      "name": "旧文档归档",
+      "author": "LegalAgent",
+      "description": "识别过期文档并按规则归档保存。",
+      "tags": [
+        "归档",
+        "文档管理"
+      ],
+      "category": "知识管理",
+      "hot": 102,
+      "enabled": false,
+      "icon": "i-user",
+      "page": "",
+      "created_at": "2026-09-15T17:50:00+08:00"
+    },
+    {
+      "id": "sk-107",
+      "name": "外文资料收藏",
+      "author": "LegalAgent",
+      "description": "翻译并收藏外文资料，保留出处信息。",
+      "tags": [
+        "翻译",
+        "收藏"
+      ],
+      "category": "知识管理",
+      "hot": 139,
+      "enabled": false,
+      "icon": "i-todo",
+      "page": "",
+      "created_at": "2026-09-15T17:55:00+08:00"
+    },
+    {
+      "id": "sk-108",
+      "name": "专家经验沉淀",
+      "author": "LegalAgent",
+      "description": "将专家口头经验整理为可复用的文档。",
+      "tags": [
+        "经验",
+        "沉淀"
+      ],
+      "category": "知识管理",
+      "hot": 176,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "",
+      "created_at": "2026-09-15T18:00:00+08:00"
+    },
+    {
+      "id": "sk-109",
+      "name": "旅行攻略生成",
+      "author": "LegalAgent",
+      "description": "根据目的地与天数生成行程攻略与预算建议。",
+      "tags": [
+        "旅行",
+        "攻略"
+      ],
+      "category": "生活娱乐",
+      "hot": 213,
+      "enabled": false,
+      "icon": "i-clock",
+      "page": "",
+      "created_at": "2026-09-15T18:05:00+08:00"
+    },
+    {
+      "id": "sk-110",
+      "name": "菜谱推荐",
+      "author": "LegalAgent",
+      "description": "根据食材与口味推荐家常菜谱与做法步骤。",
+      "tags": [
+        "菜谱",
+        "美食"
+      ],
+      "category": "生活娱乐",
+      "hot": 250,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-09-15T18:10:00+08:00"
+    },
+    {
+      "id": "sk-111",
+      "name": "健身计划",
+      "author": "LegalAgent",
+      "description": "根据目标与时间生成健身安排与动作建议。",
+      "tags": [
+        "健身",
+        "运动"
+      ],
+      "category": "生活娱乐",
+      "hot": 287,
+      "enabled": false,
+      "icon": "i-scale",
+      "page": "",
+      "created_at": "2026-09-15T18:15:00+08:00"
+    },
+    {
+      "id": "sk-112",
+      "name": "电影推荐",
+      "author": "LegalAgent",
+      "description": "根据偏好推荐电影并附观影理由。",
+      "tags": [
+        "电影",
+        "推荐"
+      ],
+      "category": "生活娱乐",
+      "hot": 324,
+      "enabled": false,
+      "icon": "i-dl",
+      "page": "",
+      "created_at": "2026-09-15T18:20:00+08:00"
+    },
+    {
+      "id": "sk-113",
+      "name": "音乐歌单推荐",
+      "author": "LegalAgent",
+      "description": "根据心情与场景推荐歌单与曲目。",
+      "tags": [
+        "音乐",
+        "歌单"
+      ],
+      "category": "生活娱乐",
+      "hot": 361,
+      "enabled": false,
+      "icon": "i-edit",
+      "page": "",
+      "created_at": "2026-09-15T18:25:00+08:00"
+    },
+    {
+      "id": "sk-114",
+      "name": "读书推荐",
+      "author": "LegalAgent",
+      "description": "根据兴趣推荐书单并附内容简介。",
+      "tags": [
+        "读书",
+        "书单"
+      ],
+      "category": "生活娱乐",
+      "hot": 398,
+      "enabled": false,
+      "icon": "i-redo",
+      "page": "",
+      "created_at": "2026-09-15T18:30:00+08:00"
+    },
+    {
+      "id": "sk-115",
+      "name": "节日祝福",
+      "author": "LegalAgent",
+      "description": "生成节日祝福语与贺卡文案。",
+      "tags": [
+        "祝福",
+        "节日"
+      ],
+      "category": "生活娱乐",
+      "hot": 435,
+      "enabled": false,
+      "icon": "i-refresh",
+      "page": "",
+      "created_at": "2026-09-15T18:35:00+08:00"
+    },
+    {
+      "id": "sk-116",
+      "name": "亲子活动",
+      "author": "LegalAgent",
+      "description": "推荐适合家庭的亲子活动与材料准备。",
+      "tags": [
+        "亲子",
+        "活动"
+      ],
+      "category": "生活娱乐",
+      "hot": 472,
+      "enabled": false,
+      "icon": "i-zap",
+      "page": "",
+      "created_at": "2026-09-15T18:40:00+08:00"
+    },
+    {
+      "id": "sk-117",
+      "name": "游戏攻略",
+      "author": "LegalAgent",
+      "description": "整理热门游戏玩法与通关要点。",
+      "tags": [
+        "游戏",
+        "攻略"
+      ],
+      "category": "生活娱乐",
+      "hot": 29,
+      "enabled": false,
+      "icon": "i-more",
+      "page": "",
+      "created_at": "2026-09-15T18:45:00+08:00"
+    },
+    {
+      "id": "sk-118",
+      "name": "手工教程",
+      "author": "LegalAgent",
+      "description": "提供手工制作步骤与材料清单。",
+      "tags": [
+        "手工",
+        "教程"
+      ],
+      "category": "生活娱乐",
+      "hot": 66,
+      "enabled": false,
+      "icon": "i-bell",
+      "page": "",
+      "created_at": "2026-09-15T18:50:00+08:00"
+    },
+    {
+      "id": "sk-119",
+      "name": "宠物护理",
+      "author": "LegalAgent",
+      "description": "提供宠物日常护理与健康观察建议。",
+      "tags": [
+        "宠物",
+        "护理"
+      ],
+      "category": "生活娱乐",
+      "hot": 103,
+      "enabled": false,
+      "icon": "i-moon",
+      "page": "",
+      "created_at": "2026-09-15T18:55:00+08:00"
+    },
+    {
+      "id": "sk-120",
+      "name": "睡眠改善",
+      "author": "LegalAgent",
+      "description": "给出改善睡眠的作息与习惯建议。",
+      "tags": [
+        "睡眠",
+        "健康"
+      ],
+      "category": "生活娱乐",
+      "hot": 140,
+      "enabled": false,
+      "icon": "i-chat",
+      "page": "",
+      "created_at": "2026-09-15T19:00:00+08:00"
+    },
+    {
+      "id": "sk-121",
+      "name": "财报解读",
+      "author": "LegalAgent",
+      "description": "解读财报关键指标并提炼经营信号。",
+      "tags": [
+        "财报",
+        "财务分析"
+      ],
+      "category": "金融",
+      "hot": 177,
+      "enabled": false,
+      "icon": "i-bookmark",
+      "page": "",
+      "created_at": "2026-09-15T19:05:00+08:00"
+    },
+    {
+      "id": "sk-122",
+      "name": "投资风险提示",
+      "author": "LegalAgent",
+      "description": "梳理投资标的的风险点与注意事项。",
+      "tags": [
+        "投资",
+        "风险"
+      ],
+      "category": "金融",
+      "hot": 214,
+      "enabled": false,
+      "icon": "i-search",
+      "page": "",
+      "created_at": "2026-09-15T19:10:00+08:00"
+    },
+    {
+      "id": "sk-123",
+      "name": "基金对比",
+      "author": "LegalAgent",
+      "description": "对比基金业绩、费率与风险特征。",
+      "tags": [
+        "基金",
+        "理财"
+      ],
+      "category": "金融",
+      "hot": 251,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-09-15T19:15:00+08:00"
+    },
+    {
+      "id": "sk-124",
+      "name": "税务计算助手",
+      "author": "LegalAgent",
+      "description": "计算个税与常见税种并给出申报说明。",
+      "tags": [
+        "税务",
+        "个税"
+      ],
+      "category": "金融",
+      "hot": 288,
+      "enabled": false,
+      "icon": "i-shield",
+      "page": "",
+      "created_at": "2026-09-15T19:20:00+08:00"
+    },
+    {
+      "id": "sk-125",
+      "name": "报销票据整理",
+      "author": "LegalAgent",
+      "description": "整理报销票据信息并生成费用清单。",
+      "tags": [
+        "票据",
+        "报销"
+      ],
+      "category": "金融",
+      "hot": 325,
+      "enabled": false,
+      "icon": "i-cal",
+      "page": "",
+      "created_at": "2026-09-15T19:25:00+08:00"
+    },
+    {
+      "id": "sk-126",
+      "name": "汇率换算",
+      "author": "LegalAgent",
+      "description": "提供多币种汇率换算与走势参考。",
+      "tags": [
+        "汇率",
+        "换算"
+      ],
+      "category": "金融",
+      "hot": 362,
+      "enabled": false,
+      "icon": "i-gavel",
+      "page": "",
+      "created_at": "2026-09-15T19:30:00+08:00"
+    },
+    {
+      "id": "sk-127",
+      "name": "理财规划建议",
+      "author": "LegalAgent",
+      "description": "根据收支与目标给出理财配置思路。",
+      "tags": [
+        "理财",
+        "规划"
+      ],
+      "category": "金融",
+      "hot": 399,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-09-15T19:35:00+08:00"
+    },
+    {
+      "id": "sk-128",
+      "name": "贷款方案对比",
+      "author": "LegalAgent",
+      "description": "对比贷款方案的总成本与还款压力。",
+      "tags": [
+        "贷款",
+        "对比"
+      ],
+      "category": "金融",
+      "hot": 436,
+      "enabled": false,
+      "icon": "i-folder",
+      "page": "",
+      "created_at": "2026-09-15T19:40:00+08:00"
+    },
+    {
+      "id": "sk-129",
+      "name": "预算编制",
+      "author": "LegalAgent",
+      "description": "根据收入与支出目标编制月度预算表。",
+      "tags": [
+        "预算",
+        "财务管理"
+      ],
+      "category": "金融",
+      "hot": 473,
+      "enabled": false,
+      "icon": "i-clip",
+      "page": "",
+      "created_at": "2026-09-15T19:45:00+08:00"
+    },
+    {
+      "id": "sk-130",
+      "name": "账单分析",
+      "author": "LegalAgent",
+      "description": "分析消费账单并归类支出结构。",
+      "tags": [
+        "账单",
+        "消费分析"
+      ],
+      "category": "金融",
+      "hot": 30,
+      "enabled": false,
+      "icon": "i-user",
+      "page": "",
+      "created_at": "2026-09-15T19:50:00+08:00"
+    },
+    {
+      "id": "sk-131",
+      "name": "保险条款解读",
+      "author": "LegalAgent",
+      "description": "解读保险条款核心责任与免责内容。",
+      "tags": [
+        "保险",
+        "条款"
+      ],
+      "category": "金融",
+      "hot": 67,
+      "enabled": false,
+      "icon": "i-todo",
+      "page": "",
+      "created_at": "2026-09-15T19:55:00+08:00"
+    },
+    {
+      "id": "sk-132",
+      "name": "股票资讯摘要",
+      "author": "LegalAgent",
+      "description": "聚合个股与板块资讯并生成要点摘要。",
+      "tags": [
+        "股票",
+        "资讯"
+      ],
+      "category": "金融",
+      "hot": 104,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "",
+      "created_at": "2026-09-15T20:00:00+08:00"
+    },
+    {
+      "id": "sk-133",
+      "name": "中英互译",
+      "author": "LegalAgent",
+      "description": "提供中英互译与表达优化建议。",
+      "tags": [
+        "翻译",
+        "中英"
+      ],
+      "category": "翻译",
+      "hot": 141,
+      "enabled": false,
+      "icon": "i-clock",
+      "page": "",
+      "created_at": "2026-09-15T20:05:00+08:00"
+    },
+    {
+      "id": "sk-134",
+      "name": "合同翻译",
+      "author": "LegalAgent",
+      "description": "翻译合同文本并保持术语与句式严谨。",
+      "tags": [
+        "合同",
+        "翻译"
+      ],
+      "category": "翻译",
+      "hot": 178,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-09-15T20:10:00+08:00"
+    },
+    {
+      "id": "sk-135",
+      "name": "论文摘要翻译",
+      "author": "LegalAgent",
+      "description": "翻译学术摘要与论文片段，保持专业术语准确。",
+      "tags": [
+        "学术",
+        "翻译"
+      ],
+      "category": "翻译",
+      "hot": 215,
+      "enabled": false,
+      "icon": "i-scale",
+      "page": "",
+      "created_at": "2026-09-15T20:15:00+08:00"
+    },
+    {
+      "id": "sk-136",
+      "name": "多语邮件翻译",
+      "author": "LegalAgent",
+      "description": "翻译并润色多语种商务邮件。",
+      "tags": [
+        "邮件",
+        "多语种"
+      ],
+      "category": "翻译",
+      "hot": 252,
+      "enabled": false,
+      "icon": "i-dl",
+      "page": "",
+      "created_at": "2026-09-15T20:20:00+08:00"
+    },
+    {
+      "id": "sk-137",
+      "name": "字幕翻译",
+      "author": "LegalAgent",
+      "description": "翻译字幕文本并适配时间轴与口语表达。",
+      "tags": [
+        "字幕",
+        "翻译"
+      ],
+      "category": "翻译",
+      "hot": 289,
+      "enabled": false,
+      "icon": "i-edit",
+      "page": "",
+      "created_at": "2026-09-15T20:25:00+08:00"
+    },
+    {
+      "id": "sk-138",
+      "name": "术语库翻译",
+      "author": "LegalAgent",
+      "description": "基于术语库统一译法，保证全文术语一致。",
+      "tags": [
+        "术语",
+        "一致性"
+      ],
+      "category": "翻译",
+      "hot": 326,
+      "enabled": false,
+      "icon": "i-redo",
+      "page": "",
+      "created_at": "2026-09-15T20:30:00+08:00"
+    },
+    {
+      "id": "sk-139",
+      "name": "公文格式排版",
+      "author": "LegalAgent",
+      "description": "按公文规范调整标题、字体与版式。",
+      "tags": [
+        "公文",
+        "排版"
+      ],
+      "category": "文书",
+      "hot": 363,
+      "enabled": false,
+      "icon": "i-refresh",
+      "page": "",
+      "created_at": "2026-09-15T20:35:00+08:00"
+    },
+    {
+      "id": "sk-140",
+      "name": "会议通知起草",
+      "author": "LegalAgent",
+      "description": "根据会议信息起草正式会议通知。",
+      "tags": [
+        "通知",
+        "会议"
+      ],
+      "category": "文书",
+      "hot": 400,
+      "enabled": false,
+      "icon": "i-zap",
+      "page": "",
+      "created_at": "2026-09-15T20:40:00+08:00"
+    },
+    {
+      "id": "sk-141",
+      "name": "工作总结生成",
+      "author": "LegalAgent",
+      "description": "根据工作素材生成阶段性工作总结。",
+      "tags": [
+        "总结",
+        "汇报"
+      ],
+      "category": "文书",
+      "hot": 437,
+      "enabled": false,
+      "icon": "i-more",
+      "page": "",
+      "created_at": "2026-09-15T20:45:00+08:00"
+    },
+    {
+      "id": "sk-142",
+      "name": "证明信生成",
+      "author": "LegalAgent",
+      "description": "根据事实情况起草规范证明信。",
+      "tags": [
+        "证明信",
+        "文书"
+      ],
+      "category": "文书",
+      "hot": 474,
+      "enabled": false,
+      "icon": "i-bell",
+      "page": "",
+      "created_at": "2026-09-15T20:50:00+08:00"
+    },
+    {
+      "id": "sk-143",
+      "name": "邀请函起草",
+      "author": "LegalAgent",
+      "description": "起草活动或商务邀请函。",
+      "tags": [
+        "邀请函",
+        "文书"
+      ],
+      "category": "文书",
+      "hot": 31,
+      "enabled": false,
+      "icon": "i-moon",
+      "page": "",
+      "created_at": "2026-09-15T20:55:00+08:00"
+    },
+    {
+      "id": "sk-144",
+      "name": "发言稿整理",
+      "author": "LegalAgent",
+      "description": "整理发言要点并形成正式发言稿。",
+      "tags": [
+        "发言稿",
+        "整理"
+      ],
+      "category": "文书",
+      "hot": 68,
+      "enabled": false,
+      "icon": "i-chat",
+      "page": "",
+      "created_at": "2026-09-15T21:00:00+08:00"
+    },
+    {
+      "id": "sk-145",
+      "name": "合同摘要",
+      "author": "LegalAgent",
+      "description": "提取合同核心条款与权利义务要点。",
+      "tags": [
+        "合同",
+        "摘要"
+      ],
+      "category": "合同",
+      "hot": 105,
+      "enabled": false,
+      "icon": "i-bookmark",
+      "page": "",
+      "created_at": "2026-09-15T21:05:00+08:00"
+    },
+    {
+      "id": "sk-146",
+      "name": "合同条款对比",
+      "author": "LegalAgent",
+      "description": "对比多份合同条款差异并给出提示。",
+      "tags": [
+        "合同",
+        "对比"
+      ],
+      "category": "合同",
+      "hot": 142,
+      "enabled": false,
+      "icon": "i-search",
+      "page": "",
+      "created_at": "2026-09-15T21:10:00+08:00"
+    },
+    {
+      "id": "sk-147",
+      "name": "合同模板生成",
+      "author": "LegalAgent",
+      "description": "根据交易场景生成合同模板框架。",
+      "tags": [
+        "合同模板",
+        "生成"
+      ],
+      "category": "合同",
+      "hot": 179,
+      "enabled": false,
+      "icon": "i-doc",
+      "page": "",
+      "created_at": "2026-09-15T21:15:00+08:00"
+    },
+    {
+      "id": "sk-148",
+      "name": "违约条款审查",
+      "author": "LegalAgent",
+      "description": "审查违约条款的完整性与可执行性。",
+      "tags": [
+        "违约",
+        "审查"
+      ],
+      "category": "合同",
+      "hot": 216,
+      "enabled": false,
+      "icon": "i-shield",
+      "page": "",
+      "created_at": "2026-09-15T21:20:00+08:00"
+    },
+    {
+      "id": "sk-149",
+      "name": "合同到期提醒",
+      "author": "LegalAgent",
+      "description": "梳理合同到期时间并生成提醒清单。",
+      "tags": [
+        "合同",
+        "提醒"
+      ],
+      "category": "合同",
+      "hot": 253,
+      "enabled": false,
+      "icon": "i-cal",
+      "page": "",
+      "created_at": "2026-09-15T21:25:00+08:00"
+    },
+    {
+      "id": "sk-150",
+      "name": "合同版本比对",
+      "author": "LegalAgent",
+      "description": "比对合同不同版本修改点并归纳影响。",
+      "tags": [
+        "合同",
+        "版本"
+      ],
+      "category": "合同",
+      "hot": 290,
+      "enabled": false,
+      "icon": "i-gavel",
+      "page": "",
+      "created_at": "2026-09-15T21:30:00+08:00"
+    },
+    {
+      "id": "sk-151",
+      "name": "法律法规效力查询",
+      "author": "LegalAgent",
+      "description": "查询法律法规现行效力与生效日期。",
+      "tags": [
+        "法规",
+        "效力"
+      ],
+      "category": "检索",
+      "hot": 327,
+      "enabled": false,
+      "icon": "i-bars",
+      "page": "",
+      "created_at": "2026-09-15T21:35:00+08:00"
+    },
+    {
+      "id": "sk-152",
+      "name": "裁判文书检索",
+      "author": "LegalAgent",
+      "description": "按案由与关键词检索裁判文书并归纳要点。",
+      "tags": [
+        "裁判文书",
+        "检索"
+      ],
+      "category": "检索",
+      "hot": 364,
+      "enabled": false,
+      "icon": "i-folder",
+      "page": "",
+      "created_at": "2026-09-15T21:40:00+08:00"
+    },
+    {
+      "id": "sk-153",
+      "name": "案例要旨归纳",
+      "author": "LegalAgent",
+      "description": "归纳类案裁判要旨与争议焦点。",
+      "tags": [
+        "案例",
+        "要旨"
+      ],
+      "category": "检索",
+      "hot": 401,
+      "enabled": false,
+      "icon": "i-clip",
+      "page": "",
+      "created_at": "2026-09-15T21:45:00+08:00"
+    },
+    {
+      "id": "sk-154",
+      "name": "法条关联推荐",
+      "author": "LegalAgent",
+      "description": "根据问题推荐关联法条与司法解释。",
+      "tags": [
+        "法条",
+        "关联"
+      ],
+      "category": "检索",
+      "hot": 438,
+      "enabled": false,
+      "icon": "i-user",
+      "page": "",
+      "created_at": "2026-09-15T21:50:00+08:00"
+    },
+    {
+      "id": "sk-155",
+      "name": "法律风险问答",
+      "author": "LegalAgent",
+      "description": "围绕具体场景提示法律风险与应对思路。",
+      "tags": [
+        "法律风险",
+        "问答"
+      ],
+      "category": "咨询",
+      "hot": 475,
+      "enabled": false,
+      "icon": "i-todo",
+      "page": "",
+      "created_at": "2026-09-15T21:55:00+08:00"
+    },
+    {
+      "id": "sk-156",
+      "name": "劳动争议咨询",
+      "author": "LegalAgent",
+      "description": "解答劳动合同、离职补偿等常见劳动争议问题。",
+      "tags": [
+        "劳动",
+        "争议"
+      ],
+      "category": "咨询",
+      "hot": 32,
+      "enabled": false,
+      "icon": "i-check",
+      "page": "",
+      "created_at": "2026-09-15T22:00:00+08:00"
+    },
+    {
+      "id": "sk-157",
+      "name": "婚姻家事咨询",
+      "author": "LegalAgent",
+      "description": "解答婚姻、继承等家事法律问题。",
+      "tags": [
+        "婚姻",
+        "家事"
+      ],
+      "category": "咨询",
+      "hot": 69,
+      "enabled": false,
+      "icon": "i-clock",
+      "page": "",
+      "created_at": "2026-09-15T22:05:00+08:00"
+    },
+    {
+      "id": "sk-158",
+      "name": "知识产权咨询",
+      "author": "LegalAgent",
+      "description": "解答商标、专利、著作权等知识产权问题。",
+      "tags": [
+        "知识产权",
+        "咨询"
+      ],
+      "category": "咨询",
+      "hot": 106,
+      "enabled": false,
+      "icon": "i-send",
+      "page": "",
+      "created_at": "2026-09-15T22:10:00+08:00"
+    },
+    {
+      "id": "sk-159",
+      "name": "任务拆解",
+      "author": "LegalAgent",
+      "description": "将复杂任务拆解为可执行子任务与依赖关系。",
+      "tags": [
+        "任务拆解",
+        "规划"
+      ],
+      "category": "任务",
+      "hot": 143,
+      "enabled": false,
+      "icon": "i-scale",
+      "page": "",
+      "created_at": "2026-09-15T22:15:00+08:00"
+    },
+    {
+      "id": "sk-160",
+      "name": "截止时间估算",
+      "author": "LegalAgent",
+      "description": "根据工作量估算任务完成时间并排期。",
+      "tags": [
+        "时间估算",
+        "排期"
+      ],
+      "category": "任务",
+      "hot": 180,
+      "enabled": false,
+      "icon": "i-dl",
+      "page": "",
+      "created_at": "2026-09-15T22:20:00+08:00"
+    },
+    {
+      "id": "sk-161",
+      "name": "优先级排序",
+      "author": "LegalAgent",
+      "description": "根据重要性与紧急度对任务排序。",
+      "tags": [
+        "优先级",
+        "排序"
+      ],
+      "category": "任务",
+      "hot": 217,
+      "enabled": false,
+      "icon": "i-edit",
+      "page": "",
+      "created_at": "2026-09-15T22:25:00+08:00"
+    },
+    {
+      "id": "sk-162",
+      "name": "任务复盘",
+      "author": "LegalAgent",
+      "description": "回顾任务执行过程并沉淀改进建议。",
+      "tags": [
+        "复盘",
+        "改进"
+      ],
+      "category": "任务",
+      "hot": 254,
+      "enabled": false,
+      "icon": "i-redo",
+      "page": "",
+      "created_at": "2026-09-15T22:30:00+08:00"
+    },
+    {
+      "id": "sk-163",
+      "name": "证据清单整理",
+      "author": "LegalAgent",
+      "description": "按证明目的整理证据清单与说明。",
+      "tags": [
+        "证据",
+        "清单"
+      ],
+      "category": "证据",
+      "hot": 291,
+      "enabled": false,
+      "icon": "i-refresh",
+      "page": "",
+      "created_at": "2026-09-15T22:35:00+08:00"
+    },
+    {
+      "id": "sk-164",
+      "name": "证据时间轴",
+      "author": "LegalAgent",
+      "description": "将证据按时间顺序整理为时间轴。",
+      "tags": [
+        "证据",
+        "时间轴"
+      ],
+      "category": "证据",
+      "hot": 328,
+      "enabled": false,
+      "icon": "i-zap",
+      "page": "",
+      "created_at": "2026-09-15T22:40:00+08:00"
+    },
+    {
+      "id": "sk-165",
+      "name": "案件进度跟踪",
+      "author": "LegalAgent",
+      "description": "记录案件关键节点并生成进度看板。",
+      "tags": [
+        "案件",
+        "进度"
+      ],
+      "category": "案件",
+      "hot": 365,
+      "enabled": false,
+      "icon": "i-more",
+      "page": "",
+      "created_at": "2026-09-15T22:45:00+08:00"
+    },
+    {
+      "id": "sk-166",
+      "name": "诉讼策略分析",
+      "author": "LegalAgent",
+      "description": "分析诉讼方案利弊并给出策略建议。",
+      "tags": [
+        "诉讼",
+        "策略"
+      ],
+      "category": "案件",
+      "hot": 402,
+      "enabled": false,
+      "icon": "i-bell",
+      "page": "",
+      "created_at": "2026-09-15T22:50:00+08:00"
+    },
+    {
+      "id": "sk-167",
+      "name": "庭前准备清单",
+      "author": "LegalAgent",
+      "description": "生成开庭前材料与要点准备清单。",
+      "tags": [
+        "庭前准备",
+        "清单"
+      ],
+      "category": "案件",
+      "hot": 439,
+      "enabled": false,
+      "icon": "i-moon",
+      "page": "",
+      "created_at": "2026-09-15T22:55:00+08:00"
+    },
+    {
+      "id": "sk-168",
+      "name": "判赔预测",
+      "author": "LegalAgent",
+      "description": "根据类案数据预测判赔区间与影响因素。",
+      "tags": [
+        "判赔",
+        "预测"
+      ],
+      "category": "案件",
+      "hot": 476,
+      "enabled": false,
+      "icon": "i-chat",
+      "page": "",
+      "created_at": "2026-09-15T23:00:00+08:00"
+    }
+  ]
+}

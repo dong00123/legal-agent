@@ -1,0 +1,147 @@
+# 律师专用多 Agent 法律咨询助手 —— 直接依赖
+#
+# 分成两份文件：
+#   requirements.txt       —— 本文件。**只列直接依赖**，每个都写清"为什么需要它"。
+#                             版本用 ``>=`` 下限 + 已知可用版本注释，便于在有 CUDA /
+#                             特定 Python 版本的机器上让 pip 自己求解。
+#   requirements.lock.txt  —— ``pip freeze`` 全量锁定（含间接依赖），
+#                             用于复现完全一致的环境（内网交付、打包 EXE 前）。
+#
+# 安装：
+#   pip install -r requirements.txt            # 常规开发/部署
+#   pip install -r requirements.lock.txt       # 需要逐字节复现时
+#
+# 本机已验证版本：Python 3.13, Windows, 246 个用例全绿（见 README「验证状态」）。
+#
+# ⚠️ 但 Docker 镜像用的是 **Python 3.11**（见 deploy/Dockerfile：torch 轮子最全），
+#    所以代码要同时保持 3.11 兼容。典型雷是 f-string 的表达式里带反斜杠 ——
+#    那要到 3.12（PEP 701）才合法，本机 3.13 毫无察觉、容器里 import 阶段就崩。
+#    由 tests/test_py311_compat.py 拦住。
+
+# ---------------------------------------------------------------- Web 服务与接口
+# 接口层框架。上游 ``starlette`` 由它带入，不单独钉版本。
+fastapi>=0.115
+# ASGI 服务器。带 ``[standard]`` 才会装 uvloop/httptools/watchfiles；
+# Windows 上没有 uvloop，装了也不会用，所以这里只要基础包。
+uvicorn>=0.30
+# 表单与文件上传（``UploadFile`` / ``Form``）**必须**有它，
+# 否则 ``POST /cases/{id}/materials`` 会在启动时报
+# "Form data requires python-multipart" —— 一个只在用到上传时才出现的雷。
+python-multipart>=0.0.9
+# 出站 HTTP。只用来调 OpenAI 兼容的推理网关（``backend/llm/client.py`` 直接
+# 走 httpx，**没有**依赖 openai SDK —— 所以换任意兼容网关都不需要改依赖）。
+httpx>=0.27
+
+# ---------------------------------------------------------------- 配置与持久化
+# 配置中心（``backend/app/config.py``）：Settings + .env 加载 + 类型校验。
+pydantic>=2.7
+pydantic-settings>=2.3
+# ORM。生产 MySQL、开发回落 SQLite，**同一套模型**，所以只需要 SQLAlchemy，
+# 不需要为两个方言写两套代码。
+SQLAlchemy>=2.0.30
+# MySQL 驱动。``DB_URL`` 里的 ``mysql+pymysql://`` 指向它。
+# 选 PyMySQL 而不是 mysqlclient：纯 Python，Windows 上不需要编译工具链。
+PyMySQL>=1.1.0
+# JWT（HS256）签发与校验。**自己实现 HMAC 而不是用 passlib** ——
+# 口令散列走标准库 hashlib.pbkdf2_hmac（见 security.py），少一个依赖少一个坑。
+PyJWT>=2.8
+
+# ---------------------------------------------------------------- 检索
+# 数值计算。向量归一化、余弦相似度、RRF 融合都直接用 numpy，
+# 不引入 faiss —— 单律所量级（万级文档）下 numpy 暴力检索完全够，且零编译依赖。
+numpy>=1.26
+# 中文分词（BM25 与检索式预处理）。
+jieba>=0.42
+# 纯 Python 全文索引：**关键词检索（BM25）的默认引擎**（``BM25_ENGINE=whoosh``）。
+# 它不可用时会回落到内置 BM25 实现（见 rag/retriever/bm25.py），所以不是硬依赖，
+# 但默认必须装上 —— 否则生产环境会静默跑在兜底引擎上。
+Whoosh>=2.7
+# 向量库客户端。``MILVUS_ENABLED=true`` 时启用；
+# 连不上会**自动回落本地 numpy 索引**（见 config.runtime_backends），
+# 所以没有 Milvus 的机器也能跑通全流程。
+pymilvus>=2.4
+# 短期记忆（会话上下文、任务中间态）。``REDIS_ENABLED=false`` 时回落进程内
+# TTL 字典 —— 同样保证无 Redis 也能跑。
+redis>=5.0
+
+# ---------------------------------------------------------------- Agent 编排
+# 图编排。方案要求"多 Agent + Validator 失败回环 + 步数上限"，
+# 用 LangGraph 而不是手写调度器：回环、检查点、递归上限都是现成的。
+# ⚠️ 1.x 与 0.x 的 API 差异较大，从 0.x 升级需要改 ``graph.py``。
+langgraph>=0.2,<2
+
+# ---------------------------------------------------------------- 文档解析
+# PDF 文本与版面抽取。选 PyMuPDF 而不是 pdfplumber：
+# 同样一份扫描件混排 PDF，PyMuPDF 快一个量级，且对中文断行处理更稳。
+pymupdf>=1.24
+# Word（.docx）抽取。**同时也是文书导出的唯一方式**（``/drafts/{id}/exports?fmt=docx``）。
+# 没装时导出接口返回 501 并给出替代方案，**不会**偷偷导出 .md 顶着 .docx 后缀。
+python-docx>=1.1
+
+# ---------------------------------------------------------------- Embedding
+# 本地向量模型（``BAAI/bge-small-zh-v1.5``）。会连带拉入 torch 与 transformers，
+# 是本项目体积最大的一组依赖。
+# ⚠️ PyPI 上的 torch 是 **CUDA 版**（连带 nvidia-* 一堆，合计 3GB+），
+#    而我们只用 CPU 推理。只想装 CPU 版就先单独装 torch：
+#      pip install torch --index-url https://download.pytorch.org/whl/cpu
+#    然后再装本文件（pip 会看到 torch 已满足，不再重复下载）。
+#    Docker 镜像里这一步已经在 ``deploy/Dockerfile`` 里做掉了。
+# 不想装（离线交付、磁盘紧张、或纯用远程 embedding 网关）时：
+#   1) 删掉这两行；
+#   2) 把 ``EMBEDDING_PROVIDER`` 设为 ``openai``（走远程网关）或 ``hash``
+#      （确定性哈希向量，仅保证链路连通，语义质量有限）。
+# 代码里是惰性导入 + 异常降级，缺这两包不会导致启动失败。
+sentence-transformers>=3.0
+transformers>=4.40
+
+# ---------------------------------------------------------------- 开发与测试
+# 测试框架。``pytest-asyncio`` 是 ``pytest.ini`` 里 ``asyncio_mode = auto`` 的前提。
+pytest>=8.0
+pytest-asyncio>=0.23
+# 覆盖率（``pytest --cov=backend``）。仅开发用。
+pytest-cov>=5.0
+
+
+# ================================================================ 可选依赖
+# 以下**不在本文件里**，需要时手动装。它们对应的功能都有降级路径，
+# 不装只是"少了某能力"，不会让服务起不来。
+
+# [队列·broker]  aio-pika>=9.0
+#   ``RABBITMQ_ENABLED=true`` 时需要。**它只是加速器，不是队列本身** ——
+#   任务排队靠数据库（``la_task`` 表），worker 没它也按 ``WORKER_POLL_SECONDS``
+#   轮询领取，正确性不受影响、不丢任务，只是延迟从瞬时变成几秒。
+#   所以**不装也能多副本部署**（以前写"多副本会失效"是错的：那是还在用
+#   进程内事件广播时的结论）。
+#   （用 aio-pika 而不是 pika：后者是同步客户端，会阻塞 worker 的事件循环。）
+
+# [MCP]   mcp>=1.0
+#   ``backend/skills/mcp_server.py`` 把本项目的工具以 MCP 协议暴露出去时需要。
+#   代码里是 ``import mcp`` 包在 try 里，缺它只会让 MCP server 不可用。
+
+# [采集]  playwright>=1.44
+#   浏览器自动化采集（``backend/crawler/``，四层：调度/访问/解析/存储）。
+#   **必须两步安装**，只 pip 装包不装内核会在启动浏览器时报
+#   "Executable doesn't exist at ...chromium-xxx"：
+#     pip install playwright
+#     playwright install chromium        # Linux CI 上加 --with-deps
+#   不装时采集能力整体不可用（``CRAWL_ENABLED`` 默认 false），
+#   但服务启动、法条/案例检索等既有链路完全不受影响 —— 本包在
+#   ``backend/crawler/fetcher.py`` 里是惰性导入，缺它只在真正采集时才报错。
+
+# [视觉]  pillow>=10.0, opencv-python>=4.9
+#   扫描件图像预处理（去噪、旋转校正、表格线检测）。缺它时解析管线
+#   跳过图像增强，直接交给 VLM —— 识别率会降，但不会失败。
+
+# [PDF 备用] pdfplumber>=0.11
+#   PyMuPDF 抽不出内容时的第二条通道（例如某些加密/畸形的旧 PDF）。
+#   ``backend/parser/`` 里没有引用它，装了也不会自动生效 —— 属于预留。
+
+# [LoRA 微调] llama-factory, peft, datasets, accelerate
+#   见 ``backend/finetune/llama_factory/``。微调在 GPU 机器上做，
+#   **不要**装进服务端环境：它会拉入与推理无关的一大堆依赖。
+
+# [桌面端] PySide6>=6.6（打包另需 pyinstaller>=6.0）
+#   仅 ``client/`` 需要，**服务端环境不要装** —— 它 300MB 起，
+#   且与服务运行毫无关系。桌面端是瘦客户端：业务规则全在服务端，
+#   所以它的依赖只有"界面 + HTTP"两样（HTTP 用主依赖里的 httpx）。
+#   装法：python -m pip install PySide6 pyinstaller

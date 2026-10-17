@@ -1,0 +1,29 @@
+# 构建上下文排除表
+#
+# **``data/`` 必须排除。** 它装着 92M 的 embedding 模型与全部法规 PDF，
+# 不排除的话每次构建都要先把它们传给 docker daemon（几十秒到几分钟），
+# 而镜像里根本用不到 —— 模型在运行时按需下载或挂载，语料走
+# ``scripts/import_corpus_pack.py`` 导入。
+#
+# 反过来，**``web/`` 要留着**：API 自己也托管前端（``/ui``），
+# 缺了它启动时会少一个挂载点，界面打不开。
+
+data/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.git/
+.gitignore
+.pytest_cache/
+tests/
+docs/
+client/
+deploy/
+dist/
+build/
+*.log
+.env
+.env.*
+!.env.example
+web_smoke.txt
